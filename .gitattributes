@@ -1,0 +1,3 @@
+# Official runtime files are verified byte for byte by the package and launcher.
+# Preserve their original line endings on every developer and CI checkout.
+/runtime/** -text
