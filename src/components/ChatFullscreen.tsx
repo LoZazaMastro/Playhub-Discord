@@ -708,7 +708,7 @@ export function ChatView({ channelId, channelName, isDm, onClosed, embedded, foc
         <div id={FS_COMPOSER_ID} ref={attachShortcutComposer} style={{ marginTop: 8 }}>
           <TextField
             value={draft}
-            placeholder={t("message_placeholder")}
+            label={t("message_placeholder")}
             // Descendre sur la saisie = « j'ai fini de lire l'historique » :
             // on dégèle et on recolle en bas. C'est le geste que le user faisait
             // DÉJÀ avant le fix #21 pour se remettre au dernier message avant de

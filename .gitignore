@@ -59,3 +59,7 @@ cli/decky
 .vscode/setup.sh
 .vscode/defsettings.json
 deploy-local.sh
+
+# Official portable runtime is a release payload, not a Git blob.
+/runtime/*.zip
+!/runtime/sources/*.tar.gz

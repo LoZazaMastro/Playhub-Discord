@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "arrpc-source.tar.gz",
+      "size": 13572,
+      "sha256": "f8c97d403773e3368314f8c3e6d146dc0e974b7910960bf818abfef0ef1b677d"
+    },
+    {
+      "file": "Vencord-source.tar.gz",
+      "size": 727365,
+      "sha256": "4adcd253519f253f65a7868080fe30bb5e09ce0a6bc9e167866faaaeeea176ee"
+    },
+    {
+      "file": "Vesktop-1.6.8-source.tar.gz",
+      "size": 3163307,
+      "sha256": "11a6e69cd36823c78f143c0c010f8740bcfccef9286fee7cc0165057b8b69644"
+    }
+  ]
+}

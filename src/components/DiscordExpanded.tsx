@@ -1,3 +1,4 @@
+import { FaDiscord } from "react-icons/fa";
 // Vue Discord étendue native Steam : aucune BrowserView CEF pré-Vesktop.
 import { Focusable, ModalRoot, NavEntryPositionPreferences, showModal } from "@decky/ui";
 import { call } from "@decky/api";
@@ -7,7 +8,7 @@ import { ExpandedNavContext } from "./ExpandedNav";
 import { useSteamcordState } from "../hooks/useSteamcordState";
 import { EVENT_ACTIVE, EventDetail, SCEvent, whenLabel } from "./EventsPanel";
 import { DANGER, FULL_BLEED, ONLINE, chromeHideMarkerRef, focusHalo, listHalo } from "./Styled";
-import { IcBell, IcChat, IcGear, IcPanel, IcPhone, IcUser, SteamcordLogo } from "./Icons";
+import { IcBell, IcChat, IcGear, IcPanel, IcPhone, IcUser } from "./Icons";
 import { t } from "../i18n";
 import { FaUserFriends } from "react-icons/fa";
 import { FriendsHub, activityLine } from "./FriendsHub";
@@ -265,10 +266,10 @@ export function DiscordExpandedModal({ closeModal, serverContent, callContent, s
     <div ref={chromeHideMarkerRef} style={{ display: "none" }} />
     <Focusable flow-children="row" onScroll={pinTop}
       // L1 = 5, R1 = 6 (GamepadButton de @decky/ui) ; même mécanisme que B dans backNav.
-      onButtonDown={(e: any) => { const b = e?.detail?.button; if (b === 5) navOnce(back); else if (b === 6) navOnce(forward); }} style={{ ...FULL_BLEED, height: "80vh", display: "flex", overflow: "hidden", borderRadius: 12, background: "#11151d", boxShadow: "0 22px 60px rgba(0,0,0,.55)" }}>
-      <Focusable flow-children="column" className="sc-xv-side" style={{ width: 268, flexShrink: 0, padding: 14, overflowX: "hidden", overflowY: "auto", scrollbarWidth: "none", display: "flex", flexDirection: "column", background: "#20252f", borderRight: "1px solid rgba(255,255,255,.08)" } as any}>
+      onButtonDown={(e: any) => { const b = e?.detail?.button; if (b === 5) navOnce(back); else if (b === 6) navOnce(forward); }} style={{ ...FULL_BLEED, height: "80vh", display: "flex", overflow: "hidden", borderRadius: 12, background: "#202020", boxShadow: "0 22px 60px rgba(0,0,0,.55)" }}>
+      <Focusable flow-children="column" className="sc-xv-side" style={{ width: "clamp(160px, 24vw, 240px)", flexShrink: 0, padding: 14, overflowX: "hidden", overflowY: "auto", scrollbarWidth: "none", display: "flex", flexDirection: "column", background: "#292929", borderRight: "1px solid rgba(255,255,255,.08)" } as any}>
         <style>{SIDEBAR_FIT}</style>
-        <div className="sc-xv-brand" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 8px 17px", fontSize: 18, fontWeight: 800, flexShrink: 0 }}><SteamcordLogo size={32} /> Steamcord</div>
+        <div className="sc-xv-brand" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 8px 17px", fontSize: 18, fontWeight: 800, flexShrink: 0 }}><FaDiscord size={28} /> Discord</div>
         <div style={{ fontSize: 11, letterSpacing: .8, fontWeight: 700, opacity: .48, padding: "0 10px 7px" }}>{t("xv_navigation")}</div>
         <SidebarItem active={mode === "dms"} icon={<IcUser />} label={t("xv_dms")} onPick={() => go("dms")} />
         <SidebarItem active={mode === "friends"} icon={<FaUserFriends />} label={t("friends")} onPick={() => go("friends")} />
@@ -284,8 +285,8 @@ export function DiscordExpandedModal({ closeModal, serverContent, callContent, s
           <SidebarItem active={false} icon={<IcPanel />} label={t("xv_to_panel")} badge={page.from === null ? <span style={{ fontSize: 11, opacity: .5 }}>B</span> : undefined} onPick={() => closeModal?.()} />
         </div>
       </Focusable>
-      <Focusable flow-children="column" navEntryPreferPosition={NavEntryPositionPreferences.FIRST} onScroll={pinTop} style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", padding: "24px 28px 18px" }}>
-        <div style={{ flexShrink: 0, display: "flex", alignItems: "baseline", gap: 12, borderBottom: "1px solid rgba(255,255,255,.09)", paddingBottom: 15, marginBottom: 14 }}><div style={{ fontSize: 23, fontWeight: 800, minWidth: 0, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{head[0]}</div><div style={{ opacity: .52, fontSize: 13, flexShrink: 0 }}>{head[1]}</div>{(canBack || canForward) && <div style={{ marginLeft: "auto", opacity: .45, fontSize: 11, flexShrink: 0 }}>{canBack ? "L1 ◀" : ""}{canBack && canForward ? "  ·  " : ""}{canForward ? "▶ R1" : ""}</div>}</div>
+      <Focusable flow-children="column" navEntryPreferPosition={NavEntryPositionPreferences.FIRST} onScroll={pinTop} style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column", padding: "clamp(12px, 2vw, 24px)" }}>
+        <div style={{ flexShrink: 0, display: "flex", alignItems: "baseline", gap: 12, borderBottom: "1px solid rgba(255,255,255,.09)", paddingBottom: 15, marginBottom: 14 }}><div style={{ fontSize: 23, fontWeight: 800, minWidth: 0, overflowWrap: "anywhere" }}>{head[0]}</div><div style={{ opacity: .52, fontSize: 13, flexShrink: 0 }}>{head[1]}</div>{(canBack || canForward) && <div style={{ marginLeft: "auto", opacity: .45, fontSize: 11, flexShrink: 0 }}>{canBack ? "L1 ◀" : ""}{canBack && canForward ? "  ·  " : ""}{canForward ? "▶ R1" : ""}</div>}</div>
         {page.kind === "chat" ? <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}><ChatView key={page.channelId} channelId={page.channelId} channelName={page.name} isDm={page.isDm} embedded /></div>
           : page.kind === "members" ? <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}><GuildMembers key={page.guildId} guildId={page.guildId} /></div>
           : mode === "friends" ? <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}><FriendsHub /></div>

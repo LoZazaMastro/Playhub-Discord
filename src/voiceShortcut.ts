@@ -331,7 +331,7 @@ function onCombo() {
       // L'état settled arrive par l'écho Discord → petit délai avant lecture.
       setTimeout(() => {
         call<[], any>("get_state").then((s) => {
-          notify({ title: "Steamcord", body: s?.me?.is_muted ? `🔇 ${t("mic_muted")}` : `🎙️ ${t("mic_unmuted")}` });
+          notify({ title: "Discord", body: s?.me?.is_muted ? `🔇 ${t("mic_muted")}` : `🎙️ ${t("mic_unmuted")}` });
         }).catch(() => {});
       }, 600);
     } else {

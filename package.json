@@ -1,31 +1,31 @@
 {
-  "name": "steamcord",
-  "version": "1.45.1",
+  "name": "playhub-discord",
+  "version": "1.0.1",
   "type": "module",
-  "description": "Discord in Steam Gaming Mode — voice chat, DMs, QR login",
+  "description": "Discord voice and conversations in Playhub for Windows",
   "scripts": {
-    "build": "shx rm -rf dist && rollup -c",
+    "build": "rollup -c",
     "build_norm": "rollup -c",
     "watch": "rollup -c -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Necrosiak/Steamcord.git"
+    "url": "git+https://github.com/LoZazaMastro/Playhub-Discord.git"
   },
   "keywords": [
+    "playhub",
     "decky",
-    "plugin",
-    "plugin-template",
-    "steam-deck",
-    "deck"
+    "discord",
+    "windows",
+    "voice"
   ],
-  "author": "Necrosiak",
+  "author": "LoZazaMastro",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/Necrosiak/Steamcord/issues"
+    "url": "https://github.com/LoZazaMastro/Playhub-Discord/issues"
   },
-  "homepage": "https://github.com/Necrosiak/Steamcord#readme",
+  "homepage": "https://github.com/LoZazaMastro/Playhub-Discord",
   "devDependencies": {
     "@decky/rollup": "^1.0.2",
     "@rollup/plugin-commonjs": "^21.1.0",
@@ -33,20 +33,23 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^8.3.3",
-    "@types/react": "16.14.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "19.1.1",
+    "@types/react-dom": "19.1.1",
     "@types/webpack": "^5.28.0",
     "rollup": "^2.77.1",
     "rollup-plugin-import-assets": "^1.1.1",
     "shx": "^0.3.4",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@decky/api": "^1.1.3",
     "@decky/ui": "^4.11.6",
     "decky-frontend-lib": "^3.25.0",
     "qrcode": "^1.5.4",
-    "react-icons": "^4.4.0"
+    "react-icons": "^4.4.0",
+    "react-router": "7.14.2"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -55,5 +58,10 @@
         "react-dom"
       ]
     }
-  }
+  },
+  "contributors": [
+    "Necrosiak",
+    "Steam Deck Homebrew",
+    "SilvertongueRED"
+  ]
 }

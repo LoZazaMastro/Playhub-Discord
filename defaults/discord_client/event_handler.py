@@ -471,9 +471,7 @@ class EventHandler:
                         "kind": "dm" if dm else "group",
                         "channel_id": chan_id, "channel_name": channel_name,
                         "message_id": str(msg.get("id") or "")}
-        logger.info(f"notification built: kind={notification['kind']} "
-                    f"title={title!r} icon={'oui' if icon else 'non'} "
-                    f"enrichi={'__sc_dm' in data}")
+        logger.info("Discord notification received")
         self.notifications.put_nowait(notification)
 
     async def _call_ring(self, data):

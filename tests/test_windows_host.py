@@ -3,6 +3,7 @@ import asyncio
 import ast
 import hashlib
 import importlib.util
+import json
 import logging
 import os
 from pathlib import Path
@@ -29,8 +30,11 @@ class WindowsHostTest(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         self.host = load("host")
-        with patch.dict(sys.modules, {"host": self.host, "decky": types.SimpleNamespace(logger=logging.getLogger(__name__))}):
+        with patch.dict(sys.modules, {"host": self.host, "windows_identity": load("windows_identity"),
+                                     "decky": types.SimpleNamespace(logger=logging.getLogger(__name__))}):
             self.win = load("vesktop_win")
+        state = patch.object(self.win, "_state_file", return_value=self.root / "current.json")
+        state.start(); self.addCleanup(state.stop)
 
     def archive(self, members):
         p = self.root / "vesktop.zip"
@@ -132,6 +136,44 @@ class WindowsHostTest(unittest.TestCase):
             self.win.profile_dir("123")
             self.assertEqual(settings.read_text(encoding="utf-8"), '{"discordBranch":"canary","custom":true}')
 
+    def test_offline_vencord_seed_uses_real_vesktop_paths_and_managed_defaults(self):
+        with patch.object(self.host, "settings_dir", return_value=str(self.root)):
+            profile = self.win.profile_dir("123")
+            self.win._seed_vencord(profile)
+            files = profile / "vesktop/sessionData/vencordFiles"
+            for name, expected in self.win.VENCORD_FILES.items():
+                self.assertEqual(self.win._sha256(files / name), expected)
+            config = profile / "vesktop/settings/settings.json"
+            self.assertEqual(json.loads(config.read_text()), {"autoUpdate": False, "autoUpdateNotification": False})
+            state = json.loads((profile / "vesktop/state.json").read_text())
+            self.assertGreater(state["updater"]["snoozeUntil"], 2000000000000)
+            self.assertFalse((profile / "vesktop/vencordFiles").exists())
+
+    def test_existing_vencord_settings_and_extension_are_not_replaced(self):
+        with patch.object(self.host, "settings_dir", return_value=str(self.root)):
+            profile = self.win.profile_dir("123")
+            self.win._seed_vencord(profile)
+            files = profile / "vesktop/sessionData/vencordFiles"
+            target = files / "vencordDesktopMain.js"
+            target.write_bytes(b"existing user extension")
+            settings = profile / "vesktop/settings/settings.json"
+            settings.write_text('{"autoUpdate":true,"theme":"personal"}')
+            self.win._seed_vencord(profile)
+            self.assertEqual(target.read_bytes(), b"existing user extension")
+            self.assertEqual(settings.read_text(), '{"autoUpdate":true,"theme":"personal"}')
+
+    def test_custom_vencord_directory_and_bad_packaged_hash_fail_closed(self):
+        with patch.object(self.host, "settings_dir", return_value=str(self.root)):
+            profile = self.win.profile_dir("custom")
+            (profile / "vesktop/state.json").write_text('{"vencordDir":"C:/custom-vencord"}')
+            self.win._seed_vencord(profile)
+            self.assertFalse((profile / "vesktop/sessionData").exists())
+            profile = self.win.profile_dir("new")
+            with patch.object(self.win, "_sha256", return_value="0" * 64):
+                with self.assertRaises(ValueError):
+                    self.win._seed_vencord(profile)
+            self.assertFalse((profile / "vesktop/sessionData").exists())
+
     def test_linux_only_guard_never_runs_helper_on_windows(self):
         source = (DEFAULTS.parent / "main.py").read_text(encoding="utf-8")
         tree = ast.parse(source)
@@ -152,7 +194,8 @@ class WindowsHostTest(unittest.TestCase):
             self.assertEqual(asyncio.run(guarded(None)), "linux")
 
     def test_cdp_requires_a_listener_owned_by_private_vesktop(self):
-        with patch.object(self.win, "our_pids", return_value=[100]):
+        (self.root / "current.json").write_text(json.dumps({"account": "fixture", "owner": {"pid": 100}}))
+        with patch.object(self.win, "steam_account_id", return_value="fixture"), patch.object(self.win.windows_identity, "matches", return_value=True):
             for listeners, expected in ((set(), False), ({100}, True), ({200}, False), ({100, 200}, False)):
                 with patch.object(self.host, "listening_pids", return_value=listeners):
                     self.assertEqual(self.win.owns_cdp(), expected)

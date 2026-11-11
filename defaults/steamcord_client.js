@@ -1,3 +1,13 @@
+// The Windows backend binds its listener before injecting this client. Never
+// guess a fixed port there: Windows may reserve it for another system service.
+window.__sc_bridgeUrl = (path, websocket = false) => {
+    const value = window.STEAMCORD_BRIDGE_PORT;
+    const port = value === undefined && window.STEAMCORD_HOST !== "windows" ? 65123 : value;
+    if (!Number.isInteger(port) || port < 1 || port > 65535 || typeof path !== "string"
+        || !path.startsWith("/") || path.startsWith("//")) throw new Error("Discord bridge is not ready");
+    return (websocket ? "ws" : "http") + "://127.0.0.1:" + port + path;
+};
+
 // Detect host: Vesktop (native Electron Discord — mic works) vs Steam's hidden CEF
 // BrowserView (mic broken). In Vesktop we must NOT hijack getUserMedia / visibility,
 // or we'd break the native mic. The CEF-only workarounds are guarded by !IS_VESKTOP.
@@ -1257,7 +1267,7 @@ window.Vencord.Plugins.plugins.Steamcord = {
                 try {
                     const t = e.target;
                     if (t && t.closest && t.closest("[role=\"textbox\"]"))
-                        fetch("http://127.0.0.1:65123/openkb", { mode: "no-cors" });
+                        fetch(window.__sc_bridgeUrl("/openkb?bridge=") + encodeURIComponent(window.STEAMCORD_BRIDGE_TOKEN || ""), { mode: "no-cors" });
                 } catch (err) { }
             }, true);
         }
@@ -1366,12 +1376,31 @@ window.Vencord.Plugins.plugins.Steamcord = {
                 setInterval(forceEngineEnabled, 3000);
             });
 
+            let reconnectTimer = null;
+            let reconnectDelay = 100;
+            let bridgeDisposed = false;
+            let releaseConnection = () => {};
+            function scheduleReconnect() {
+                if (bridgeDisposed || reconnectTimer !== null) return;
+                const delay = reconnectDelay;
+                reconnectDelay = Math.min(3000, Math.max(250, reconnectDelay * 2));
+                reconnectTimer = window.setTimeout(() => { reconnectTimer = null; connect(); }, delay);
+            }
             function connect() {
+                if (bridgeDisposed) return;
+                if (reconnectTimer !== null) { window.clearTimeout(reconnectTimer); reconnectTimer = null; }
                 // Garde anti-double-client : si un WS est déjà ouvert/en cours, ne pas
                 // en créer un second (sinon chaque message backend est traité 2×).
                 if (window.STEAMCORD_WS && window.STEAMCORD_WS.readyState <= 1) return;
-                window.STEAMCORD_WS = new WebSocket('ws://127.0.0.1:65123/socket');
+                const socket = window.STEAMCORD_WS = new WebSocket(window.__sc_bridgeUrl("/socket?bridge=", true) + encodeURIComponent(window.STEAMCORD_BRIDGE_TOKEN || ''));
+                const connectionIntervals = [];
+                const setInterval = (callback, milliseconds) => {
+                    const timer = window.setInterval(callback, milliseconds);
+                    connectionIntervals.push(timer);
+                    return timer;
+                };
                 window.STEAMCORD_WS.addEventListener("message", async function (e) {
+                    if (bridgeDisposed || window.STEAMCORD_WS !== socket || socket.readyState !== 1) return;
                     const data = JSON.parse(e.data);
                     if (data.type.startsWith("$")) {
                         let result;
@@ -2813,20 +2842,26 @@ window.Vencord.Plugins.plugins.Steamcord = {
                             // préserve false/0/"".
                             result: result ?? {}
                         };
-                        console.debug(data, payload);
-                        window.STEAMCORD_WS.send(JSON.stringify(payload));
+                        // The backend request counter belongs to this socket.
+                        // Never deliver a pending reply into a newer session.
+                        if (bridgeDisposed || window.STEAMCORD_WS !== socket || socket.readyState !== 1) return;
+                        socket.send(JSON.stringify(payload));
                         return;
                     }
                     FluxDispatcher.dispatch(data);
                 });
 
                 window.STEAMCORD_WS.onopen = function (e) {
+                    if (bridgeDisposed || window.STEAMCORD_WS !== socket) return;
+                    reconnectDelay = 100;
                     // CEF only: kick off the mic relay handshake. In Vesktop the mic is
                     // native — don't touch getUserMedia.
                     if (!window.STEAMCORD_IS_VESKTOP) navigator.mediaDevices.getUserMedia();
                     Vencord.Webpack.waitFor("useState", t => {
+                        if (bridgeDisposed || window.STEAMCORD_WS !== socket || socket.readyState !== 1) return;
                         window.STEAMCORD_WS.send(JSON.stringify({ type: "LOADED", result: true }));
                         Vencord.Webpack.onceReady.then(() => {
+                            if (bridgeDisposed || window.STEAMCORD_WS !== socket || socket.readyState !== 1) return;
                             const user = Vencord.Webpack.Common.UserStore.getCurrentUser();
                             if (user) {
                                 window.STEAMCORD_WS.send(JSON.stringify({ type: "CONNECTION_OPEN", user }));
@@ -2837,26 +2872,34 @@ window.Vencord.Plugins.plugins.Steamcord = {
                     });
                 }
 
-                window.STEAMCORD_WS.onclose = function (e) {
-                    FluxDispatcher._interceptors.pop()
-                    setTimeout(function () {
-                        connect();
-                    }, 100);
+                let released = false;
+                const release = () => {
+                    if (released) return;
+                    released = true;
+                    for (const timer of connectionIntervals) window.clearInterval(timer);
+                    const index = FluxDispatcher._interceptors.indexOf(interceptor);
+                    if (index >= 0) FluxDispatcher._interceptors.splice(index, 1);
+                };
+                releaseConnection = release;
+                window.STEAMCORD_WS.onclose = function () {
+                    release();
+                    if (window.STEAMCORD_WS === socket) scheduleReconnect();
                 };
 
                 window.STEAMCORD_WS.onerror = function (err) {
                     console.error('Socket encountered error: ', err.message, 'Closing socket');
-                    window.STEAMCORD_WS.close();
+                    socket.close();
                 };
 
                 Vencord.Webpack.onceReady.then(t => {
+                    if (bridgeDisposed || window.STEAMCORD_WS !== socket || socket.readyState !== 1) return;
                     const user = Vencord.Webpack.Common.UserStore.getCurrentUser();
                     if (user) {
                         window.STEAMCORD_WS.send(JSON.stringify({ type: "CONNECTION_OPEN", user }));
                     }
                 });
 
-                FluxDispatcher.addInterceptor(e => {
+                const interceptor = e => {
                     if (e.type == "CHANNEL_SELECT") patchTypingField();
                     // Observe all DM activity, not only the chat currently open.
                     if (e.type === "MESSAGE_CREATE" && e.message) {
@@ -3006,7 +3049,8 @@ window.Vencord.Plugins.plugins.Steamcord = {
                         console.log("Dispatching Steamcord event: ", e);
                         window.STEAMCORD_WS.send(JSON.stringify(e));
                     }
-                });
+                };
+                FluxDispatcher.addInterceptor(interceptor);
                 console.log("Steamcord: Added event interceptor");
 
                 // Robust voice-channel tracking: Discord does NOT reliably emit
@@ -3124,14 +3168,23 @@ window.Vencord.Plugins.plugins.Steamcord = {
                         const inVoice = !!Vencord.Webpack.findStore("SelectedChannelStore").getVoiceChannelId();
                         if (inVoice && !steamcordVoiceShown) {
                             steamcordVoiceShown = true;
-                            fetch("http://127.0.0.1:65123/voice_render", { mode: "no-cors" }).catch(() => {});
+                            fetch(window.__sc_bridgeUrl("/voice_render"), { mode: "no-cors" }).catch(() => {});
                         } else if (!inVoice && steamcordVoiceShown) {
                             steamcordVoiceShown = false;
-                            fetch("http://127.0.0.1:65123/voice_hide", { mode: "no-cors" }).catch(() => {});
+                            fetch(window.__sc_bridgeUrl("/voice_hide"), { mode: "no-cors" }).catch(() => {});
                         }
                     } catch (_) {}
                 }, 1000);
             }
+            window.__sc_reconnectBridge = connect;
+            window.__sc_disposeBridge = () => {
+                bridgeDisposed = true;
+                if (reconnectTimer !== null) { window.clearTimeout(reconnectTimer); reconnectTimer = null; }
+                releaseConnection();
+                const socket = window.STEAMCORD_WS;
+                if (socket && socket.readyState <= 1) socket.close();
+            };
+            window.addEventListener("pagehide", window.__sc_disposeBridge, { once: true });
             connect();
         });
 
@@ -3144,7 +3197,7 @@ window.Vencord.Plugins.plugins.Steamcord = {
                     if (window.location.pathname !== "/login") return;
                     const t = e.target;
                     if (t && t.tagName === "INPUT")
-                        fetch("http://127.0.0.1:65123/openkb", { mode: "no-cors" });
+                        fetch(window.__sc_bridgeUrl("/openkb?bridge=") + encodeURIComponent(window.STEAMCORD_BRIDGE_TOKEN || ""), { mode: "no-cors" });
                 } catch (err) { }
             }, true);
         })();

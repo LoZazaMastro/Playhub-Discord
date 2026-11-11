@@ -1,0 +1,2937 @@
+# Changelog
+
+## 1.45.1 — 2026-11-10
+
+### Fixes
+
+- Turning off the Steamcord entry in Steam's main menu now lasts after Steam restarts. Steamcord also saves this choice in its own settings, because Steam could reload an older value and bring the entry back ([#86](https://github.com/Necrosiak/Steamcord/issues/86)).
+
+### Improved
+
+- Game detection diagnostics now say how many windows were read, how many belong to GeForce NOW, and what kind of title they had (game name, GeForce NOW only, a launcher page). Game titles are still never included ([#88](https://github.com/Necrosiak/Steamcord/issues/88)).
+
+### Thanks
+
+Thanks to [@zerothecat4564](https://github.com/zerothecat4564) and [@JDLKMR](https://github.com/JDLKMR) for reporting and confirming the menu issue ([#86](https://github.com/Necrosiak/Steamcord/issues/86)), and to [@j2v454sj](https://github.com/j2v454sj) for testing GeForce NOW detection ([#88](https://github.com/Necrosiak/Steamcord/issues/88)).
+
+**Full changelog:** [v1.45.0...v1.45.1](https://github.com/Necrosiak/Steamcord/compare/v1.45.0...v1.45.1)
+
+## 1.45.0 — 2026-11-09
+
+### New
+
+- **Proxy for Discord.** In countries where Discord is blocked, Settings ▸ Proxy can send Discord through an HTTP, HTTPS, SOCKS4 or SOCKS5 proxy, with an optional login, and a Test button checks that Discord answers through it. Discord's connection, sign-in (QR code included), images and Go Live signalling use it, as do Steamcord's own downloads (updates, attachments, the Windows Vesktop download). The password is stored on the device only, never shown again in the panel, and never written to a command line or the log. Voice and video calls cannot go through a proxy: in countries where calls are blocked too, a system-wide VPN is still needed. Thanks to [@borborisovai](https://github.com/borborisovai).
+
+### Fixes
+
+- Screen sharing started from Vesktop's own button in Desktop Mode works again. It no longer goes through the Go Live timeout and fallback, which could leave the button unresponsive for the rest of the session ([#94](https://github.com/Necrosiak/Steamcord/pull/94), thanks to [@simonesessa](https://github.com/simonesessa)).
+- A Discord start that keeps failing no longer writes the whole injected script to the log every 2 seconds, which could grow the log by hundreds of MB (thanks to [@SilvertongueRED](https://github.com/SilvertongueRED)).
+
+**Full changelog:** [v1.44.1...v1.45.0](https://github.com/Necrosiak/Steamcord/compare/v1.44.1...v1.45.0)
+
+## 1.44.1 — 2026-11-08
+
+### New
+
+- Game detection diagnostics in Settings, available in both the Quick Access panel and the expanded view on Windows and Linux. The report shows whether game detection is enabled and where GeForce NOW detection stops, without including game titles or account information (#88).
+
+### Improved
+
+- Game and video diagnostics include the Steamcord version and Linux distribution/version or Windows version/build.
+
+### Known issues
+
+- This update adds diagnostics for testing; it does not contain a confirmed fix for GeForce NOW detection (#88), screen sharing split into four copies (#91), pixelated streams (#89), or in-game opacity on the Deck OLED (#93).
+
+### Thanks
+
+Thanks to [@j2v454sj](https://github.com/j2v454sj) and [@BeanieBoy981](https://github.com/BeanieBoy981) for testing and sending feedback and logs.
+
+**Full changelog:** [v1.44.0...v1.44.1](https://github.com/Necrosiak/Steamcord/compare/v1.44.0...v1.44.1)
+
+## 1.44.0 — 2026-11-07
+
+### New
+
+- Voice overlay preferences are kept for the next call, with centered side positions, your own mute/deafen and streaming indicators, and a separate switch for stream and camera notifications (#92).
+- Experimental GeForce NOW game detection from the native client's window title. Manual titles take priority. Browser sessions and native Wayland windows invisible to X11 aren't covered. A real GeForce NOW session still needs confirmation (#88).
+
+### Fixes
+
+- Game / Discord balance stays inactive in Desktop Mode, can be disabled, and restores the application volumes Steamcord changed (#87).
+- Manual game titles remain applied when Discord's game database is unavailable.
+
+### Improved
+
+- The receiving video relay requests full resolution and a higher bitrate. This is not yet a confirmed fix for pixelated streams (#89).
+- Video diagnostics and microphone guidance are available in Settings (#90).
+
+### Known issues
+
+- Screen sharing split into four copies (#91) and in-game opacity on the Deck OLED (#93) remain under investigation.
+
+### Thanks
+
+Thanks to [@nawavon](https://github.com/nawavon), [@edwardlaurence00](https://github.com/edwardlaurence00), [@j2v454sj](https://github.com/j2v454sj) and [@Matchaccia](https://github.com/Matchaccia) for the reports and suggestions.
+
+**Full changelog:** [v1.43.2...v1.44.0](https://github.com/Necrosiak/Steamcord/compare/v1.43.2...v1.44.0)
+
+## 1.43.2 — 2026-11-03
+
+### Fixes
+
+- **A microphone plugged in after Steamcord starts is picked up.** On a device without a microphone, Steamcord replaces the system microphone with a silent one so the call never hears your speakers. When a real microphone appeared later, Steamcord was supposed to hand it back within seconds, but that check stopped right after it started, so the silent microphone stayed until the next reboot. It now switches to the real microphone as soon as it appears, also after a plugin update or reload.
+- Steamcord's background process now stops on its own if Decky Loader goes away without stopping it, instead of staying in memory.
+
+**Full changelog:** [v1.43.1...v1.43.2](https://github.com/Necrosiak/Steamcord/compare/v1.43.1...v1.43.2)
+
+## 1.43.1 — 2026-11-02
+
+### New
+
+- **Hide the Steamcord entry in Steam's main menu.** A new option in Settings, under "Open on", removes the entry from the menu; the Quick Access panel stays available. Thanks to [@JDLKMR](https://github.com/JDLKMR) for the suggestion in [#86](https://github.com/Necrosiak/Steamcord/issues/86).
+
+**Full changelog:** [v1.43.0...v1.43.1](https://github.com/Necrosiak/Steamcord/compare/v1.43.0...v1.43.1)
+
+## 1.43.0 — 2026-11-01
+
+### New
+
+- **Windows support.** Steamcord now runs in Steam Big Picture on Windows, with the official Decky Loader installed by [Playhub](https://github.com/LoZazaMastro/Playhub) or with musika08's [Decky Loader for Windows](https://github.com/musika08/decky-loader-windows). Voice, private messages, notifications, game activity, Go Live with sound and watching streams all work. Steamcord downloads its own private copy of Vesktop, so a Discord you already use on Windows is left alone. Features that rely on Linux components (audio pickers, game audio mixing, overlays, controller shortcuts) are hidden there. See [Steamcord on Windows](docs/WINDOWS.md).
+
+### Improved
+
+- **Streams you aren't watching stay quiet.** In Game Mode and on Windows, a stream shared in your voice channel no longer plays its sound until you press Watch, and closing the panel stops it again; voices and your volume settings are untouched. Thanks to [@jckirton](https://github.com/jckirton) for the suggestion in [#83](https://github.com/Necrosiak/Steamcord/issues/83).
+
+### Fixes
+
+- The in-game overlay is no longer reported as unavailable when Steamcord starts: the check that looks for it now runs in the same clean environment as the overlay itself.
+
+### Thanks
+
+Thanks to [@SilvertongueRED](https://github.com/SilvertongueRED), whose [Windows fork](https://github.com/SilvertongueRED/Steamcord-for-Windows) showed the way for this port.
+
+**Full changelog:** [v1.42.6...v1.43.0](https://github.com/Necrosiak/Steamcord/compare/v1.42.6...v1.43.0)
+
+## 1.42.6 — 2026-11-01
+
+### Improved
+
+- **Steamcord in the Steam menu.** The entry now uses the plugin's name and opens the existing expanded view. Steamcord, SkullKey and BoneCast can each keep their own entry when installed together.
+
+### Fixes
+
+- Reopening the Steam menu or reloading a plugin no longer adds another entry. Older duplicate Discord entries are cleaned up too.
+
+### Thanks
+
+Thanks to [@cymbatpd23](https://github.com/cymbatpd23) for reporting the repeated entries in [#84](https://github.com/Necrosiak/Steamcord/issues/84).
+
+**Full changelog:** [v1.42.5...v1.42.6](https://github.com/Necrosiak/Steamcord/compare/v1.42.5...v1.42.6)
+
+
+## 1.42.5 — 2026-10-29
+
+### Fixed
+
+- **Discord stays off after a restart** — turning Discord off from
+  Steamcord's settings only lasted until the next reboot, then Vesktop
+  started again on its own. Steamcord now remembers the switch: Discord
+  stays off until you turn it back on, and the rest of Steamcord starts
+  normally meanwhile. Thanks to [prozac192](https://github.com/prozac192) for
+  the report ([#82](https://github.com/Necrosiak/Steamcord/issues/82)).
+
+## 1.42.4 — 2026-10-28
+
+### Fixed
+
+- **Discord entry in the Steam menu** — the "Discord" item of Steam's main
+  menu (Steam button) no longer appeared, because Steam changed how its menu
+  items are built. It is back, shows once you are signed in, and opens
+  Steamcord's expanded view. Opening the Steam menu while that view is open
+  closes it, and a second press returns to your game. Thanks to
+  [theupriser](https://github.com/theupriser) for the fix and the tests
+  ([#80](https://github.com/Necrosiak/Steamcord/pull/80)).
+- **Games started from Battle.net** — a Proton game launched through
+  Battle.net showed only "Battle.net" without artwork in your Discord status.
+  Steamcord now treats Battle.net as a launcher, reads Windows paths correctly,
+  and tells apart games that share an executable, so World of Warcraft,
+  World of Warcraft Classic and World of Warcraft: Forever each show under
+  their own name. The path fix also helps other Proton games started from a
+  launcher. Thanks to [mweitl](https://github.com/mweitl) for the analysis and
+  the patch ([#81](https://github.com/Necrosiak/Steamcord/issues/81)).
+
+## 1.42.3 — 2026-10-25
+
+### Fixed
+
+- **Notifications from other plugins** — Steamcord replaced Decky's shared
+  notification system, so other plugins could not dismiss the notifications
+  they showed, and an old workaround removed Decky's wrapper around Steam's
+  notification renderer. Steamcord now leaves both alone and uses Decky's own
+  API for its native notification mode. Its chat-style notifications, click
+  actions, sounds and streamer mode are unchanged. Thanks to
+  [deathtenk](https://github.com/deathtenk) for the fix and the tests
+  ([#78](https://github.com/Necrosiak/Steamcord/pull/78)).
+
+## 1.42.2 — 2026-10-21
+
+### Fixed
+
+- **In-game voice overlay not showing on some systems** (such as Anatase) —
+  Steamcord looks up the display Steam runs on so the overlay appears above
+  your game. When Steam's process file couldn't be used, the overlay ended up
+  on the game's display, where gamescope doesn't show overlays. Steamcord now
+  finds Steam's process directly in that case. Diagnosed thanks to the detailed
+  output shared by [mafiosnik777](https://github.com/mafiosnik777) in
+  [#75](https://github.com/Necrosiak/Steamcord/issues/75).
+
+## 1.42.1 — 2026-10-19
+
+### Fixed
+
+- **Screen sharing on systems with Python 3.15** (such as Anatase) — the
+  library Steamcord uses to talk to the screen-sharing portal failed to load
+  there, because Python 3.15 removed something it relied on. Spotted in the
+  log shared by [mafiosnik777](https://github.com/mafiosnik777) in
+  [#75](https://github.com/Necrosiak/Steamcord/issues/75).
+
+## 1.42.0 — 2026-10-18
+
+### New
+
+- **Turn Discord off and on** — a new switch in Steamcord's settings stops
+  Discord completely, with a confirmation first so it can't happen by
+  accident. While it's off, nothing relaunches it in the background and the
+  panel shows a *Start Discord* button instead of your servers. Turning it back
+  on keeps you signed in. Requested by
+  [JerrickLewis7190](https://github.com/JerrickLewis7190) in
+  [#77](https://github.com/Necrosiak/Steamcord/issues/77).
+
+### Changed
+
+- **Text chat layout** — messages now scroll in their own area, with the
+  message box and buttons kept in place below them
+  ([#74](https://github.com/Necrosiak/Steamcord/issues/74)).
+- **In-game voice overlay** — picks the display it shows on more carefully
+  ([#75](https://github.com/Necrosiak/Steamcord/issues/75)).
+- **Sign-in** — the login page no longer waits forever if its preview stalls
+  ([#76](https://github.com/Necrosiak/Steamcord/issues/76)).
+
+## 1.41.5 — 2026-10-12
+
+### New
+
+- **The controller voice shortcut works in-game with many more controllers.**
+  Besides the Steam Controller (2026), Steamcord now also reads the Steam
+  Deck's built-in controller (A/B/X/Y, D-pad, L4/R4/L5/R5), standard gamepads
+  such as Xbox, DualSense or 8BitDo (A/B/X/Y and D-pad), and controllers that
+  Steam takes over completely, like the Switch 2 Pro Controller (through
+  Steam's virtual gamepad, while a game has focus). Requested by
+  [danlucka](https://github.com/danlucka) in
+  [#60](https://github.com/Necrosiak/Steamcord/issues/60).
+
+## 1.41.4 — 2026-10-11
+
+### Live private-conversation lists and pins (#73)
+
+- Keep private conversations ordered by their latest sent/received message in
+  voice QAM, text QAM and Big Screen, with live Discord activity updates and a
+  recovery poll. Do not prioritize ongoing calls above newer conversations.
+- Pin/unpin conversations from all three views. Pins are shared, persisted
+  separately per Discord account, and the latest pinned conversation goes first.
+  Unpinned conversations return to latest-message ordering.
+- Remove the arbitrary 30-conversation cutoff so older pinned chats can appear.
+- Keep keyed rows and the last good list during transient refresh errors;
+  dispose event listeners and ignore late requests when a view closes.
+- Pin controls use matching SVG icons with labels in all nine languages.
+- Move pinned conversations up/down using compact arrow controls next to the
+  pin. The saved order is shared by voice, text and Big Screen.
+- Keep conversation names visible alongside compact pin controls. Voice cards
+  have explicit controller navigation groups; text/Big Screen rows reset their
+  entry focus to the conversation instead of remembering a previously visited pin.
+- Thanks to @TheAwesomeGcdm for the request and to Nekyron for repeated live
+  controller tests on Bazzite. Other SteamOS devices still need field feedback.
+
+Older releases (v1.0.0 → v1.11.0) are documented on the
+[GitHub Releases](https://github.com/Necrosiak/Steamcord/releases) page.
+
+## 1.41.3 — 2026-10-10
+
+### SteamOS POV diagnostics (#70)
+
+- Added bounded, privacy-conscious logs for POV activation, requested remote
+  streams, first incoming init/media segments, local WebSocket connection,
+  decoded frames and Cairo surfaces. A short counter summary appears every
+  10 seconds while the POV receiver is active.
+- Logs contain counts, backend/format and frame dimensions only; they do not
+  include Discord user IDs, stream contents or the local feed URL. This build
+  does not claim to fix the reporter's SteamOS POV failure; it makes the
+  failing stage observable on the next test.
+
+## 1.41.2 — 2026-10-09
+
+### SteamOS POV overlay (#70)
+
+- The in-game POV overlay can use GTK/Cairo plus GStreamer VP8/WebM when
+  WebKitGTK is absent. Steamcord probes `appsrc`, `matroskademux`, `vp8dec`,
+  `videoconvert` and `appsink` before enabling the switch. The WebKit path
+  keeps its H.264/MP4 stream.
+- Up to four video tiles use the existing layout, size and opacity controls.
+  A missing decoder leaves the voice roster available and explains why the
+  video switch is unavailable.
+- The new path displayed a real remote Discord screen share on Bazzite.
+  Frame pacing was corrected after live testing. Stock SteamOS still needs
+  a real in-game test before compatibility can be confirmed; the successful
+  Bazzite test is not a SteamOS result. Thanks to @justEhCupcake for the Steam Machine
+  GStreamer inventory in [#70](https://github.com/Necrosiak/Steamcord/issues/70).
+
+### Decky notification sounds and AudioLoader (#72)
+
+- Notifications from other Decky plugins now play the Steam UI toast sound
+  through the audio manager that AudioLoader can replace with a custom pack.
+  Toasts requesting `playSound: false` remain silent. Steamcord still avoids
+  Decky's native toast rendering on SteamUI builds where it crashes.
+- Fixed an intermittent extra chat-message sound after SteamUI recreates its
+  notification store. The filter now recognizes both `steamid_sender()` and
+  older `steamid()` getters and reattaches when SteamUI replaces the method.
+- Verified on Bazzite with AudioLoader 1.6.1: a custom test pack's WAV loaded
+  successfully, a silent toast played no sound, and a normal toast triggered
+  one sound. The temporary pack was removed and the original settings restored.
+
+## Planned for upcoming updates
+
+> The UI of recently added features (in-game voice/POV overlays, the
+> multi-POV grid, the quick-reply panel) is **not final** — layout, controls
+> and defaults are still open to change. Suggestions are welcome via
+> [issues](https://github.com/Necrosiak/Steamcord/issues); the same applies to
+> anything added going forward.
+
+- **Screen + camera as separate POV tiles** — when someone shares both at
+  once, show them as two tiles instead of preferring the screen.
+
+## 1.41.1 — 2026-10-08
+
+### Clicking a notification takes you there
+
+Until now, clicking a Steamcord notification led nowhere: Steam tried to open
+a chat with a friend that doesn't exist, opened an empty group chat, or — in
+Gaming Mode — showed an "Accept invite" menu that did nothing.
+
+- **Messages (DMs and server mentions)** open the conversation in the
+  fullscreen chat, with the notified message selected. If more messages
+  arrived since, it scrolls back to it.
+- **Incoming calls** open a call window with **Answer** and **Decline**.
+  Answering joins the call and opens the Steamcord panel on it. If the call
+  stopped ringing, the window offers **Call back** instead.
+- The conversation and call windows now use Steamcord's dark styling, logo and
+  controller focus treatment. The call buttons use Steam's supported row
+  navigation, so both remain reachable with a controller.
+- The notification center closes when you click, so Back returns you to what
+  you were doing (your game), not to the notification list.
+
+Server-message notifications now use Steam's private-message style (the only
+one Steam lets us make clickable), so in Gaming Mode their header reads
+"Message" instead of "Group message".
+
+### Fixes
+
+- **Mentions showed as a long number** (`@111101782683328512`) in the chat.
+  They now show the name — server nickname first — highlighted like in
+  Discord, with mentions of you in gold. Role mentions and channel links are
+  fixed too.
+- **An incoming call could arrive as a plain message notification** (Discord's
+  own "started a call" message). It is now treated as a call, and you only get
+  one notification per call.
+
+Notification click routing and mention rendering contributed by
+[@azizzidi](https://github.com/azizzidi) in
+[#71](https://github.com/Necrosiak/Steamcord/pull/71). Tested on a Steam Machine
+by the contributor and on Bazzite by Necrosiak (message and call clicks).
+**A huge thank-you to @azizzidi:** I had been stuck on this part because Steam
+ignored the notification callback and opened its own empty chat instead. Their
+work traced the actual click path through Steam's chat store and made the
+redirect to the right Discord conversation or call possible. The Steamcord
+window styling and controller navigation were then finished and tested on
+Bazzite.
+
+## 1.41.0 — 2026-10-06
+
+### See who joins and leaves the call, in game
+
+The in-game voice overlay now shows a short line when someone joins the voice
+channel (**→ name**, in green) or leaves it (**← name**, in red), like
+Discord's own overlay, so you're no longer left guessing mid-game. It fades
+after 5 seconds. Opening the overlay or switching channels doesn't announce the
+people already there. Works with and without WebKit (Steam Deck included).
+
+### Fixes
+
+- **The voice overlay could stay frozen after Steamcord updated.** When the
+  plugin reloaded during a call, the old overlay window kept running with the
+  member list of that moment, and people who joined later never showed up. The
+  stale window is now closed when Steamcord starts.
+- **Screen share and Steam's game recording**
+  ([#69](https://github.com/Necrosiak/Steamcord/issues/69)): measured the real
+  cause. When Steam's background recording grabs the game screen first, it sets
+  the capture format to one Vesktop can't use, and the share freezes; when the
+  share starts first, both work side by side. The warning now only shows in
+  that exact case, and suggests the safe way around it: start the share before
+  the recording, or turn off background recording before launching the game.
+  (Turning recording off in the middle of a game can crash Steam itself, so
+  Steamcord doesn't do it for you.)
+
+## 1.40.3 — 2026-10-05
+
+### Fixes
+
+- **Other Decky plugins' notifications played the chat message sound**
+  ([#68](https://github.com/Necrosiak/Steamcord/issues/68)). Steamcord shows
+  every plugin's notifications in Steam's chat style, because a native Decky
+  notification still crashes Steam's interface on the current build (re-tested
+  today). They now stay silent instead of sounding like a new message, and keep
+  the neutral avatar; only Steamcord's own notifications keep the chat sound.
+  Reported by [josejuanlr98](https://github.com/josejuanlr98).
+- **Screen share freezing while Steam records your game**
+  ([#69](https://github.com/Necrosiak/Steamcord/issues/69)). Steam's background
+  game recording reads the same screen as the share, and with two readers one of
+  them stops getting pictures. Steamcord can't prevent that, but it now tells
+  you once per share when both run at the same time, with where to turn
+  background recording off. Reported, with the logs that showed it, by
+  [justEhCupcake](https://github.com/justEhCupcake).
+
+## 1.40.2 — 2026-10-04
+
+### Keep Vesktop out of Desktop Mode
+
+Requested by [BrotherO4](https://github.com/BrotherO4) in
+[#66](https://github.com/Necrosiak/Steamcord/issues/66).
+
+*Voice only in Gaming Mode* only hides the voice controls: Vesktop keeps running
+in both sessions so that switching never hangs up a call, and it came back if
+you closed it. For people who use another Discord app on the desktop, a new
+option, **Don't run Vesktop in Desktop Mode** (off by default), closes Vesktop
+when you switch to Desktop Mode and starts it again in Gaming Mode. A call in
+progress ends when you switch.
+
+### Fix
+
+- **Game audio sharing could loop your headset back into itself.** The links
+  that let you keep hearing the game while it is shared could attach to your
+  headset's own sound instead of the game's, which gives an endless echo. It
+  only worked here because the shared game output happened to be the default
+  one; the links now always listen to the right source. Found while fixing the
+  same echo in BoneCast.
+
+## 1.40.1 — 2026-10-01
+
+### Fix
+
+- **Game / Discord sound kept turning other apps down outside of a call**
+  ([#64](https://github.com/Necrosiak/Steamcord/issues/64)). The setting is
+  remembered, but it was applied to every sound on your output all the time, so
+  a mix left off-centre made Firefox, games and system sounds sit at a fraction
+  of their volume, and any manual change was undone within seconds — with no way
+  to reach the slider outside a call. It now only applies while you are in a
+  call; when you leave, the sounds it turned down go back to 100 %, and your
+  setting is kept for the next call. Reported and fixed by
+  [@ezamelczyk](https://github.com/ezamelczyk) in
+  [#65](https://github.com/Necrosiak/Steamcord/pull/65).
+- **Apps that still started quiet after that.** Your system remembers each
+  app's last volume, so apps that had been turned down kept starting low even
+  once the mix stopped touching them. For the week after this update, outside a
+  call, an app that starts at exactly the level the mix used to force is put
+  back to 100 % once — if you turn it down again yourself, it stays that way.
+- **Game / Discord sound did nothing when the saved output was unplugged.** If
+  the headset or speakers chosen in Steamcord were disconnected, the mix looked
+  for sounds on a device that wasn't there and adjusted nothing, even in a call.
+  It now falls back to the output you are actually using.
+
+## 1.40.0 — 2026-09-30
+
+### Game / Discord sound, like on PlayStation
+
+Suggested on Reddit by u/iReaddit-KRTORR, who missed the PlayStation party
+chat balance.
+
+- A new **Game / Discord sound** menu in the call, under the Soundboard, in the
+  Quick Access Menu and in the expanded view. One slider balances the game
+  (Steam blue, left) against Discord (Discord purple, right): in the middle
+  both play at 100 %, and moving it turns the other side down, without going
+  into the game's settings mid-match.
+- It only changes what **you** hear. What goes to the call and to a Go Live is
+  untouched. Games started later and calls joined later follow the setting,
+  and it is remembered.
+- One exception: a [BoneCast](https://github.com/Necrosiak/BoneCast) stream
+  takes the game sound from your output, so while it is live, turning the game
+  down turns it down for viewers too.
+
+### Help when "Initializing" takes too long
+
+Reported in [#61](https://github.com/Necrosiak/Steamcord/issues/61).
+
+- After a minute on *Initializing*, the panel now says what to try: sign in to
+  Discord in Vesktop from Desktop Mode, or use **Repair Vencord** from Vesktop's
+  tray menu if Discord never finishes loading.
+
+### Fix
+
+- **Turning off "screen as camera" could restart Gaming Mode.** gamescope can
+  crash if a screen capture disconnects while it is drawing a frame for it
+  (a bug in gamescope itself, measured in BoneCast, which shares this capture
+  code). The capture now pauses, lets gamescope finish the frame and only then
+  disconnects.
+
+### Expanded view
+
+- The Soundboard, Game / Discord sound and in-game overlay menus now line up
+  with the rest of the call, and their selection ring no longer spills over
+  the column.
+- Mute, deafen and hang up, and the channel name, are centered.
+
+## 1.39.3 — 2026-09-29
+
+### No more endless "Initializing" in Gaming Mode on setups outside SteamOS
+
+Reported in [#61](https://github.com/Necrosiak/Steamcord/issues/61).
+
+- **Vesktop now opens on the display Steam itself uses.** In Gaming Mode,
+  Steamcord starts Vesktop on gamescope's X display. It took that display from
+  the user session, which on many setups doesn't export one, and fell back to
+  `:0`. On SteamOS and Bazzite, Steam happens to be on `:0`. On a gamescope
+  session set up another way (here arch-deckify), `:0` was a different X
+  server that refused the connection: Vesktop crashed on start, and the panel
+  stayed on *Initializing* forever. Steamcord now reads the display, and its
+  authorization cookie if there is one, from the running Steam process.
+- **Better diagnostics when Vesktop can't start.** The log now lists the X
+  displays present and the one Steam uses, and copies Vesktop's own last error
+  lines into the Steamcord log, so a report shows the cause directly.
+
+## 1.39.2 — 2026-09-28
+
+### Controller push-to-talk works in-game
+
+Reported in [#60](https://github.com/Necrosiak/Steamcord/issues/60).
+
+- **The controller voice shortcut now works while a game has focus.** Steam
+  stops passing controller buttons to its own UI as soon as a game is in
+  front, so push-to-talk and mute toggle on a controller button only worked
+  with the QAM or the Steam UI open. For the **Steam Controller (2026)**,
+  Steamcord now reads the controller directly, read-only and alongside
+  Steam, so the shortcut keeps working in-game, in both push-to-talk and
+  toggle mode. Supported buttons: A/B/X/Y, D-pad, L4/R4, L5/R5. Other
+  controllers behave as before.
+- **Your own speaking ring lights up again in the call view.** Discord saw
+  you talking, but the ring around your own avatar stayed off.
+- **D-pad buttons show their name** in the shortcut settings instead of
+  `BTN20`–`BTN23`.
+- **README:** the controller shortcut section no longer claims it works
+  in-game with every controller, and explains why remapping a button to a
+  keyboard key in Steam Input cannot be picked up in Game Mode.
+
+## 1.39.1 — 2026-09-27
+
+### Game audio stays in the stream, and stopping a Go Live no longer drops the call
+
+Reported in [#58](https://github.com/Necrosiak/Steamcord/issues/58).
+
+- **Sharing game audio during a Go Live no longer steals the game from the
+  stream.** Turning on *Share game audio* while live moved every game sound,
+  and the Go Live's own audio link with it, into the voice mix: viewers got a
+  silent stream and the call heard the game through the microphone. The game
+  now goes to both, the stream and the call, and stopping either one leaves
+  the other untouched.
+- **Sounds that start after the Go Live are now in the stream.** Game audio
+  was only routed when the share started, so a game launched mid-stream, or
+  anything else that began playing afterwards, stayed on your headset and
+  viewers never heard it. New sounds now join the stream within seconds.
+- **Stopping a Go Live asks whether to keep game audio in the call.** *Share
+  game audio* is its own button and works without a stream, so stopping the
+  stream no longer decides for you: keep it (B) or stop sharing it.
+- **Stopping a Go Live no longer kicks you out of the call.** After a Go Live,
+  the screen capture can stay open for up to about 30 seconds, and a
+  safeguard meant for stuck captures restarted Vesktop, which dropped the
+  call. During a call it now only closes the capture session and leaves
+  Vesktop running.
+- **Steamcord no longer gets stuck on "Initializing…" when Vesktop starts at
+  the same moment as the plugin.** The Discord page could finish loading a
+  fraction of a second before Steamcord hooked into it, and the reload meant
+  to fix that was swallowed by the page load in progress. Steamcord now
+  checks the page and reloads it again if its client is missing.
+
+## 1.39.0 — 2026-09-27
+
+### Go Live works again after a quick restart, and voice can stay in Gaming Mode
+
+Reported in [#57](https://github.com/Necrosiak/Steamcord/issues/57) and
+requested in [#55](https://github.com/Necrosiak/Steamcord/issues/55).
+
+- **Starting Go Live again right after stopping it no longer fails.** Every
+  Go Live went through Vesktop's screen picker, which opens a full capture of
+  the screen just to draw a 1920×1080 thumbnail, plus one more beside the real
+  one: three captures on the Gaming Mode screen each time, two of which stayed
+  open for about 30 seconds. Starting a new share within those 30 seconds
+  failed on SteamOS, and the failed attempt then left a capture behind that
+  blocked every Go Live until Vesktop restarted. In Gaming Mode, Steamcord now
+  captures the screen directly: one capture, ready in a fraction of a second,
+  with the same quality setting and game audio as before. If the direct
+  capture fails, the previous path is still there as a fallback, and Steamcord
+  waits for its extra captures to close before starting another share.
+- **Leaving the call during a Go Live now cleans up after it.** Only the
+  *Stop* button used to tear down the audio routing of the share; ending it
+  any other way — leaving the channel, or Discord ending the stream — left it
+  in place until the plugin reloaded, and the next Go Live reused it.
+- **Voice only in Gaming Mode is on by default.** Steamcord hides its voice
+  controls in Desktop and Big Picture while keeping messages available. Turn
+  the setting off in Settings to use voice in every Steam interface. Desktop
+  detection is deliberate: KWin wins over Gamescope, because a leftover
+  Gamescope process must not make a desktop session look like Gaming Mode. If
+  Steamcord cannot identify the session, voice stays available. Changing modes
+  never hangs up a Discord call.
+- **The virtual-camera share is hidden by default.** It predates Go Live in
+  Gaming Mode, needs v4l2loopback (which SteamOS does not ship), and Go Live
+  does better everywhere. *Show virtual camera sharing* in Settings brings the
+  button back.
+- **The panel title no longer slides under the controls when scrolling.**
+
+## 1.38.0 — 2026-09-25
+
+### The expanded view fits a Steam Deck, and Steamcord speaks seven more languages properly
+
+Reported in [#52](https://github.com/Necrosiak/Steamcord/issues/52) and
+[#43](https://github.com/Necrosiak/Steamcord/issues/43).
+
+- **The sidebar of the expanded view no longer gets cut off on a Steam Deck.**
+  At the Deck's resolution the view is about 427 px tall, and the sidebar
+  needed 466: *Back to panel* slid off the bottom. On short screens the sidebar
+  now tightens its spacing, and if that is still not enough it scrolls instead
+  of clipping. Larger screens are unchanged.
+- **80 labels were missing in German, Spanish, Italian, Portuguese, Dutch,
+  Polish and Russian.** "Show current game on Discord" was the one that got
+  noticed; the rest — overlays, microphone processing, video, logout, server
+  reordering, reply and typing indicators — were quietly falling back to
+  English too. All of them are translated now.
+- **A successful update now says so.** After installing, the button used to
+  read "Up to date", exactly like a click that did nothing. It now reads
+  "Updated to x ✓", with a note to close and reopen the Quick Access menu.
+- **The Quick Access panel gets the fixes from 1.37.3.** Settings that sat
+  against each other are spaced there too, and the server, channel and DM
+  lists draw one clean focus ring instead of a glow clipped into a second
+  frame.
+- **A selected message in the chat no longer has its left border cut off.**
+- **The hang-up button shows a phone, not a plug** — contributed by
+  [@bookcasey](https://github.com/bookcasey).
+
+## 1.37.3 — 2026-09-24
+
+### The expanded view gets a real background, and one focus ring
+
+Four details reported in [#43](https://github.com/Necrosiak/Steamcord/issues/43),
+one of which was a bug.
+
+- **The expanded view is no longer see-through.** To hide the frame of Steam's
+  window around the view, Steamcord clears the background of what surrounds
+  it — and the marker it starts from sat *inside* the view, so it cleared the
+  view's own background too. Only the left column stayed opaque. The view now
+  has its solid dark background back; how much of the game shows *behind* it
+  is still up to the **Background dimming** slider (Settings → Opens on).
+- **One focus ring instead of two.** Steam drew its own focus ring on top of
+  Steamcord's, and in the lists (DMs, friends, servers, members) the selected
+  card grew slightly and glowed, and the edge of the list cut that glow flat
+  into a second frame. Steam's ring is turned off wherever Steamcord draws its
+  own, and list cards now show a single, complete white ring.
+- **Spacing in the settings.** In the expanded view, two controls in a row —
+  the two "Opens on" menus, the toggles and the title field — sat against
+  each other. They are now spaced out, as is a control that follows a note.
+  Labels stay attached to the menu they describe.
+- **The GitHub button** in the About section now lights up when the controller
+  is on it.
+
+## 1.37.2 — 2026-09-24
+
+### No more error screen in the desktop Steam window
+
+In Desktop Mode, the Steam window could switch to Decky's "An error occurred
+while rendering this content" screen a few minutes after opening — reported in
+[#53](https://github.com/Necrosiak/Steamcord/issues/53).
+
+Reproduced on the same Steam build as the report: a notification sent through
+Decky's **native** toaster makes the desktop Steam client crash while drawing
+it, with the exact same stack trace. Steamcord only uses that toaster when the
+**Native Decky notifications** setting is on; the default, chat-style
+notifications never triggered it.
+
+That setting is now only honoured in Game Mode. On the desktop, every
+notification — Steamcord's and other Decky plugins' — goes through the safe
+path, whatever the setting says. Checked with the setting on: the previous
+version brought up the error screen, this one shows the notification and the
+bell entry with no error.
+
+## 1.37.1 — 2026-09-23
+
+### The background dimming no longer leaks into your game
+
+Since 1.37.0, opening the Quick Access menu or getting a Steam notification
+while playing could darken the game, all the way to black at 100% — reported in
+[#52](https://github.com/Necrosiak/Steamcord/issues/52).
+
+The **Background dimming** slider paints two layers that belong to Steam, not
+to Steamcord: the backdrop behind modals and Big Picture's full-screen
+background. Steam does not throw them away when a window closes, it reuses them
+for the Quick Access menu and for notifications — and Steamcord's paint stayed
+on them after the expanded view was closed. Every style Steamcord puts on those
+layers is now recorded with its original value and handed back as soon as the
+view closes.
+
+Checked in a running game, with the old behaviour put back as a control (the
+game went black behind the Quick Access menu and behind a notification) and
+then with the fix: the Quick Access menu, a Steamcord notification and eight
+kinds of Steam notifications, with no dimming at all. The slider itself works
+as before while the expanded view is open.
+
+## 1.37.0 — 2026-09-22
+
+### The update button now finishes the job
+
+Pressing **Install** wrote the new version to disk and then stopped there, with
+no progress, no message and no new version until the next reboot — reported in
+[#52](https://github.com/Necrosiak/Steamcord/issues/52).
+
+Installing an update has always ended with a plugin reload, and that reload
+could never happen. Two separate reasons, both measured: Decky's loader is a
+PyInstaller bundle, so every plugin backend inherits its library path and
+`systemctl` cannot even start from one; and even with that cleaned up, restarting
+a system service is refused to a plugin that does not run as root. Nothing
+checked the result, so nothing was ever said about it.
+
+Steamcord now asks the loader — which does run as root — to reload this plugin
+alone, and the panel shows the new version when it is done. Decky itself is left
+running, and the other plugins are not bounced. If the loader is too old to offer
+that, the button says so plainly instead of sitting on *Installing…* forever.
+
+Automatic updates no longer claim to be reloading either: they say the update
+takes effect the next time Steam starts, which is what actually happens.
+
+### How dark the background is, behind the expanded view
+
+The expanded view let the Steam UI show through more than some people wanted,
+also raised in [#52](https://github.com/Necrosiak/Steamcord/issues/52). There is
+now a **Background dimming** slider in Settings, from 60% to 100%; at 100% the
+background disappears entirely. It applies to the expanded view, the fullscreen
+POV grid and the media viewer, and the background repaints as you move it.
+
+### Updates moved to the bottom of Settings
+
+The **Updates** section now sits at the end of the settings tab, just above the
+GitHub link.
+
+### Reloading the plugin no longer takes five seconds
+
+Every reload ended with Decky killing the backend after a five-second timeout.
+Stopping a helper process waited on that process, and during an unload that wait
+never returns — which also meant that everything after it had never run, the
+shutdown of the internal web server included. The unload now does its work
+without waiting on anything: it takes about a tenth of a second.
+
+## 1.36.0 — 2026-09-22
+
+### The screen saver no longer lands on top of a stream
+
+Watching someone's stream is the one thing you do with the controller in your
+lap, so after a few minutes without input SteamOS' screen saver comes up over
+the video. **While a stream is playing — in the panel, in the expanded view or
+in the fullscreen POV grid — the screen saver is switched off, and put back
+exactly as it was the moment you stop watching.**
+
+There is no inhibit API to call for this. The screen saver service only lets
+the UI *read* its state, `SteamClient` exposes nothing about idle, gamescope
+does not implement `zwp_idle_inhibit_manager_v1`, and a Game Mode session has
+no `org.freedesktop.ScreenSaver` on the bus. So the plugin does the one thing
+that does work: it sets Steam's own screen saver delay to *Disabled* for the
+duration, then writes your value back. Both the mains and the battery delay are
+held, since the power source can change in the middle of a stream, and a delay
+you had already set to *Disabled* is left alone.
+
+Two things keep that from turning into a setting stuck at *Disabled*. Every
+write is **read back** before the plugin treats the screen saver as held; if
+Steam reports anything else, nothing is held and your value is put back rather
+than left in an unknown state. And the original delays are **written to
+`~/.config/steamcord-keepawake.json` before anything is changed**, so a session
+that dies mid-stream — Steam killed, plugin reloaded, machine crashed —
+restores them the next time the plugin loads. That restore only happens if the
+delay is *still* at *Disabled*: a value you changed yourself always wins.
+
+**Settings → "Keep the screen awake while watching"** turns the whole thing
+off. Screen dimming and auto-sleep are deliberately left alone — the machine
+can still dim its panel and still suspend on its own.
+
+Asked for by [@PaulDGillis](https://github.com/PaulDGillis) in
+[#51](https://github.com/Necrosiak/Steamcord/issues/51).
+
+### Also
+
+- The licences of the vendored `libnice` GStreamer plugin ship next to it:
+  `COPYING`, `COPYING.LGPL` and `COPYING.MPL`, taken byte for byte from libnice
+  0.1.22. A `DiscordTab` component that had been unreachable since the first
+  commit, and the one translation key only it used, are gone.
+
+## 1.35.1 — 2026-09-20
+
+Same-day follow-up to v1.35.0, from a maintainer report.
+
+### Fixed
+
+- **An incoming message no longer rings twice.** Vesktop plays Discord's own
+  `message1` sound, and the Steam notification we post rings on top of it — two
+  sounds for one message. Settings → Notifications now has **Message
+  notification sound**, with four values: *Discord* (the new default: Discord
+  rings, our Steam toast stays quiet), *Steam* (Discord's message sound is
+  muted, the toast rings), *Both* (the previous behaviour) and *None*. The
+  setting shows up in the Quick Access panel and in the expanded view, since
+  both render the same settings page.
+
+  Only message notifications are affected: calls, screen-share and camera
+  notices, and the plugin's own notices keep their sound on both sides. Nothing
+  is written to your Discord account either — the sound is muted on this machine
+  only, in the running client, and your own Discord sound settings are left
+  untouched. Steam's other notifications (friend messages, downloads) are
+  untouched as well: only the notifications Steamcord itself posts are silenced.
+
+## 1.35.0 — 2026-09-20
+
+### The expanded view hands the panel back
+
+**B now goes up one level instead of walking back through the history.** It
+leaves the conversation, the server's members or the call you just joined and
+returns to the page each was opened from; from a section chosen in the sidebar
+it closes the view. Before, a few minutes of browsing meant pressing B as many
+times as you had opened pages to get the Quick Access panel back. **L1 / R1**
+still move through the whole history, so nothing is lost.
+
+**A "Back to panel" button** sits at the bottom of the sidebar, where a grey
+hint used to be.
+
+**Settings choose what the Steamcord icon opens** — the panel, as before, or
+the expanded view straight away. You can still switch either way at any time:
+the icon next to your name opens the view, B and the new button close it. The
+choice is stored locally with a backup in the plugin, so clearing Steam's web
+storage does not lose it.
+
+### Desktop mode: we were killing your Vesktop
+
+On a desktop session with a **native** Vesktop, the plugin crashed it in a loop
+— within a minute, every time, unless you stopped Decky.
+
+Two faults, both ours. Our `pkill` matched **Electron's own child processes**
+(zygote, GPU, renderer, utility — twelve processes for one window), and killing
+the zygote or the GPU process makes Electron leave by *"GPU process isn't
+usable. Goodbye."*; our retry loop then relaunched and dismembered it again
+every two seconds. Only the main process is signalled now. And the Wayland
+socket was **hardcoded to wayland-0**, so a session living on wayland-1 got a
+socket that does not exist: nothing rendered and the debug port never opened,
+which is the endless *Initializing*. The session's own socket is used when it
+really exists. Game Mode is unchanged.
+
+Reported by [@P1XEL0711](https://github.com/P1XEL0711) in
+[#49](https://github.com/Necrosiak/Steamcord/issues/49), with the log that made
+both faults visible.
+
+### Also
+
+- **A logo of its own** — monochrome and transparent so it sits with the rest
+  of the interface, drawn from a real `assets/logo.svg` rather than living
+  inside the code.
+
+## 1.34.0 — 2026-09-15
+
+### Expanded view — a full-screen Discord (proof of concept)
+
+> This is a **proof of concept that is already well along**. Expect bugs, and
+> please report them on the [issues](https://github.com/Necrosiak/Steamcord/issues).
+
+Open it from the new icon next to your name at the top of the panel (a browser
+window with the Discord logo). It turns Steamcord into a full-screen app with a
+sidebar:
+
+- **Direct messages** — each conversation shows what the other person is doing
+  right now. A opens the chat; a **Call / Join** button sits on the same row.
+- **Friends** — online first, with their status and **current activity**
+  (playing, listening, custom status). Message anyone, even people you have
+  never written to, call them, **add a friend by username**, and accept, decline
+  or cancel requests.
+- **Servers** — each server unfolds into its **members**, **scheduled events**,
+  **text channels** and **voice channels** with who is inside. Selecting a voice
+  channel joins it; the **Channel chat** button next to it opens the text chat
+  every voice channel has. Hide, reorder and refresh servers as in the panel.
+- **Members** — the server's member list as Discord shows it: grouped by role,
+  names in the role colour, roles or activity underneath, with **Message** and
+  **Add friend**. The list comes from a channel everyone can see, so private
+  channels no longer shrink it.
+- **Events** — every event from every server in one place, live ones first.
+- **Current call** — mute, deafen, disconnect, members, soundboard, Go Live,
+  camera, game audio and the call's own chat. Joining a call switches here on
+  its own.
+- **Settings** — the panel's settings, full width.
+
+Chats open **inside the view** instead of a separate window. **L1 / R1** move back
+and forward through what you opened; **B** goes back, and closes the view only
+when there is nothing behind. Leaving the view never ends a call or a stream —
+it is only the interface.
+
+**Y on a person** (friends, members, DMs) opens a menu: Profile (banner, bio,
+mutual servers and friends), Message, Call, Close DM, add / accept / cancel /
+remove friend, and block / unblock. Removing a friend and blocking ask first.
+
+Suggested by [@moi952](https://github.com/moi952) in
+[#43](https://github.com/Necrosiak/Steamcord/issues/43).
+
+### Streamer mode
+
+A Steam notification that pops up while you are live ends up in the video:
+gamescope draws it over the game, and that is the picture Discord and BoneCast
+capture. Notifications are now **held while you stream** — Discord Go Live, or a
+[BoneCast](https://github.com/Necrosiak/BoneCast) stream or recording — and shown
+once it ends: as they were if there are three or fewer, as one summary
+otherwise. **Always on** covers OBS and any streaming software a plugin cannot
+detect. Set it in Settings → Notifications → *Streamer mode*.
+
+It covers Steamcord's notifications and the toasts of other Decky plugins, which
+already go through Steamcord. Steam's own notifications (friends, achievements)
+do not go through a plugin and are not held.
+
+### Your display name
+
+The name at the top of the panel is now your **Discord display name** rather than
+your login, and you can change it from Settings → *Display name*.
+
+### Fixed
+- **Opening view kept across restarts, even if Steam clears its web storage**
+  (#43) — the *Opening view* choice (Voice/Text × Servers/DMs) was stored only
+  in Steam's localStorage. It is now also saved by the plugin in
+  `~/.config/steamcord-view.json`, and restored from there when the local copy
+  is missing. Not reproduced on the test machine, so this is a safeguard rather
+  than a confirmed fix.
+
+## 1.33.0 — 2026-09-13
+
+### A button to reload audio devices
+
+For a microphone that Discord does not pick up in Game Mode while it works on
+the desktop (#48). **Settings → Audio devices → Reload audio devices** does two
+things:
+
+- **System side** — if the default input was left on a monitor or on one of
+  Steamcord's own virtual sources while a real microphone exists, it is given
+  back to that microphone, and Vesktop's streams are routed again. Skipped
+  during a Go Live or while game audio is shared, since those modes place the
+  sources themselves.
+- **Discord side** — Discord only refreshes its device list on a device-change
+  event, so a microphone that appeared after Vesktop started, or an input chosen
+  elsewhere that does not exist here, left it holding a dead capture. The button
+  makes it re-read the list and reopen the capture, falling back to *Default*
+  when the remembered input is gone.
+
+### Discord now sees every input device
+
+Steamcord inherited a filter that hid *Filter Chain Source*, *Virtual Source*
+and an unlabelled *default* device from Discord. It was meant for the old hidden
+Steam browser tab, yet it also applied under Vesktop — and on SteamOS the
+microphone can go through a filter chain, so Discord could not see it in Game
+Mode while Vesktop on the desktop could (a likely cause of #48). The filter is
+gone; an already-running Vesktop gets the unfiltered list back as soon as the
+plugin reloads, without a restart.
+
+### Readable device names
+
+On a system in a language with accented characters (French, for one), the audio
+device lists showed technical names such as `alsa_output.usb-…`: `pactl` cannot
+encode an accented description in its JSON output and returns `(null)`. The
+lists now fall back to the device's own readable name (*HDMI TO USB*,
+*Arctis Nova Elite*…).
+
+## 1.32.0 — 2026-09-13
+
+### Go Live finally carries the game's sound — and only the game's
+
+Three faults were stacked here, two of them ours.
+
+Steamcord patches `enumerateDevices` and was **filtering out the very device
+Vesktop looks up** to attach the share's audio track (`vencord-screen-share`).
+The lookup returned nothing, no audio track was attached, and the viewer got a
+volume slider with silence behind it. The filter had been added against an echo
+problem, with a comment claiming Vesktop opened the device by exact id; its own
+code does the opposite.
+
+The share's audio also came from the default output's monitor — the whole system
+mix, Discord included — so other people's voices came back inside the stream.
+
+And the source picker chose whatever the dialog happened to list, which on a
+handheld running a non-Steam session shell meant sharing the shell: a process
+that makes no sound. The dialog only lists applications playing audio at the
+instant it opens, so a quiet game is never in it at all.
+
+Rather than patch the picker, Steamcord no longer chooses anything in that
+dialog. It provides the share's audio itself: the game's playback is routed to a
+dedicated output whose monitor is offered to Vesktop as the share device, while
+Discord keeps playing to the real one. You still hear your game normally. Voices
+cannot re-enter the stream, because Discord never plays into the captured output
+— structural, not a filter. Measured: a tone at ~70% into the output device does
+not move the captured sink by a decibel.
+
+### Go Live starts in seconds instead of half a minute
+
+The native capture portal was given 25 seconds before falling back to the local
+relay. When that path does not work on a machine, that is 25 seconds of waiting
+on every Go Live, every time — and when it does work it answers in one or two.
+It is 8 seconds now, and the fallback says so in the log instead of being silent.
+
+### The Go Live preview stops capturing the screen a second time
+
+The thumbnail used to cost a `gamescopectl` screenshot plus an ffmpeg pass —
+about 0.57 core-seconds per image — and, worse, opened a second PipeWire
+consumer on the gamescope node, which is what once froze the share for viewers.
+Vesktop already holds the stream it is encoding, so the preview is now a frame
+taken from it: no extra capture, no extra consumer. It refreshes every five
+seconds while it is on screen and not at all when it is not.
+
+Volume sliders no longer have their edges clipped.
+
+### Copy the text of a message
+
+Steam's on-screen keyboard pastes but cannot copy or cut, so a link or a code
+posted in a channel could be read and nothing else. Messages now carry a **Copy**
+action next to Reply and Forward
+([#47](https://github.com/Necrosiak/Steamcord/issues/47)).
+
+### Choose which view the panel opens on
+
+Settings → **Opens on**: Voice or Text, Servers or DMs. The panel always started
+on Voice + Servers, which meant redoing the same two moves on every open for
+anyone who mostly reads text DMs
+([#43](https://github.com/Necrosiak/Steamcord/issues/43)).
+
+### Clips keep their audio/video offset
+
+A Steam clip is two DASH tracks that do not necessarily start at the same
+instant. Muxing them normalised each one to zero independently, throwing that
+gap away — invisible at 35 ms, a whole-clip desync whenever Steam attaches the
+audio late ([#46](https://github.com/Necrosiak/Steamcord/issues/46)).
+
+### Updates no longer stop at the first thing they cannot write, or at DNS
+
+Two separate faults, both silent:
+
+- The update was applied file by file and gave up on the first one it could not
+  write — leaving the plugin **half updated**, part old code and part new. It now
+  surveys everything first: a code file it cannot write cancels the update
+  without touching anything, while documentation, licences and `plugin.json`
+  are skipped and the update proceeds.
+- The release check ran once, a few seconds after boot, which is often **before
+  the network is up** — and nothing retried, so the plugin stayed on its version
+  until a boot that happened to be luckier. It now retries while the failure is
+  the network.
+
+Installing through Decky's own installer has been dropped from the automatic
+path: that route reports the install to the Decky Store, which does not know a
+self-distributed plugin, and the request fails — leaving the files written, the
+plugin never reloaded, and a confirmation dialog frozen over the Steam UI. The
+manual update button still falls back to it, last, for the one case the plugin
+cannot handle alone: a release that adds a new top-level file.
+
+## 1.31.2 — 2026-09-06
+
+Two people looked at the same panel this week and said the same thing in
+different words: parts of it do not look like the rest. They were right, and
+following that up turned over a second problem nobody had reported — the reason
+one of them had been testing the wrong version of the plugin for three days.
+
+### Fixed
+
+- **Automatic updates gave up too early, and then never tried again.** The
+  check runs about fourteen seconds after the plugin starts and hands the
+  install to Decky's own installer. On a cold boot in Gaming Mode, Decky's
+  frontend has not always finished loading by then — so the handover found
+  nothing to hand over to, the fallback died on `plugin.json` (which Decky
+  keeps root-owned, along with the plugin directory), and that was the end of
+  it until the next reboot. Being a race, it looked random: some boots updated
+  fine, others silently did not. It now waits for the loader to appear instead
+  of abandoning at the first second, and if both paths genuinely fail it says
+  so — naming the manual install rather than printing an error number.
+  [@ZyreonX](https://github.com/ZyreonX)'s logs are what exposed this: three
+  sessions in a row running 1.30.0 while being asked to test 1.31.
+- **The share dialog was confirmed with a button found before the audio source
+  was chosen.** Picking a source re-renders the dialog, and React can replace
+  that node, leaving the click landing on an element detached from the live
+  tree and carrying the state from before the choice. The button is looked up
+  again after the choice now.
+
+### Changed
+
+- **The whole panel is drawn from one visual kit.** One list — the server list
+  in the voice tab — had been redrawn in 1.31.0, and everything else kept
+  Steam's native button focus: a pale background with dark text where the rest
+  of the plugin has a white ring and an accent glow. That is what made parts of
+  it look like they came from somewhere else, which is what
+  [@Havok027](https://github.com/Havok027) reported in
+  [#45](https://github.com/Necrosiak/Steamcord/issues/45). The kit now lives in
+  one place and every screen draws from it:
+  - **the voice tab** — a person in a call is a card that tints while they are
+    speaking, `LIVE` is a badge rather than a red dot and the word, local
+    previews sit behind an accent rail, and the mute, watch and fullscreen
+    buttons are one button instead of four near-copies;
+  - **the text tab's server list**, which was a second copy of the voice tab's
+    list drawn differently, down to `▲`/`▼` characters instead of icons;
+  - **direct messages**, which had no focus treatment at all and drew avatars
+    at a fixed 24 pixels — half the size of the ones beside them on a 1440p
+    screen;
+  - **the soundboard and the overlay menu**, which now share one collapsible
+    header, and the events panel, forward dialog, clip pager and send button.
+- **Everything scales with the panel.** The controls that still carried
+  Deck-sized pixel values follow the Quick Access panel's own size, as the rest
+  of the plugin already did.
+
+### Known, not fixed
+
+- **Go Live still carries no sound on some setups.** The audio source is
+  selected and the dialog confirms it, so the explanation given in
+  [#42](https://github.com/Necrosiak/Steamcord/issues/42) earlier — that the
+  share went out with audio set to `None` — is wrong. What the logs show is
+  that the dropdown only ever lists applications that are *making a sound at
+  that instant*, and a game that is quiet when the dialog opens is not in it.
+  Being measured before anything is changed.
+
+## 1.31.1 — 2026-09-06
+
+Follow-ups to the log [@bastiHST90](https://github.com/bastiHST90) attached to
+[#44](https://github.com/Necrosiak/Steamcord/issues/44), which turned out to
+document two problems he had not come to report.
+
+### Fixed
+
+- **The first notification after a quiet spell was always late.** The log shows
+  the pattern plainly: the first one after half an hour fails on `Cannot write
+  to closing transport`, and notifications arriving close together never fail —
+  the websocket to the Steam UI simply goes stale when unused. The retry then
+  waited a second before reconnecting, which only delayed the notification, as
+  a closed transport is not going to reopen on its own. It now reconnects
+  immediately when the failure says the socket is gone, and keeps the pause for
+  anything else.
+- **The socket leak had a second site.** Reconnecting the Discord tab reopened
+  its websocket without closing the old one, so every Vesktop reconnect dropped
+  an unclosed session. That log carried seven of those errors in one evening
+  and most were not the notification path at all. 1.31.0 fixed the dispatcher;
+  this is the rest of it.
+- **The portal shim answers `org.freedesktop.portal.Settings`** instead of
+  refusing it. Same reasoning as ProxyResolver after
+  [#39](https://github.com/Necrosiak/Steamcord/issues/39): Settings is served
+  by the portal *frontend*, so it exists wherever a real portal does, and
+  refusing it is not "an interface we do not have" — it is a regression every
+  application in the session can see. It is also the most-called interface
+  there is, since every GTK, Qt and Chromium app asks for the light/dark
+  preference at startup, and each was falling back to defaults while the log
+  filled with refusals.
+
+## 1.31.0 — 2026-09-06
+
+Nobody could hear you while you were sharing your screen, and the plugin was
+the reason. Five other things were failing silently for the same underlying
+reason: their errors were being thrown away. This release also brings in five
+fixes contributed by the GameModeCord fork, and adds attachments, forwarding
+and events.
+
+### Fixed
+
+- **Nobody could hear you during a Go Live.** With no real microphone
+  connected, Steamcord puts a silent source in place so the output monitor is
+  not rebroadcast over the voice channel. That silent source was a *monitor*,
+  and WebRTC discards monitors — so Discord did not open a quiet capture, it
+  opened **no capture at all**, and the stream lost its audio along with your
+  voice. Viewers heard nothing whatsoever. The silence is now exposed through
+  `module-remap-source`, so what lands as the default source is a real input.
+- **Plugging a headset in mid-stream changed nothing.** That decision was taken
+  once, when the share started. A real capture device appearing is now noticed,
+  and the microphone handed back.
+- **The Go Live thumbnail never produced a single image.** It is written to a
+  `.tmp` file and renamed, so nobody sees a half-written JPEG — and ffmpeg
+  picks its output format from the extension, which `.tmp` does not provide. It
+  refused to open a muxer at all, and the error was invisible with stderr going
+  to `/dev/null`. The preview is back, on the `gamescopectl` path that does not
+  touch gamescope's buffer pool.
+- **Game Mode screen sharing found no camera unless v4l2loopback was on
+  `/dev/video42`.** The feeder, the module check and the camera pick were all
+  hardcoded to that node and to the "Steamcord Screen" label. Bazzite — and any
+  machine where OBS is already set up — loads the module as "OBS Virtual
+  Camera" on `/dev/video0`: every check failed, the button did nothing, and
+  nothing was logged to say why. *(found and written by
+  [@Memberoffoxhound](https://github.com/Memberoffoxhound))*
+- **Both share buttons vanished from every DM call.** They were gated on
+  `vc.channel_name`, which a DM call does not have. *(found by
+  [@Memberoffoxhound](https://github.com/Memberoffoxhound))*
+- **No audio processing on the game's sound while it is shared.** Sharing game
+  audio feeds it to Discord as a microphone, so Discord ran Krisp, noise
+  suppression and automatic gain over it — Krisp is trained on speech and
+  grinds music and effects down as background noise. All of it is now off for
+  the duration of the share, and your settings are given back exactly as they
+  were when it stops, or when the call ends.
+- **Saving anything from the plugin failed on certificate verification.**
+  plugin_loader's bundled Python ships no CA store, so every TLS request from
+  the backend failed. The system trust store is now named explicitly;
+  verification is never disabled.
+- **Every notification-dispatch retry leaked a socket.** Reconnecting to the
+  Steam UI fetched a fresh tab and dropped the old one, leaving its aiohttp
+  session unclosed. *(reported by
+  [@bastiHST90](https://github.com/bastiHST90))*
+- **The share diagnostic filled the log** with the same line every 15 seconds
+  whether or not anything had changed. It now logs transitions only.
+  *(reported by [@bastiHST90](https://github.com/bastiHST90))*
+
+### Added
+
+- **Notifications can be turned off outside a game too.** The one setting was
+  "Notifications while playing" and did exactly that, so turning it off still
+  let everything through the rest of the time. Both contexts are now separate
+  and both default to All. *(requested by
+  [@bastiHST90](https://github.com/bastiHST90))*
+- **Save any chat attachment** — a PDF, a zip, a log — to your Downloads
+  folder. Anything that was neither image nor video used to arrive as a bare
+  count, with no way to learn its name, let alone get it. Images and videos
+  open in the fullscreen viewer instead of the Steam browser, and video
+  attachments are shown at all, which they were not. *(requested by
+  [@moi952](https://github.com/moi952))*
+- **Forward a message, with its images and files**, to another channel or DM.
+  Discord forwards by reference; there is no such primitive here, so this sends
+  a copy with the author's name — without attribution a forwarded message
+  arrives looking like something you wrote.
+- **Scheduled events**: see what is coming, open one for its banner,
+  description and who is attending, and join an event that is already running
+  straight into its voice channel. Read and take part only — no creating, no
+  editing.
+
+### Changed
+
+- **The QAM scales to the panel** instead of using Steam Deck absolute pixels.
+  On a 1440p or 4K Game Mode session everything rendered tiny and
+  `DialogButton` clipped icons. *(written by
+  [@Memberoffoxhound](https://github.com/Memberoffoxhound))*
+- **B walks back one menu at a time** instead of closing the whole panel from
+  wherever you stood. *(written by
+  [@Memberoffoxhound](https://github.com/Memberoffoxhound))*
+- **The tabs look like tabs.** Voice/Text/Config and Servers/DMs were three
+  buttons in a row with the selected one slightly bluer, and nothing said the
+  choices were exclusive. *(reported by [@moi952](https://github.com/moi952))*
+- **The server list matches the rest of the plugin.** Those rows were the only
+  controls still using Steam's native focus. They now use the shared white ring
+  and accent glow, on rounded cards, and a server's icon becomes a circle when
+  it is open — so you can see which one is expanded without reading the
+  chevron.
+- **The BSD-3 notice names its copyright holder.** It still carried the Decky
+  template's "Hypothetical Plugin Developer" placeholder.
+
+## 1.30.0 — 2026-09-01
+
+Viewers saw a **frozen picture** a few seconds after you went live, while
+Discord still reported the stream as active and your "Live" badge showed up
+normally. The cause was Steamcord's own Go Live thumbnail.
+
+### Fixed
+
+- **Go Live froze for viewers after a few seconds.** The QAM thumbnail attached
+  a *second* PipeWire consumer to the gamescope node. Consumers of one node
+  share its buffers, and a buffer is only recycled once **every** consumer has
+  released it — the thumbnail never completed its format negotiation, so it
+  never released anything. gamescope ran out of buffers and had no frame left to
+  send. Measured on a BC-250 with a game running: **880 `out of buffers` in 15 s
+  with the thumbnail, 0 without**, and a clean consumer received **0 frames in
+  14 s**. This is also the cause of
+  [#42](https://github.com/Necrosiak/Steamcord/issues/42).
+- **A hung `pw-dump` blocked screen detection instead of being cleared.** The
+  purge already used elsewhere was missing from this path, so each attempt
+  piled up one more stuck client — 40 s lost in a real log before another
+  component cleaned up. An empty reply (a concurrent purge killing our own call)
+  is handled too, instead of surfacing a raw `JSONDecodeError`.
+- **Screen detection could pick an audio node.** Matching on "screen" also
+  matched `vencord-screen-share`, which is an `Audio/Source/Virtual`; whether it
+  was chosen depended on `pw-dump` ordering. Video nodes only, now.
+
+### Changed
+
+- **The Go Live thumbnail is removed for now.** The QAM says so in one line and
+  keeps the LIVE badge; sharing itself is untouched. Both ways of producing a
+  live thumbnail cost too much: a second PipeWire consumer is what froze the
+  stream in the first place, and a `gamescopectl` screenshot per second measures
+  at **+67 points of a CPU core for gamescope alone** (6 % → 74 %) plus ~0.6
+  core-second of ffmpeg per frame — not acceptable while a game runs and video
+  is encoded in software. A one-shot capture taken when the share starts costs
+  ~1.3 core-seconds and nothing in between; that path is implemented in the
+  backend and will come back once it has been validated in real conditions.
+
+- **Chaining Go Live / stop / Go Live broke the share.** Two things: the
+  `pw-dump` timeout was paid **twice** — the first probe waited 5 s and gave up,
+  then the fallback that is supposed to reuse the already-known node probed for
+  another 5 s before accepting it. `Start` took 14 s instead of 30 ms, the
+  client's budget ran out, the GStreamer relay took over — and the relay closes
+  every portal session, including the one just created. The known-node cache
+  also expired after 3 s, far too short for a stop/start cycle. Fixed: a probe
+  that just failed skips the next one, and the cache now holds for 20 s.
+- **The Go Live button's cooldown is now asymmetric** — 2.5 s after starting
+  (nothing is tearing down, and you must be able to stop quickly), **6 s after
+  stopping**, which is when Chromium releases its PipeWire descriptors, the shim
+  its sessions and venmic stops. The client-side guard went from 1.2 s to 3.5 s.
+- **A failed share used to block every later one, until Vesktop was restarted
+  by hand.** When `getDisplayMedia` never completes, Chromium keeps its PipeWire
+  stream on the gamescope node forever. That orphan then makes *everything*
+  fail — the native portal and the relay both hit the negotiation assertion
+  trying to be the second consumer. Signalling the portal shim does **not**
+  release it; the lock is inside Chromium. Steamcord now watches for a
+  gamescope → Vesktop capture link that survives 45 s with no active share, and
+  restarts Vesktop itself to clear it. Before doing anything it asks Discord
+  whether a share is running, rather than trusting its own cached state — that
+  state has been seen out of sync, and acting on it alone could have killed a
+  live share.
+
+### Known, not fixed here
+
+- **ScreenCast portal sessions still leak.** Chromium never calls
+  `Session.Close`, so each Go Live leaves three sessions behind (9 created /
+  0 closed in one test run) until the gamescope session ends. They hold
+  gamescope buffers, which makes buffer pressure worse — but they are not what
+  froze the stream, and releasing them on every stop proved risky: the release
+  path was written as a last resort for sessions already known to be orphaned,
+  and firing it during a normal teardown left the next Go Live hung on
+  acquisition. A safe version needs to target only the sessions of the share
+  that ended, and wait for Chromium to drop its file descriptors.
+
+## 1.29.1 — 2026-08-31
+
+Go Live could not start at all in Gaming Mode, and the microphone broadcast the
+system output to everyone in the call. Both are fixed.
+
+### Fixed
+
+- **The share picker was never confirmed, so Go Live hung and did nothing.** In
+  Gaming Mode the Vesktop window is hidden, so Steamcord confirms that modal on
+  the user's behalf. Two separate things had broken that. It located the modal by
+  a container Vesktop no longer renders — the class survives only in dead CSS
+  inside the app bundle, which is exactly why searching the bundle still finds it
+  and makes it look present. And even once the button is found, clicking it does
+  nothing: those are Discord's new design-system buttons, whose handler is not
+  wired to the DOM event. Verified on a device: a plain click and a full pointer
+  and mouse event sequence both had no effect at all, while invoking the button's
+  React handler closed the modal and resolved the capture immediately.
+
+  A timing bug hid the consequences. The acquisition watchdog gave up after 20
+  seconds while the native portal path takes up to 25 before falling back to the
+  local relay, so the fallback could never finish — it negotiated into a void and
+  the source that arrived late was thrown away. The watchdog now outlasts what it
+  is watching.
+
+  Measured after the fix: acquisition in 1.8 seconds instead of hanging, through
+  the native portal, at 1920x1080.
+
+- **The microphone carried the system output, so other people heard themselves
+  come back as feedback.** On a machine with no capture hardware the default
+  audio source is the monitor of the output — everything the user can hear,
+  including the voices of everyone else in the call. Steamcord already replaced
+  that with a silent device, but only for the duration of a share, and it put the
+  monitor back afterwards. The monitor is never restored now; the silence is in
+  place from startup, and a real microphone plugged in later is handed back
+  instead.
+
+  The system-audio device used to give viewers the game sound was also never
+  stopped. It outlived the share, stayed the only running audio source, and ended
+  up serving as the microphone. It now stops with the share and can no longer be
+  selected as an input.
+
+- **A stuck screen-capture query no longer kills Go Live.** The picker issues
+  several capture requests within two seconds, and concurrent PipeWire queries
+  can wedge each other — after which the portal reported no screen at all,
+  although the screen was there and had answered moments earlier. Go Live then
+  fell back to the local relay at 960x540 instead of the native path at 1920x1080.
+  Those queries are now serialised and cached, a recently seen screen is reused
+  rather than failing outright, and a wedged query is recovered from
+  automatically. Steamcord no longer suggests restarting the console for this.
+
+- **The Quick Access Menu could claim a stream was live when it was not.** If the
+  Discord window is restarted while sharing, the new page starts with no
+  knowledge of the previous stream and can never report it as stopped, so the
+  button kept offering to stop a share that no longer existed — while the other
+  participants saw nothing at all. The backend now forgets its stream state when
+  the Discord window dies.
+
+- **A startup race could leave voice stuck connecting.** The call that
+  un-occludes the hidden Discord view could run before that view existed and
+  threw instead. Chromium freezes WebRTC negotiation in an occluded view, so
+  losing that call can leave the voice connection hanging at handshake.
+
+Thanks to [@ZyreonX](https://github.com/ZyreonX), who reported after v1.28.3 that
+Go Live still did not work and attached the log that proved it. That log is what
+made the second failure visible: the pipeline error was gone, which left the real
+blocker alone in plain sight
+([#42](https://github.com/Necrosiak/Steamcord/issues/42)).
+
+## 1.29.0 — 2026-08-30
+
+### Added
+
+- **Clips are picked from a grid of thumbnails, not a list of file names.** A
+  list gave no way to tell one recording from another — nobody remembers a clip
+  by its timestamp. Each clip is now a tile: the picture on top, the game name
+  and the date underneath. Nine tiles per page, with a pager below the grid that
+  appears only when there are more.
+
+  Steam already writes a `thumbnail.jpg` into every clip folder, so nothing has
+  to be extracted for Steam clips. The original is 1920x1080 for roughly 290 KiB,
+  far too much to attach to the listing: sending those in base64 over the
+  websocket that also carries voice would push several MiB per open. Each tile
+  therefore requests its own thumbnail, scaled to 320 px and cached — about
+  8 KiB, a quarter of a MiB for a full page — and only the tiles actually on
+  screen ask for one, so a hundred clips do not trigger a hundred conversions.
+
+  Videos that are not Steam clips have no thumbnail of their own and keep a
+  plain tile with their name and date.
+
+Thanks to [@Havok027](https://github.com/Havok027), who pointed out that the
+picker shipped in v1.27.0 was unreadable and described what it should look like
+([#40](https://github.com/Necrosiak/Steamcord/issues/40)).
+
+## 1.28.3 — 2026-08-30
+
+Go Live could not work on any real installation. Not on some hardware, not
+intermittently: the local WebRTC pipeline could never be built, because the ICE
+plugin it depends on was looked for in a directory that does not exist once
+Decky has installed the plugin.
+
+### Fixed
+
+- **Go Live never started, and the client waited 20 seconds for a screen source
+  that never arrived.** `webrtcbin` builds its ICE transport from `nicesrc` and
+  `nicesink`, provided by the GStreamer `nice` plugin. That plugin is absent
+  from the Bazzite image, so Steamcord ships its own copy in
+  `gst-plugins/libgstnice.so` and adds it to `GST_PLUGIN_PATH` — no system
+  install, no reboot. The path pointed at `<plugin>/defaults/gst-plugins`,
+  but Decky flattens `defaults/` into the plugin root at install time, so that
+  directory only ever existed on a development checkout. The plugin was never
+  loaded, `webrtcbin` had no ICE, and the pipeline died on `could not link
+  queue1 to send … Your GStreamer installation is missing a plug-in`, leaving
+  `getDesktopSource` to time out. Both locations are now passed, so the vendored
+  plugin is found in a release install and in a development tree alike.
+- **A missing ICE plugin now says so.** `nicesrc` joins the pre-flight element
+  check, so a future regression on that path reports which plugin is missing
+  instead of failing with an opaque caps-negotiation error.
+
+## 1.28.2 — 2026-08-25
+
+Consequence here: the per-Steam-account Discord profiles stopped switching — every account was served the same generic profile.
+
+### Fixed
+
+- **The active Steam account could no longer be identified, after Steam changed
+  its files.** Steam stopped publishing a numeric `ActiveUser` in `registry.vdf`
+  — it now publishes `AutoLoginUser`, holding the account *name* — and dropped
+  `MostRecent` from `loginusers.vdf` in favour of `AutoLogin` and `Timestamp`.
+  Both probes came back empty and everything fell back to a generic profile.
+  The account is now resolved from `AutoLoginUser` matched by name, then
+  `AutoLogin`, then the most recent `Timestamp`; the older keys are still tried
+  first, so an older Steam behaves exactly as before.
+
+## 1.28.1 — 2026-08-25
+
+### Fixed
+
+- **"Audio system (PipeWire) stopped responding" appeared for hiccups that had
+  already passed.** The screen-source poll gives PipeWire five seconds to answer
+  and warned on the very first miss, telling people to restart their console.
+  But a genuine wedge never recovers, whereas a single slow answer does: five
+  such misses were observed in one afternoon, always in pairs twenty seconds
+  apart, always back to normal on the next poll, with nothing wrong in
+  PipeWire's own logs. The warning now needs three consecutive silent polls —
+  about forty-five seconds — before it says anything. A real wedge still raises
+  it, and a recovery is noted in the log.
+
+## 1.28.0 — 2026-08-25
+
+Clip sending, as shipped in v1.27.0 and v1.27.1, did not work for the clips
+people actually have. Those two releases have been withdrawn.
+
+### Fixed
+
+- **Steam clips were invisible, and could not have been sent anyway**
+  ([#40](https://github.com/Necrosiak/Steamcord/issues/40)). A Steam clip is not
+  a file: it is a folder holding a thumbnail, a timeline and the recording split
+  into DASH fragments (`init-stream0.m4s` plus a run of `chunk-stream0-*.m4s`,
+  and the same again for audio). The previous releases looked for video files,
+  so a clip recorded a minute earlier appeared nowhere. Clips are now listed
+  first, named after the game and the time they were taken, and rebuilt on send
+  by stitching the fragments back together — in numerical order, since sorting
+  them as text puts chunk 100 before chunk 2.
+
+- **Clips are compressed to fit instead of being refused.** Twenty-five seconds
+  of 1080p comes to about 32 MiB, three times what Discord accepts, so greying
+  those out would have meant offering none of them. The bitrate is now derived
+  from the clip's length to land just under the limit — that example becomes
+  8.4 MiB in around thirteen seconds, still 1080p. Beyond ten minutes, or where
+  the required bitrate would ruin the picture, Steamcord says so rather than
+  grinding away at it.
+
+- **`ffmpeg` inherited the plugin loader's PyInstaller environment** and died on
+  `OPENSSL_3.2.0 not found`, which surfaced as "could not send this clip". This
+  is the same defect fixed for the GStreamer children in v1.25.0; the media
+  tooling added in v1.27.0 had not been routed through the same cleanup.
+
+- **Attachments arrived with a doubled extension** and an internal working name.
+  A clip now arrives as `clip-20260825-073545.mp4`.
+
+### Changed
+
+- Preparing a clip takes a few seconds, so the picker now stays open and says
+  what it is doing instead of closing as though nothing had happened.
+
+## 1.27.1 — 2026-08-25
+
+### Fixed
+
+- **Clips that were not already MP4 arrived as a download instead of a video**
+  ([#40](https://github.com/Necrosiak/Steamcord/issues/40)). Discord only plays
+  MP4, WebM and MOV inline. A Matroska clip uploaded perfectly well and then sat
+  in the conversation as a file to download, which defeats the point of sending
+  a clip at all. Anything in another container is now repackaged as MP4 before
+  it is sent — the streams are copied, not re-encoded, so it is near-instant and
+  loses no quality. If the streams cannot go into an MP4 the original is sent
+  unchanged rather than not sent at all.
+
+## 1.27.0 — 2026-08-25
+
+Three reports, three different needs: someone whose Go Live fails silently,
+someone whose Rich Presence names the wrong game, and someone who wanted to
+send a clip without going through their phone.
+
+### Added
+
+- **Send a video clip to Discord from the plugin**
+  ([#40](https://github.com/Necrosiak/Steamcord/issues/40)). A film icon next to
+  the screenshot button lists the videos in your Videos, Downloads and Desktop
+  folders — under their localised names too — along with any clips you have
+  exported from Steam, newest first. Files above Discord's 10 MiB limit are
+  listed but greyed out with their size, rather than hidden as if they did not
+  exist. Steam's own recordings live as `.m4s` fragments and are not playable
+  files, so only exported clips appear.
+
+  The file never travels through the plugin's websocket: Discord fetches it from
+  a local address and hands it to the same uploader the client uses for its own
+  attachments. The backend only ever issues opaque tokens, never paths.
+
+### Fixed
+
+- **The play timer never restarted when the detected game changed**
+  ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). The timer followed
+  the title Steam reports, which stays "Heroic" from beginning to end. Closing a
+  game therefore left Heroic carrying on with the game's elapsed time, and the
+  next game continued from there. It now restarts whenever the game actually
+  shown changes.
+
+- **Nothing after the screen capture was visible in the logs**
+  ([#42](https://github.com/Necrosiak/Steamcord/issues/42)). Go Live acquires the
+  screen and then asks Discord to publish it. Everything past the first step was
+  written to Vesktop's console, which is out of reach in Gaming Mode — so a
+  report where the capture starts and the stream never appears contained nothing
+  to work with. Each step is now recorded in the backend log, including whether
+  Discord actually created a stream two seconds after being asked to.
+
+### Changed
+
+- **You can override which game is shown**
+  ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). Discord's database
+  maps one executable to one title, and some series share a single program file
+  — every classic Need for Speed runs `speed.exe`, and Discord lists only one
+  *Most Wanted*. No amount of guessing fixes that, so there are now two settings:
+  one to switch launcher detection off, and one to force an exact title.
+
+## 1.26.1 — 2026-08-24
+
+Same-day follow-up to v1.26.0, from @imrprogamer testing it properly.
+
+### Fixed
+
+- **A title Discord did not recognise could pick up someone else's artwork**
+  ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). When the running
+  title resolved to nothing, v1.26.0 fell back to the first recognised
+  executable it could find — which might be anything detectable sitting in the
+  background. Watching media in Harbor showed an unrelated game's picture. No
+  artwork was always better than the wrong artwork. The executable must now
+  bear some resemblance to the title Steam reports; launcher titles are exempt,
+  because there the whole point is to find a game unrelated to the launcher.
+
+- **Games started from inside a launcher are picked up as they appear**
+  ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). Steam only notifies
+  about its own applications, so launching a game from Heroic produced no event
+  at all and the process list travelled with a snapshot taken before the game
+  existed — leaving "Heroic" on screen. The list is now refreshed every 20
+  seconds for as long as something is running, and the client ignores refreshes
+  that change nothing, so Discord sees no extra traffic.
+
+## 1.26.0 — 2026-08-24
+
+Rich Presence had been running on the wrong code for ten releases, and a crash
+in the desktop fallback had been waiting since before that.
+
+### Fixed
+
+- **The Rich Presence improvements shipped in v1.16.0 never ran**
+  ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). Two `case "$rpc"`
+  branches existed in the same `switch`, so the second — the one with the
+  artwork lookup, the normalised name matching added for
+  [#32](https://github.com/Necrosiak/Steamcord/issues/32), and the continuous
+  playtime — was unreachable. What actually ran was the original exact-match
+  handler: it required the Steam title to equal Discord's title character for
+  character, so anything Steam writes differently ("HELLDIVERS™ 2", a shortcut
+  named "GTA San Andreas") got no artwork at all, and the play timer restarted
+  on every reconnection. The dead branch is now the live one.
+
+- **The screen-share relay crashed when it had no pipeline to close**
+  ([#42](https://github.com/Necrosiak/Steamcord/issues/42)). `close_pipeline()`
+  read an attribute that only `start_pipeline()` ever created, so every path
+  that closed the socket without building a pipeline raised `AttributeError` in
+  the handler's cleanup — the Desktop Mode `no_source` path, and, since v1.25.0,
+  the missing-plugins path as well.
+
+### Added
+
+- **Games launched through Heroic, Lutris and other launchers are now
+  detected** ([#41](https://github.com/Necrosiak/Steamcord/issues/41)). Steam
+  only knows what Steam started, so launching a game from Heroic showed
+  "Heroic" in Discord and nothing about the game. Steamcord now reports the
+  running executables alongside the Steam title, and matches them against the
+  executable list in Discord's own detectable-games database — the same
+  information the official client uses. A game whose Steam title already
+  resolves is left alone, so nothing that worked before can be redirected.
+
+- **Artwork for shortcuts whose name does not match Discord's**. When the title
+  resolves to nothing, the running executable is used instead, and the
+  canonical name is displayed with it.
+
+## 1.25.0 — 2026-08-23
+
+Screen sharing worked here and failed elsewhere. Three reasons, none of them
+visible on the machine it was developed on.
+
+### Fixed
+
+- **The GStreamer fallback could never claim the screen after the native path
+  timed out** ([#38](https://github.com/Necrosiak/Steamcord/issues/38)). When
+  `getDisplayMedia` did not answer within 25 seconds, Steamcord gave up and fell
+  back to its local GStreamer relay — but nothing cancelled the portal capture
+  session it had already opened. Closing a session only released our own copies
+  of the PipeWire file descriptors and never emitted
+  `org.freedesktop.portal.Session.Closed`, so Chromium went on believing the
+  session was alive and kept holding the gamescope node. The fallback then found
+  a source it could not open. Killing the shim by hand was the only thing that
+  freed it, because losing the D-Bus name is what finally told Chromium to let
+  go. Sessions now emit `Closed`, and the relay asks the shim to release them
+  before it opens the node.
+
+- **The GStreamer child inherited the plugin loader's PyInstaller
+  environment** ([#38](https://github.com/Necrosiak/Steamcord/issues/38)).
+  Decky's loader is a PyInstaller binary and points `LD_LIBRARY_PATH` and
+  `LD_PRELOAD` at its own bundled libraries. The system GStreamer launched from
+  it picked those up and aborted on the bundled OpenSSL (`OPENSSL_3.4.0 not
+  found`), so Go Live produced no picture at all. Steamcord already had the
+  cleanup used for the portal shim; this launch path had simply never been
+  routed through it. Two further spawn sites (the virtual-camera feeder and the
+  Go Live preview) fell back to the same unscrubbed environment and are fixed
+  too. This never showed up on Bazzite, whose system libraries happen to be
+  compatible with the bundled ones; on SteamOS it is fatal.
+
+- **An incomplete GStreamer install failed without saying so**
+  ([#38](https://github.com/Necrosiak/Steamcord/issues/38)). Without
+  `gst-plugins-bad` there is no `webrtcbin`, so the pipeline could not be built
+  and Go Live failed in a way that looked like "no capturable screen". Steamcord
+  now checks the GStreamer registry up front and reports every missing element
+  along with the package that provides it.
+
+### Known limitations
+
+- On hardware where `v4l2loopback` cannot be installed, the virtual-camera path
+  remains unavailable; this is a packaging matter for the distribution, not
+  something Steamcord can work around.
+
+## 1.24.0 — 2026-08-23
+
+A login that could never finish, a README that described a feature removed a
+month earlier, and a workaround that had quietly been breaking other people's
+applications.
+
+### Fixed
+
+- **Steamcord broke every other app in Gaming Mode that talks to the desktop
+  portal** ([#39](https://github.com/Necrosiak/Steamcord/issues/39)). To make
+  Go Live work under gamescope — which ships no portal backend — Steamcord runs
+  a shim that takes ownership of `org.freedesktop.portal.Desktop` and stops the
+  real `xdg-desktop-portal` while a gamescope session exists.
+
+  That bus name is **session-wide**, not private to Discord. The shim
+  implemented only `ScreenCast` and answered everything else with an error, so
+  while it was running, *every* application in the session got that error
+  instead of a working portal. It was reported as Sober (Roblox on Linux)
+  failing to list servers; Sober was simply asking for its proxy configuration
+  and being refused by us.
+
+  The shim now answers the interfaces the real portal implements in its
+  frontend, with no desktop backend involved — `ProxyResolver` and
+  `NetworkMonitor`. Those are always available with a real portal on any
+  desktop, so refusing them was a regression rather than a missing feature.
+  Anything still unimplemented is now logged with the caller and the method, so
+  the next gap of this kind shows up in Steamcord's own journal instead of in
+  somebody else's application.
+
+- **QR login looped forever, silently, when Discord served a CAPTCHA**
+  ([#37](https://github.com/Necrosiak/Steamcord/issues/37)). When Discord does
+  not trust the IP it puts a CAPTCHA on its *login page*. It then never issues a
+  remote-auth ticket at all: the QR code quietly reset every ~30 seconds,
+  forever, with nothing shown to explain it.
+
+  The plugin did have a CAPTCHA warning, translated into all nine languages —
+  and it could never fire. It was set only on the ticket-exchange path
+  (`exchange_ticket` receiving a `400` with `captcha_key`), and that path does
+  not exist under Vesktop: there the QR code shown in the panel is Discord's
+  own, mirrored from its login page, so no ticket is ever exchanged. The
+  warning was unreachable by construction. Detection now looks at the page
+  itself, where the challenge actually is.
+
+- **The README described a fullscreen login that no longer exists.** The
+  fullscreen login button and its CAPTCHA fallback were removed in v1.14.3
+  (they drove a Steam BrowserView from the pre-Vesktop architecture and had
+  been dead for everyone), but all nine READMEs kept advertising them —
+  including the claim that a CAPTCHA could be solved there. Corrected in every
+  language.
+
+### Added
+
+- **Solve the CAPTCHA in Gaming Mode, with the controller.** When the challenge
+  is detected the panel now offers to open it: Steamcord mirrors Discord's
+  login page and sends your clicks back to it. The D-pad moves the pointer and
+  A clicks; a touchscreen or mouse works too. It closes itself once you are
+  logged in.
+
+  Simply showing the Vesktop window instead would not work, and this was
+  measured rather than assumed: the window is started minimized, and mapping it
+  by hand changes nothing on screen — gamescope only paints the window Steam
+  designates, and before/after screenshots are identical byte for byte. Posting
+  it as an external overlay (the atom mangoapp uses) does display it, but such
+  windows receive no focus and no input at all. Mirroring the page over CDP is
+  the only path that works, and the page receives the forwarded clicks as
+  genuine user input.
+
+## 1.23.0 — 2026-08-18
+
+Two reports about the plugin costing more than it should, and one long-standing
+request for control over the stream. All three turned out to be about the same
+thing: work being done that nobody asked for, and settings that existed but were
+never exposed.
+
+### Added
+
+- **Stream quality settings for Go Live** (resolution and frame rate), in the
+  Steamcord settings next to the notification options — requested in
+  [#33](https://github.com/Necrosiak/Steamcord/issues/33).
+
+  Steamcord was already pinning screen sharing to 1080p60 internally, without
+  ever showing it. Now you choose: 720p / 1080p / 1440p / Source, and 15 / 30 /
+  60 FPS / Source.
+
+  Worth being precise about what this does, because it is not a transcoder. The
+  setting is handed to Discord's own encoder as a capture constraint, so nothing
+  is re-encoded on your machine and the plugin costs no extra CPU for it. It
+  also means the constraint is read **when a share starts**: changing it does
+  not affect a Go Live already running, only the next one.
+
+### Fixed
+
+- **A polling loop that never stopped, burning CPU and battery forever**
+  ([#36](https://github.com/Necrosiak/Steamcord/issues/36)).
+
+  Steamcord opens the on-screen keyboard when you tap a message box. It found
+  that message box by polling the DOM every 100 ms and stopping once it had
+  wired it up — except on any view that has no message box (the friends list, a
+  voice channel, a forum, the shop) the lookup threw, the failure was swallowed,
+  and the loop simply never stopped. Worse, it was restarted on **every channel
+  switch**: one permanently leaked 10 Hz whole-document query per such view
+  visited, accumulating for as long as the session lasted.
+
+  Measured over CDP on nothing but an idle friends list, it was the only
+  repeated DOM query in the whole renderer, running exactly ten times a second.
+  It is now a single delegated click listener, installed once: no polling at
+  all, and it also covers message boxes created later, which the old code could
+  not do reliably.
+
+- **The 1080p60 screen-share preset was often never applied.** It was written
+  through `window.localStorage`, which Discord deletes on `discord.com` as an
+  anti-token-theft measure; the write threw and the failure was swallowed. It
+  now goes through a same-origin iframe, the same approach Vencord uses.
+
+### Changed
+
+- **Vesktop no longer keeps its renderer at foreground priority.** Its window is
+  never shown — everything you look at is the plugin's own UI in the Steam
+  overlay — yet two Chromium flags were forcing the browser to treat that hidden
+  window as if you were watching it. Only the flag that protects JavaScript
+  timers is kept, because Discord's gateway heartbeat depends on it.
+
+  To be straight about the measured effect: idle CPU did **not** change (about
+  1.7 % of one core before, and Chromium was already throttling animation to
+  1 fps on its own). What changes is that the scheduler may now deprioritise a
+  renderer nobody is looking at while a game is running.
+
+## 1.22.0 — 2026-08-12
+
+The voice shortcut could only be bound to controller buttons, which is the one
+thing `SteamClient.Input` can see. Binding push-to-talk to a key on an attached
+keyboard — or to a spare mouse button, which is what most people actually want
+when the Deck is docked — needed a different input source, read from the
+backend. It turned out not to need any new privileges.
+
+### Added
+
+- **Push-to-talk on a physical keyboard key or a mouse button.** The QAM now
+  captures whatever you press — controller chord, keyboard key or mouse button —
+  and keeps one binding per input type, any of them opening the mic. Controller
+  in handheld, mouse while docked, without reconfiguring in between.
+
+  Keyboard and mouse are read in the backend from `/dev/input/event*`, because
+  the CEF context has no keyboard focus while a game is running: a `keydown`
+  listener in the panel sees nothing in the exact situation the feature exists
+  for. Notable constraints the implementation respects:
+
+  - **No root flag.** `plugin.json` stays `"flags": []`. On SteamOS this is
+    enough: it ships `70-steam-jupiter-input.rules`, which tags input devices
+    `uaccess`, and logind then grants the active session user a POSIX ACL on the
+    event nodes. **On other distributions it is usually not enough** — see the
+    known limitation below.
+  - **Readable devices are probed, never inferred.** Whether a node is readable
+    is not deducible from its bus or vendor — two predictions made from the rule
+    text turned out wrong. The reader simply attempts `open()` and offers what
+    succeeds; a device that is present but not readable is listed separately
+    and shown to you, rather than being indistinguishable from one that is absent.
+  - **`EVIOCGRAB` is never used.** The grab is per *device*, not per key, so it
+    would take the whole keyboard away from the game. As a passive reader the
+    plugin sees the same events the game does.
+  - **Bindings are stored as a device fingerprint**, not `/dev/input/eventN`:
+    node numbers are reassigned on reconnect and after suspend (observed: the
+    same keyboard came back as `event19` having been `event18`). Devices are
+    re-resolved on a read error and on a periodic rescan, so a binding survives
+    sleep and Bluetooth reconnects.
+  - **Privacy.** The reader is a separate module so the guarantee is auditable in
+    one place: it never logs or persists a key code, only the binding you chose
+    and a count of readable devices. Autorepeat is ignored, and `SYN_DROPPED`
+    releases push-to-talk rather than risk leaving the mic open.
+
+### Fixed
+
+- **The mic cut out when two shortcuts were held at once.** `set_ptt` carried no
+  notion of *which* input asked for it, so with a controller button and a
+  keyboard key both held, releasing either one closed the mic while the other was
+  still down. Push-to-talk state is now tracked per source and only the
+  aggregate edge is sent to Discord.
+- **Saving the voice shortcut could drop unrelated settings.** The config was
+  written as a whole blob with no merge, so any caller that did not know about a
+  key silently removed it. Writes now merge onto the stored file under a lock.
+- **The controller shortcut could stop responding until Steam restarted.** The
+  subscription returned by `RegisterForControllerInputMessages` is now retained,
+  and re-subscribed after the machine wakes from sleep — held-button state is
+  reset at the same time, since a button held before suspend is not held after.
+- **A binding could anchor on a node that never speaks.** A device fingerprint
+  (vendor, product, name) does not identify a *node*, and several nodes can share
+  all three byte for byte — measured on an ordinary 2.4GHz receiver whose
+  `event3` and `event7` are both keyboards with identical fields. Resolution
+  stopped at the first match, which is the lowest-numbered node and frequently
+  the silent one; the shortcut then never fired, with no error anywhere. Every
+  matching node is now registered.
+- **Push-to-talk was not released when the plugin reloaded.** A key held at that
+  moment left the client on `$ptt = true` with nothing left to say otherwise,
+  holding the mic open.
+
+### Known limitation
+
+- **Outside SteamOS, your keyboard and mouse are probably not readable.** The
+  plugin cannot fix this from its side: reading `/dev/input/event*` needs a
+  `uaccess` ACL, and systemd's own rule grants it to **joysticks only**
+  (`70-uaccess.rules`: `ENV{ID_INPUT_JOYSTICK}`). SteamOS adds a rule covering
+  input devices; most other distributions do not — measured on Bazzite, where a
+  USB wireless mouse returned `EACCES` on all five of its nodes, and a keyboard
+  was readable only because an unrelated RGB-lighting rule happened to tag it.
+
+  The panel now tells you when this is the case, instead of silently offering
+  nothing. To opt in, add two lines as root and reload udev:
+
+  ```
+  # /etc/udev/rules.d/70-input-uaccess.rules
+  SUBSYSTEM=="input", ENV{ID_INPUT_KEYBOARD}=="1", TAG+="uaccess"
+  SUBSYSTEM=="input", ENV{ID_INPUT_MOUSE}=="1", TAG+="uaccess"
+  ```
+
+  ```
+  sudo udevadm control --reload-rules && sudo udevadm trigger --subsystem-match=input
+  ```
+
+  Be aware of what this trades away: `uaccess` lets **any** process running as
+  your user read every keystroke on the machine, in any window. It is the same
+  trade SteamOS makes on the Deck, reasonable on a single-user games console and
+  much less so on a machine you also work on. Deleting the file reverts it.
+
+### Changed
+
+- The voice shortcut config is now versioned (`version: 2`) and holds a list of
+  bindings instead of a single button array. Existing configs are migrated in
+  memory and only rewritten in the new shape once you save, so an install can be
+  rolled back. Nobody loses an existing controller binding.
+
+## 1.21.1 — 2026-08-09
+
+@william097y noticed that some games showed up in Discord without their
+artwork, and guessed the reason from the pattern: the affected titles all
+carried a `™`. That guess was right, and it pointed at something slightly
+wider than the symbol itself.
+
+### Fixed
+
+- **Games showing in Discord without their Rich Presence artwork**
+  ([#32](https://github.com/Necrosiak/Steamcord/issues/32)). Steam and Discord
+  do not spell the same game the same way. Steam keeps legal symbols and
+  typographic punctuation — `HELLDIVERS™ 2`, `DARK SOULS™ III`,
+  `Marvel’s Spider-Man Remastered` with a curly apostrophe — while Discord's
+  detectable-games index has `HELLDIVERS 2` and `Marvel's …` with a plain one.
+  Steamcord matched those two spellings literally, so the title resolved to no
+  application id at all, and the artwork hangs off that id: the activity
+  appeared with the right name and no image.
+
+  Titles are now compared through a normalised key (legal symbols, curly
+  quotes and dashes, width and spacing), and, failing that, a letters-and-digits
+  key that absorbs punctuation differences such as
+  `Resident Evil 7 Biohazard` versus `Resident Evil 7: Biohazard`. Exact
+  matching still runs first, so no game that already resolved can change
+  target. Measured against a real 139-game library, matches went from 99 to
+  110 — every game in that library which Discord knows about.
+
+  The loosest key is deliberately fenced in: on its own it collapses any
+  fully non-Latin title — Japanese, Korean, Chinese, Cyrillic — to an empty
+  string, which on the real index put more than fifty games in one bucket.
+  It is therefore only consulted for keys of at least six characters that
+  contain a letter, and any key claimed by two different applications is
+  dropped for good. No image is better than another game's image.
+
+## 1.21.0 — 2026-08-03
+
+The first NixOS report, from @Strix-Vyxlor, turned out not to be about missing
+packages at all: the plugin could not find tools that were installed. One cause,
+three symptoms, and the fix makes every unusual distribution more likely to work
+out of the box.
+
+> Updating from v1.18.2 or later works normally from the plugin — this release
+> adds no new top-level files.
+
+### Fixed
+
+- **Screen share and its preview silently did nothing on NixOS**
+  ([#29](https://github.com/Necrosiak/Steamcord/issues/29)). The backend is
+  started by Decky's *system* service, so it inherits systemd's minimal `PATH`.
+  On NixOS nothing lives in those directories — `pgrep`, `pw-dump`, `pactl`,
+  `ffmpeg` and `gamescopectl` are all under `/run/current-system/sw/bin` — so
+  three separate features died on a bare `FileNotFoundError`: the plugin could
+  no longer tell Game Mode from Desktop (`[shareenv]`), PipeWire node discovery
+  failed (`[screendiag]`), and the preview's no-GStreamer fallback never fired,
+  because looking up its two binaries went through the same truncated `PATH`.
+  Steamcord now appends the Nix and Guix roots, `~/.local/bin` and the usual
+  `/usr` locations to its own `PATH` at startup — appended, never prepended, so
+  the distribution's own binaries keep priority, and a no-op where those
+  directories do not exist.
+
+### Changed
+
+- **procps is no longer a dependency.** Process lookup used to shell out to
+  `pgrep`/`pkill`, which are absent from a default NixOS or Alpine install.
+  Steamcord now reads `/proc` directly — no package needed on any distribution,
+  and one less process spawned on paths that run every time the panel opens.
+- **Install hints for four more package managers.** `nixos-rebuild`, `emerge`,
+  `apk` and `xbps-install` are recognised alongside pacman/dnf/apt/zypper, so
+  those users stop being shown an Arch command. NixOS gets the declaration to
+  add to `configuration.nix` rather than an imperative command, which would be
+  undone by the next rebuild.
+- **A `[deps]` line at startup** naming exactly which optional tools were not
+  found and what each one costs. None of them are mandatory — voice and chat
+  need none — but a feature that quietly does nothing now says why.
+
+### Documentation
+
+- [docs/OS-NOTES.md](docs/OS-NOTES.md) gains a **required system tools** table,
+  a **NixOS** section (including why `pygobject3` on its own cannot work), and
+  Gentoo, Alpine and Void entries in the package tables — the explicit
+  dependency list asked for in
+  [#29](https://github.com/Necrosiak/Steamcord/issues/29).
+
+## 1.20.0 — 2026-08-02
+
+Four reports from @Matchaccia and @Havok027, three of them traced to a definite
+root cause. The screenshot picker was showing the wrong screenshots, screen
+sharing could die until a full shutdown, the server list could fail with a raw
+Python error, and notifications can now be filtered while a game is running.
+
+> Updating from v1.18.2 or later works normally from the plugin — this release
+> adds no new top-level files.
+
+### Fixed
+
+- **The screenshot picker never showed your most recent screenshots**
+  ([#27](https://github.com/Necrosiak/Steamcord/issues/27)). `GetAllAppsLocalScreenshotsRange(0, 24)`
+  looked like "the 25 newest". It is not. Measured against the running Steam
+  client: the bounds are **inclusive**, and the list is **not sorted by date** —
+  it is grouped by game, and only descending *within* each game. So the request
+  returned the first 25 entries of a per-game ordering, and once you had more
+  screenshots than that, whole recent games fell outside the window. Taking the
+  tail of the list does not work either, because the newest shot can sit in the
+  middle. The picker now fetches everything and sorts it itself.
+- **Screen sharing could stop starting entirely, until a full shutdown**
+  ([#26](https://github.com/Necrosiak/Steamcord/issues/26)). The ScreenCast
+  portal handed Chromium a PipeWire connection and held its own copy of the file
+  descriptor until Discord closed the session — which Discord only does on a
+  clean stop. A glitched stream, a reloaded tab or a restarted Vesktop leaked
+  one every time. Those connections pile up until PipeWire stops registering
+  clients: `pw-dump` then hangs, the screen node can no longer be found, and
+  `Start` fails **without surfacing any error** — exactly the reported "it just
+  doesn't want to start". Stale sessions are now closed when a new one opens,
+  and our copy of the descriptor is always released.
+- **The server list could fail with a raw Python exception**
+  ([#28](https://github.com/Necrosiak/Steamcord/issues/28)). Two separate
+  problems. A non-dict entry in the guild list raised `AttributeError` straight
+  into the panel, because the type guard was applied in one place out of three.
+  And Vencord resolves its stores lazily: opening the tab in the first seconds
+  after Discord starts could throw a `TypeError` that was relayed verbatim. The
+  list now retries on its own while the failure is transient, unexpected errors
+  are logged with a traceback, and neither case reaches the UI as a stack trace.
+  For the record, a 30-second timeout was ruled out by measurement — the lookup
+  takes 23 ms across 98 servers and 515 voice channels.
+
+### Added
+
+- **Notifications while playing** ([#25](https://github.com/Necrosiak/Steamcord/issues/25)),
+  requested by @Havok027. A new setting with three modes: all notifications,
+  direct messages and calls only, or none — applied only while a game is in the
+  foreground. A corrupt or unreadable setting always falls back to "all", so
+  notifications are never silenced without you asking.
+
+## 1.19.0 — 2026-07-26
+
+Follow-up to @DavidNotProgamer2's reports. The jump-to-latest button is gone,
+replaced by a controller shortcut and by the composer itself; the first
+notification of a session no longer disappears; and a whole class of silent
+failures is fixed — several DOM helpers had been looking for elements in the
+wrong document and quietly doing nothing.
+
+> Updating from v1.18.2 or later works normally from the plugin — this release
+> adds no new top-level files.
+
+### Changed
+
+- **Fullscreen chat: no more "Jump to latest" button.** Moving down onto the
+  message box is what resumes the live feed now, which is the gesture most
+  people already used. The button also flickered while scrolling, because its
+  state was recomputed on every scroll event.
+- **Controller shortcut in the fullscreen chat** — **Y** (or **X**) puts the
+  selection back on the message box and returns to the bottom of the
+  conversation in one press. The action is shown in the footer legend.
+- **Quick chat: moving down from the channel list now lands directly on the
+  message box**, instead of stopping on the most recent message first. Moving
+  back up still enters the list on the most recent message and walks the
+  history one message at a time.
+
+### Fixed
+
+- **The very first message notification of a session never popped**
+  ([#23](https://github.com/Necrosiak/Steamcord/issues/23)). The toast window
+  subscribes to Steam's notification store; when a notification arrives before
+  that window is mounted, nothing renders it and the notification is silently
+  lost — the entry still reached the tray, which is why it looked like a
+  display glitch. Steamcord now checks that the first toast of a session was
+  actually rendered and re-issues it once if it was not.
+- **Notifications arriving in quick succession were dropped.** The backend held
+  a single notification slot: anything that arrived while the previous one was
+  being dispatched overwrote it and was then cleared. Two messages in a row
+  produced one notification. It is now a proper queue, preserving order.
+- **Only one screen share was visible at a time**
+  ([#24](https://github.com/Necrosiak/Steamcord/issues/24)). Stream detection
+  relied on a registry that can be empty even when someone is sharing, so
+  neither the LIVE badge nor the Watch button appeared; and watching a second
+  share cut the first one off. Detection now also reads the voice state, and
+  watching no longer stops the stream already playing.
+- **Several UI behaviours silently did nothing at all.** The fullscreen view
+  and the quick chat both looked up their scroll containers by element id, but
+  the plugin does not run in the same document as the panel (quick chat) or the
+  modal (fullscreen) — every lookup returned nothing. Sticking to the bottom,
+  restoring focus on the most recent message, and holding the view still on the
+  selected message were all affected. They now work on the real nodes.
+
+## 1.18.4 — 2026-07-24
+
+Bugfix release, entirely from @DavidNotProgamer2's chat report
+([#21](https://github.com/Necrosiak/Steamcord/issues/21)): the fullscreen chat
+stays where you put it, messages arrive live every time, and actions that fail
+now say why instead of pretending to have worked.
+
+> Updating from v1.18.2 or later works normally from the plugin — this release
+> adds no new top-level files.
+
+### Fixed
+
+- **Fullscreen chat no longer jumps to the newest message while you are reading
+  an older one** ([#21](https://github.com/Necrosiak/Steamcord/issues/21)). The
+  v1.18.1 fix only froze the view while you were *acting* on a message —
+  editing, reacting, deleting — and simply *selecting* one did not count. Worse,
+  the "are you still at the bottom?" test measured the scroll position, which is
+  blind to this case: selecting a message already on screen scrolls nothing, so
+  the list still looked pinned to the bottom and the next incoming message
+  yanked it away regardless. The view now follows which message your cursor is
+  on. Select anything that is not the newest and it holds still, with the "jump
+  to latest" button to resume. Passive reading still follows the conversation.
+- **Messages sometimes took 20 seconds to appear, or seemed never to arrive**
+  ([#21](https://github.com/Necrosiak/Steamcord/issues/21)). Live message events
+  are only pushed for the one channel the plugin declares it is watching, and
+  that declaration was made solely by the quick-access panel — which unmounts
+  behind the fullscreen window and released the channel on its way out. So
+  depending on how you got into fullscreen, the live feed was switched off
+  underneath it and messages only surfaced on the 20-second reconciliation poll.
+  That is why it looked random and had nothing to do with servers or DMs. The
+  fullscreen view now claims its own channel, re-claims it periodically (so it
+  also recovers by itself if the Discord tab restarts), and hands it back when
+  it closes.
+- **The quick-access chat preview showed the oldest messages instead of the
+  newest** ([#21](https://github.com/Necrosiak/Steamcord/issues/21)). It was
+  still using the delayed "scroll to the bottom" that loses the race whenever an
+  image finishes decoding after the fact, leaving you parked at the top of the
+  conversation with one or two messages visible. It is now anchored to the
+  bottom the same way the fullscreen list is.
+- **Editing, deleting or reacting could fail silently.** When one of these was
+  refused, the reason was thrown away in three separate places: the error was
+  serialised to an empty object on its way back from the Discord tab, the
+  backend read that empty result as a success, and the interface applied its
+  optimistic update anyway. A failed edit therefore closed the editor and
+  displayed your new text until the next refresh quietly replaced it — visually
+  identical to nothing having happened, with nothing in the logs either. These
+  failures are now visible: the reason appears in red under the message and in
+  the plugin log, the editor stays open with your text intact, and the
+  optimistic update is rolled back. The reason is the one Discord gives —
+  message, error code and HTTP status — not a generic placeholder.
+- **A message that could not be sent no longer disappears.** A refused send was
+  treated as a success: the draft was cleared and the conversation reloaded, so
+  the text vanished without ever reaching Discord. The draft — and the reply
+  you were answering — are now kept, with Discord's own reason shown.
+- **The quick-access message list no longer jumps to the oldest message when
+  you scroll down into it.** Entering the list from above landed on its first
+  child — the oldest message on screen — which tore the view away from the
+  recent messages it had just settled on. Entry now targets the newest message
+  whichever direction you come from, and each step up walks back through the
+  conversation.
+
+### Changed
+
+- **Overlay logs are now in English.** The `[overlay]` lines printed by the
+  helper and the backend were still partly in French, which is awkward given
+  that these are exactly the lines people paste into bug reports.
+
+## 1.18.3 — 2026-07-24
+
+Bugfix release. In-game overlays finally work on a stock Steam Deck: the
+overlay no longer needs a web engine to draw the voice roster.
+
+### Fixed
+
+- **In-game overlays now work on SteamOS**
+  ([#22](https://github.com/Necrosiak/Steamcord/issues/22)). SteamOS ships no
+  WebKitGTK GObject binding at all — neither 4.1 nor 4.0 — so the overlay
+  helper died on startup and no overlay ever appeared on a Steam Deck. The
+  helper now picks its renderer at launch: WebKitGTK where it exists, and
+  otherwise a native GTK/Cairo renderer that draws the voice roster itself
+  (avatars, speaking ring, mute badge, position/opacity/size settings — same
+  look as before). The POV video overlay still needs a web engine to decode
+  the stream, so it is hidden from the menu, with the reason, on systems
+  without one instead of offering a switch that cannot work.
+- **Overlay window no longer depends on python-xlib.** Setting the
+  `GAMESCOPE_EXTERNAL_OVERLAY` atom — what makes gamescope paint the window
+  over the game — fell back silently when the module was missing. It now calls
+  libX11 directly if python-xlib is unavailable.
+
+## 1.18.2 — 2026-07-24
+
+Bugfix release. The in-plugin updater now works on every install, and in-game
+overlays start on Decks that only ship the older WebKit binding.
+
+> **⚠️ Updating from v1.17.0 or older requires a manual reinstall.** The fix
+> ships *inside* the updater, so it cannot repair an update performed by an older
+> one — and those installs are missing the `game_overlay` folder, which the old
+> updater cannot create. Uninstall the plugin from Decky and install v1.18.2
+> fresh. Coming from v1.18.0 or v1.18.1, update normally: this release adds no
+> new top-level files. **From v1.18.2 onwards, updating from the plugin always
+> works.**
+
+### Fixed
+
+- **Plugin updates no longer fail with "Permission denied"**
+  ([#16](https://github.com/Necrosiak/Steamcord/issues/16)). Decky re-owns the
+  plugin's top-level directory as root on every load and only hands the contents
+  to your user, so the backend could never create a *new* top-level file or
+  directory — any release that added one failed, and no amount of `chmod` or
+  `chown` made it stick. Updates are now handed to Decky's own installer, which
+  runs as root and restores permissions afterwards. Decky shows its usual
+  confirmation prompt, and the update button follows the install through to the
+  end instead of hanging.
+- **In-game overlays did nothing on some Decks**
+  ([#22](https://github.com/Necrosiak/Steamcord/issues/22)). The overlay helper
+  required the WebKit2 **4.1** GObject binding and exited immediately when only
+  **4.0** was available. It now probes both, and says so clearly if neither is
+  installed.
+- **The speaking / focus ring was invisible on portrait streams**
+  ([#22](https://github.com/Necrosiak/Steamcord/issues/22)). A letterboxed video
+  still fills its whole element and painted over the ring; the ring is now drawn
+  above the video.
+- **A failed update check reported "up to date"**. A network error or an
+  exhausted GitHub API rate limit now shows the real reason instead of claiming
+  you are on the latest version.
+- **Plugin notifications used your own Steam name and avatar**, as if you had
+  sent them to yourself. They now show as *Steamcord*.
+
+### Changed
+
+- **Auto-update is off by default.** An available update is always announced with
+  a notification; installing it stays your call. Installing goes through Decky's
+  confirmation prompt, so it is never triggered silently in the background.
+
+## 1.18.1 — 2026-07-23
+
+Follow-up fixes for feedback on the 1.18.0 features.
+
+### Fixed
+- **In-game overlays** — the overlay toggle no longer silently reverts to off.
+  When enabling an overlay, the plugin now confirms the overlay window
+  actually stays up; if it fails to start, the toggle flips back immediately
+  instead of appearing on and then reverting the next time you open the panel.
+  (If overlays still fail to appear on your device, please attach the
+  `[overlay]` lines from `journalctl -u plugin_loader` — the underlying cause
+  on some setups is still being investigated.)
+- **Controller focus ring** now shows on the "All POV" and in-game overlay
+  buttons when navigating with a gamepad (previously the highlight only
+  appeared with touch, though the buttons were still pressable).
+- **Reaction counts** no longer briefly show one too many when you add or
+  remove your own reaction.
+- **Custom server emojis** now render inline in messages instead of showing
+  their raw `:name:` code.
+- **Notifications** are muted for the channel you have open in the fullscreen
+  chat (messages only — call, stream and camera notifications still come
+  through).
+- **Fullscreen chat** no longer scrolls to the bottom while you are acting on
+  a specific message (reacting, editing or deleting).
+
+## 1.18.0 — 2026-07-23
+
+### Added
+- **In-game overlays** (new "In-game overlays" menu in the voice tab):
+  - **Voice overlay** — a Discord-style roster (avatars, names, a green
+    speaking halo, muted-mic badge) drawn over the running game via
+    gamescope's overlay plane. Adjustable corner, opacity and size.
+  - **POV overlay** — a real live video feed of up to 4 participants
+    (screen/camera) over the game, in five layouts (all right/left stacked,
+    all top/bottom in a row, or one per corner) with opacity and size.
+- **Fullscreen multi-POV grid** — when people in a call have their camera or
+  stream on, a button above the member list opens one fullscreen grid with
+  every POV at once; press A on a tile to fullscreen just that one. Speaking
+  and muted states are shown per tile, and connected non-streaming members
+  appear as avatar tiles.
+- **Quick-reply chat in the Quick Access panel** — the channel view in the
+  QAM is interactive again: a navigable message list (links and photos open
+  with A) plus a minimal composer to fire off a reply in seconds (Enter
+  sends). Advanced actions (edit/delete, reactions, screenshot upload) stay
+  exclusive to the fullscreen view, one button away. Drafts are shared
+  between the QAM and the fullscreen chat.
+
+### Fixed
+- The in-game overlays now close automatically when you leave the voice call.
+- Message rows in the QAM no longer log `Unhandled flow-children` errors on
+  the current Steam client.
+
+## 1.17.0 — 2026-07-23
+
+### Added
+- **Fullscreen chat view** (#20, suggested by @DavidNotProgamer2 with
+  mockups): open any text channel or DM in a real fullscreen Steam modal —
+  navigable history with pagination, reply composer, and a screenshot
+  picker that browses recent screenshots across games instead of always
+  sending the last one taken. The QAM panel shows a passive live preview
+  with an "Open Chat" button.
+- **Real-time messages**: new messages, edits, deletions and reactions in
+  the channel you have open now arrive the second Discord receives them,
+  pushed through the plugin's event pipeline — no more waiting for the next
+  poll (polling remains only as a 20 s reconciliation safety net). A posted
+  link's embed thumbnail also pops in as soon as Discord resolves it.
+- **Typing indicator** both ways: see "X is typing…" live, and others see
+  you typing while you compose.
+- **Reactions, edit/delete, reply**: react with common emojis (or toggle
+  existing reactions), edit or delete your own messages (two-step confirm),
+  and reply to any message with the quoted context shown above it.
+- **Author avatars** next to usernames in the conversation and in the QAM
+  preview — fixed-size round thumbnails that never disturb the layout.
+- **Reorder / hide servers in the text tab** — same mechanism as the voice
+  tab, sharing the same preferences (hide or move a server once, both tabs
+  follow). DMs are not affected.
+- **Enter sends the message** from the composer, and an unsent draft now
+  survives the modal closing — reopen the chat and your text is back.
+
+### Fixed
+- The conversation now opens anchored to the **latest** message at the
+  bottom (like every chat app) and sticks to it as new messages arrive;
+  controller navigation from the composer walks up from the newest message
+  one by one. This took a few rounds of live testing to get right across
+  Steam's gamepad navigation engine and Chromium's scroll anchoring.
+- Message action chips (add-reaction "+", Reply, Edit, Delete) rendered
+  with a zero-width flex basis, piling their labels on top of each other
+  into an unreadable overlap.
+- Messages flashing away and back every few seconds: a background poll
+  returning transiently empty replaced the whole displayed history.
+- `flow-children="horizontal"/"vertical"` is rejected by the current Steam
+  client (only `row`/`column` and variants are accepted), which broke
+  re-renders of dynamic rows — all occurrences migrated.
+- Discord system events (member joins, boosts) no longer show as blank
+  messages; history pages are filtered so "load older" keeps working.
+
+## 1.16.9 — 2026-07-22
+
+### Fixed
+- Updater still failing with "Permission denied" on real installs after
+  v1.16.8's diagnostics (#16) — traced to Decky Loader itself: it only keeps
+  the plugin's top-level directory (and `plugin.json`) root-owned, while
+  every other file gets chowned to the host user at install time. The
+  tmp-file + `os.replace` dance from v1.16.1 needs to create a new entry in
+  that directory before it can rename it into place, which needs directory
+  write access — something a non-root backend never has there, regardless of
+  who owns the files inside. When that fails, the updater now falls back to
+  overwriting the destination file's content directly, which only needs
+  write permission on the file itself (already granted by Decky) — covering
+  essentially every file in a normal update. Only `plugin.json` or a
+  genuinely brand-new top-level file added in some future release can still
+  hit the wall, in which case the existing `chown -R` guidance still applies.
+
+## 1.16.8 — 2026-07-22
+
+### Changed
+- Updater (#16): the SELinux/`restorecon` theory from v1.16.6 turned out to be
+  incomplete — confirmed by reports from Steam Deck/Steam Machine (stock
+  SteamOS, which has no SELinux at all) still hitting `Permission denied`
+  even after the directory ownership was verified correct. Rather than guess
+  a third fix blind, a `Permission denied` failure now logs the update
+  process's actual uid/euid/groups and the target directory's owner/mode/
+  `os.access(W_OK)` result at the moment it happens, so the next report gives
+  a conclusive answer instead of another manual `ls -la` round-trip.
+
+## 1.16.7 — 2026-07-21
+
+### Fixed
+- Plain-text messages (no link, no image) still weren't controller/keyboard
+  nav stops after the v1.16.2 fix (#17) — only links and the "Load older
+  messages" button were reachable with the stick/D-pad. The message list
+  container was missing an explicit vertical flow hint, so a lone `Focusable`
+  per message wasn't picked up as a stop by Steam's gamepad navigation unless
+  something more "interactive" (a real button) was also present. Every
+  message is now wrapped the same way as the rest of the panel's focusable
+  rows, and picks up the same highlight (colored background + outline, text
+  stays readable) when focused instead of vanishing with no visual feedback.
+
+## 1.16.6 — 2026-07-20
+
+### Fixed
+- Updater still failing with "Permission denied" on some root-owned installs
+  even after the v1.16.1 fix and a manual `chown -R` (#16). The atomic
+  `os.replace` fix in v1.16.1 only ever addressed file *ownership*; on
+  SELinux-enforcing systems (Bazzite/Fedora Atomic by default) a hierarchy
+  created by a `sudo`-run install can also be *mislabeled* at the SELinux
+  layer, which `chown` never touches. The updater now runs a best-effort
+  `restorecon -R` over the plugin directory after every successful update to
+  self-heal that labeling — a silent no-op on systems without SELinux
+  (SteamOS, CachyOS/Arch, Debian/Ubuntu). If an update still fails, the error
+  now also suggests `sudo restorecon -R` (only where SELinux is actually
+  enforcing) alongside the existing `chown -R` hint, and calls out explicitly
+  when the failure can't be an ownership issue because the plugin is already
+  running as root.
+
+## 1.16.5 — 2026-07-20
+
+### Added
+- **Reorder and hide servers** in the server/DM browser (#18). A new toggle
+  reveals ↑/↓ and hide/unhide controls per server (kept out of the way by
+  default); a "show hidden" button lets you bring hidden servers back. The
+  order and hidden set are Steamcord's own local preferences — Discord's
+  native drag-and-drop reorder doesn't actually persist across a client
+  restart, so this is tracked separately and survives reconnecting. New
+  servers you join always show up (appended after your custom order), and
+  leaving a server never leaves a stale/broken entry behind.
+
+## 1.16.4 — 2026-07-20
+
+### Added
+- **Soundboard** in the voice call view: browse and play the default sounds,
+  the current server's sounds, and — with Nitro — sounds from every other
+  server you've joined, same as the "soundboard everywhere" perk on the real
+  client. Browsing/playing only, no sound management (upload/edit/delete
+  stays server administration, out of scope here). You now hear your own
+  sounds locally too, matching the real client's behavior.
+- **Native Discord sound cues** for muting/unmuting, deafening/undeafening,
+  disconnecting from a voice channel, and other participants joining or
+  leaving the channel you're in. These reuse Discord's own bundled sounds
+  (whatever soundpack you have selected — classic, seasonal, etc.) instead of
+  shipping separate audio files.
+
+### Fixed
+- Soundboard tiles rendered as a plain full-width list instead of a compact
+  grid, and playing a sound could kick the controller focus out of the panel
+  entirely. A very similar focus loss also happened whenever another
+  participant's mic activity flickered on/off, even without touching the
+  soundboard at all. All three turned out to share the same root cause —
+  controller-focused elements being torn down and rebuilt by the UI on
+  re-renders that had nothing to do with them — and are fixed together.
+- The new join/leave sound cue above could trigger randomly while **not even
+  in a voice channel**: voice-state updates are broadcast for any mutual
+  friend's voice activity anywhere, and a friend leaving a call elsewhere
+  reports no channel — which was matching "no channel" on our own side too.
+
+## 1.16.2 — 2026-07-20
+
+### Fixed
+- **Impossible to read past the last 30 messages in a channel/DM, and
+  keyboard/controller navigation only stopped on messages containing a link**
+  (#17). Two separate issues: only the most recent 30 messages were ever
+  fetched, with no way to reach anything older; and plain-text messages had no
+  focusable element at all, so D-pad/keyboard navigation (which drives
+  Steam's scroll-follows-focus behavior) skipped straight to the next message
+  that had a link or image. Every message is now itself a focus stop, and a
+  "Load older messages" button appears at the top of the list once there's
+  more history to fetch, paging backwards through the conversation.
+- The 5 s background refresh no longer snaps the view back to the bottom
+  while reading older history — it just doesn't discard messages loaded that
+  way — and it no longer wipes the whole conversation from view if a single
+  refresh happens to fail.
+
+## 1.16.1 — 2026-07-20
+
+### Changed
+- **Monochrome SVG icons across the whole QAM UI** (#15). All color emoji
+  icons (tabs, config sections, sliders, buttons, status picker) were replaced
+  with monochrome vector icons that inherit the surrounding text size and
+  color, so the plugin now blends in with the rest of the SteamOS UI. Discord
+  statuses are shown as tinted dots (filled / moon / slashed / hollow) instead
+  of emoji.
+- **Faster Go Live self-preview** (#12). The stock-SteamOS screenshot fallback
+  now produces roughly one frame per second (instead of one every ~3 s): the
+  loop waits for the screenshot file to actually finish being written instead
+  of sleeping a fixed margin, and the QAM polls the thumbnail every second.
+
+### Fixed
+- **In-plugin updates failed on root-owned installs** (#16). The plugin
+  backend runs as the regular user, and the updater overwrote files with
+  `shutil.copy2`, which ends with a `chmod` on the destination — an operation
+  a non-root user cannot perform on root-owned files even when they are
+  world-writable. Files are now replaced via a temp file + atomic
+  `os.replace`, which only needs write permission on the directory; as a
+  bonus every replaced file becomes owned by the user, so a root-owned
+  install heals itself as it updates. If a directory is still not writable,
+  the error message now tells you the exact `chown -R` command to run.
+- **Controller shortcut capture never registered any button** (#14). Newer
+  Steam client builds changed the `RegisterForControllerInputMessages`
+  callback from an array of event objects to positional arguments, so the
+  capture (and the shortcut itself) silently saw nothing. The listener now
+  handles both signatures — and button ids are unchanged between builds, so
+  existing bindings keep working. Button names are also nicer now (A/B/X/Y,
+  D-pad, L4/L5/R4/R5, … instead of `BTN<n>`).
+- **Pressing the capture button instantly saved "A" as the shortcut** (#14).
+  The controller events of the very press that clicked "Set binding" leaked
+  into the capture, validating a one-button "A" chord before you could touch
+  anything. The capture now ignores the activating press (short grace period
+  + already-held buttons) and only validates once you release your actual
+  chord — you can still bind A itself by pressing it again after the grace.
+- **Mic processing settings (noise suppression, echo cancellation, automatic
+  gain control) reverted to defaults** (#14). The plugin now persists your
+  choices itself and re-asserts them every time the Discord client logs in,
+  so they survive plugin and console restarts even when Discord's own
+  persistence fails. The setters also verify the value actually applied and
+  report an error instead of silently doing nothing, and the QAM shows the
+  real applied value rather than an optimistic one. If the volume of other
+  apps was "dancing" during your calls (#13), it was most likely WebRTC's
+  automatic gain control staying enabled no matter what you selected — turn
+  AGC off and it should stop now that the toggle actually sticks.
+- **Audio output/input "Auto" kept the last manual choice** (#14). Switching
+  back to Auto now actively moves the Discord streams back to the system
+  default device instead of leaving them wherever they were last routed.
+
+## 1.16.0 — 2026-07-19
+
+### Added
+- **Discord Rich Presence for the running game** (#11). The QAM already told
+  the backend which game was running, but the client handler for it had been
+  lost in an earlier rewrite, so nothing ever reached Discord. It is now
+  dispatched as a proper local activity, with the game name matched (case-
+  insensitively) against Discord's detectable-applications list so most games
+  get their real artwork and "Playing …" card; the activity is also replayed
+  automatically when the Discord client reconnects, and the elapsed timer
+  survives those reconnections. A new toggle in Config → Status ("Show current
+  game on Discord", on by default) lets you turn the feature off; switching it
+  off clears the activity immediately. While the option is on, the QAM also
+  shows a small "Playing …" line (game artwork + name) under your username.
+
+### Fixed
+- **Rapid stream toggling could break streaming — and the whole console's
+  audio** (#12). Closing and reopening Go Live within a second or two made
+  overlapping acquisitions race each other: the Go Live button died, and the
+  storm of stream setup/teardown could push PipeWire itself into a state
+  where it stops accepting new clients — which on SteamOS shows up as dead
+  Steam/QAM buttons, no sound, and games refusing to launch. Fixes: the Go
+  Live button now has a short cooldown; a new start waits for the previous
+  stream's teardown before acquiring; a watchdog recovers the button if an
+  acquisition hangs; the backend serializes start/stop so audio routing can't
+  race; and every PipeWire query (`pw-dump`, `pactl`) now has a timeout, so a
+  wedged PipeWire degrades into a clear error (plus a toast telling you to
+  restart the console) instead of freezing streaming forever.
+- **Self-preview stuck on "Starting Preview…" on stock SteamOS** (#12). Stock
+  SteamOS ships GStreamer without `gst-plugin-pipewire`, so the preview
+  pipeline silently died. The preview now falls back to a
+  `gamescopectl screenshot` + `ffmpeg` loop (both are stock on SteamOS), and
+  if no method works the tile now says so instead of spinning forever.
+- The LIVE badge and preview tile no longer flicker away during a
+  not-so-fast stream reopen (a debounced synthetic STOP from the previous
+  stream raced the new one).
+
+## 1.15.1 — 2026-07-19
+
+### Added
+- **Live preview for native Go Live.** While streaming through the portal, the
+  voice view now shows a small self-preview tile (a snapshot refreshed every
+  ~2 s, captured from the same gamescope PipeWire node Chromium streams), so
+  you can see what your viewers see — same idea as the existing virtual-camera
+  preview.
+- **Update notification even with auto-update off.** If a newer release
+  exists and auto-update is disabled, a toast now tells you it's available
+  (install from the Quick Access Menu); before, you were never notified.
+
+### Changed
+- The game-mode share button is now labeled "Share screen (virtual camera)"
+  instead of "(game mode)" — since v1.15.0 native Go Live is the primary path
+  in Gaming Mode and this button is the fallback. The label is also translated
+  in all 9 languages now (it used to fall back to English outside EN/FR).
+
+### Fixed
+- **Stream volume on your own row did nothing and reset to 18 %.** Discord's
+  engine ignores the per-user stream volume for your own id (you never hear
+  your own stream), so the slider silently failed and fell back to the
+  engine's stream default (amplitude 18) on every QAM reopen. Your row now
+  shows a real **broadcast volume** slider instead: it scales the venmic
+  capture source (PipeWire), i.e. what your viewers actually hear.
+- **Volume sliders now use Discord's perceptual scale.** The engine stores
+  amplitudes while the Discord UI shows perceptual percentages; the QAM
+  sliders now convert both ways (same curve as Discord), so percentages match
+  the Discord app — another stream's default now reads ~54 % instead of a
+  mysterious "18 %".
+- **Plugin stuck on "Initializing…" after a fast Vesktop restart.** The
+  watchdog only probed Vesktop's CDP endpoint; a quick `systemctl restart`
+  brings the new endpoint up before the next probe, so the dead tab was never
+  detected and the client never re-injected. The watchdog now probes the
+  actual tab (trivial evaluate with a timeout) and recovers within seconds.
+- The initializing screen no longer draws the title across the Steam spinner
+  (the spinner renders ~110pt regardless of its container and overflowed its
+  48px box); the spinner is now properly contained with the title below it.
+- **Voice channel no longer duplicates system audio during Go Live on
+  mic-less machines.** Without a real microphone the default source is the
+  output monitor, so the voice channel silently broadcast everything the
+  machine played (game audio, UI sounds, an echo of other participants) on
+  top of the stream's own soundshare — and the stream volume slider had no
+  effect on it. While streaming without a real microphone, the voice capture
+  is now pointed at a silent sink and restored afterwards; a real microphone
+  is left untouched.
+- A Go Live stop arriving while the screen acquisition was still in flight
+  could leave Vesktop's (invisible) share dialog unanswered, wedging every
+  later `getDisplayMedia` in Electron's main process until Vesktop restarted.
+  The stop now lets the acquisition finish and releases the source; a second
+  Go Live during acquisition is ignored.
+- **Go Live black screen after the July 2026 Discord update.** Discord's new
+  bundle (hot-loaded by Vesktop on restart) changed the Go Live startup
+  contract: dispatching `STREAM_START` alone no longer captures anything — the
+  stream goes ACTIVE with no video track attached, so viewers see black. The
+  QAM Go Live now reproduces Discord's own browser flow: acquire the screen
+  through the media engine's desktop-source pool (which routes through our
+  ScreenCast portal in Gaming Mode) and pass the source id to `STREAM_START`.
+- The self-camera "rescue" path no longer looks up a Discord internal
+  (`toggleSelfVideo`) that no longer exists; it retries the real media action
+  instead, and the diagnostic verdict now reads the actual engine state.
+- **Server, DM and text-chat lists now fill the panel down to the bottom.**
+  They were capped at a hardcoded height sized for 800p, leaving a large
+  empty gap below on higher resolutions; they now size themselves to the
+  panel at any resolution.
+- A failed automatic update no longer toasts "update installed" and restarts
+  the plugin loader for nothing — it now reports the actual error.
+- **The Go Live button now shows up in Gaming Mode.** v1.15.0 shipped native
+  Go Live for gamescope, but the Quick Access Menu still hid the button there
+  — a leftover gate from when Go Live could only work under KWin. The button
+  is now always available while in voice; the virtual-camera ("game mode
+  share") button remains as the gamescope fallback. Reported by
+  @DavidNotProgamer2 right after the v1.15.0 release (#8).
+- On stock SteamOS, the screen-share error toast now points to Go Live
+  (which needs no kernel module) instead of dead-ending on v4l2loopback
+  being unavailable. (all 9 languages)
+
+## 1.15.0 — 2026-07-18
+
+### Added
+- **Native Go Live in Gaming Mode — no more virtual camera.** gamescope has
+  no screen-cast portal, which is why Go Live black-screened in game mode and
+  the v4l2loopback camera workaround existed. The plugin now ships its own
+  portal: `portal_shim.py` owns `org.freedesktop.portal.Desktop` on the user
+  bus (only while a gamescope session exists — it steps aside in Desktop Mode)
+  and answers Chromium's ScreenCast handshake with the gamescope PipeWire
+  node, the same one Steam Game Recording captures. The regular Go Live
+  button now streams the real screen at native resolution through Chromium's
+  own capture path (no VP8 double-encode, no kernel module, no rootfs writes
+  — safe across SteamOS A/B updates). Game audio is attached via venmic
+  ("Entire System"), and Vesktop's invisible share-settings modal is
+  auto-confirmed (1080p60 preset). `getDisplayMedia` now tries the native
+  portal first and falls back to the local GStreamer WebRTC relay; the
+  virtual-camera button remains as a manual last resort. Vesktop is launched
+  with `XDG_SESSION_TYPE=wayland` under gamescope so Chromium picks the
+  PipeWire capturer. A stale desktop-session `xdg-desktop-portal` holding the
+  portal name in game mode is stopped (it re-activates on demand back in
+  Desktop Mode). New vendored dep: `dbus_next` (pure Python, py_modules,
+  MIT — license shipped alongside).
+  Contributed by @azizzidi (#10) — thank you! Validated end-to-end on a
+  BC-250 with the hardening below.
+
+### Changed (hardening of the native Go Live, on top of #10)
+- **The portal only serves Steamcord's own Vesktop.** A screen-cast portal
+  that auto-approves without a consent dialog must not hand the screen to
+  arbitrary processes: the shim now verifies the D-Bus caller (resolving the
+  flatpak `xdg-dbus-proxy` through its systemd scope) before creating a
+  session, and the PipeWire fd is only handed to verified sessions.
+- **Reliable game-mode detection**: gamescope sockets persist in
+  `XDG_RUNTIME_DIR` after a game-mode session, so socket probing alone would
+  have hijacked the portal name back on the desktop and broken KDE screen
+  sharing. Detection now checks for a running KWin first (same logic the
+  share-button picker already used), in both the shim and the Vesktop
+  launcher.
+- **Electron is pinned to X11 rendering under gamescope**
+  (`--ozone-platform=x11`): with `XDG_SESSION_TYPE=wayland` alone, Electron
+  tried to render on a non-existent Wayland socket and never opened a window
+  (WebRTC's capturer selection reads the environment, not the rendering
+  platform, so the portal path still engages).
+- **Unimplemented portal interfaces get proper D-Bus error replies** (and
+  `Properties.GetAll` an empty dict) instead of no answer at all — otherwise
+  every app probing `Settings`/`FileChooser` in game mode hung until timeout.
+- **The share-settings modal is only auto-confirmed for shares Steamcord
+  itself initiated** — a share started manually in the Vesktop window keeps
+  its quality/audio dialog untouched.
+
+### Fixed
+- **Cameras going black while switching between videos** (#8): Discord's
+  voice server only sends the video of participants whose tile is
+  rendered by Discord's own UI — every mounted `<video>` tile holds an
+  "active sink" refcount per stream, and when it drops to zero the client
+  tells the server to stop that user's video (that's the black 16:9
+  rectangle that neither stop/re-watch nor toggling helped; screen shares
+  use a separate quality manager and were never affected, and 1:1 calls
+  take a special path — which is why a single stream always worked).
+  The relay now registers itself as an active video sink for the camera
+  it is relaying, exactly like a rendered Discord tile would, and keeps
+  re-asserting it while the relay is alive: switching between two
+  cameras, watching camera + screen while the share is restarted, and
+  coming back to a previously-watched camera should all keep the picture
+  live. Reported by @DavidNotProgamer2 with meticulous multi-account
+  testing — thanks again.
+
+## 1.14.6 — 2026-07-18
+
+### Fixed
+- **Incoming video rewritten: mirrored cameras, ghost tiles and black
+  streams** (#8): the relay used to capture the `<video>` elements Discord
+  had rendered, sorted by size — with no way to tell which element belonged
+  to which stream, and no way at all to capture a stream Discord had
+  decided not to render (with camera + screen share active, only one of
+  the two exists in the DOM; live-debugged on a real call). Incoming video
+  is now read straight from Discord's media engine (`RTCPeerConnection`
+  receivers), where every track is tied to its owner and its type: the
+  screen share is the track on the `stream` connection of that user, the
+  camera comes from the voice connection's track-owner table. No more
+  guessing — camera-only mirroring, "first watch shows only the camera",
+  and the ghost/black tiles that survived re-joining a call should all be
+  gone, and camera + screen share can finally be watched together.
+- **Tiles are labeled** (#8): each incoming video tile now says what it is
+  (🖥️ screen / 📷 camera) — the offer carries a per-track label so the
+  panel no longer shows anonymous tiles.
+
+### Added
+- **Toast when someone goes live**: starting a screen share or turning a
+  camera on in your voice channel now shows a SteamOS notification with
+  the person's name and avatar — before, with the panel closed, you never
+  knew a video had started (Discord itself doesn't notify these events).
+  Only real transitions notify: joining a call where someone is already
+  streaming stays silent.
+
+### Changed
+- **Fullscreen reworked** (#8, suggested by David): the fullscreen view is
+  now a real Steam modal rendered above the whole screen (the previous
+  in-panel overlay could not escape the Quick Access sidebar), one video
+  at a time — each tile has its own ⛶ button (choose the screen *or* the
+  camera) — and the controller's **B** button closes it.
+- **"v4l2loopback is installed but not loaded" that no command could fix**
+  (#9): the module can already be loaded by something else — on Bazzite
+  `/usr/lib/modprobe.d/20-akmods.conf` loads it as the OBS Virtual Camera,
+  without the `video_nr=42` device Steamcord needs. `modprobe` is a no-op
+  when the module is already loaded: it exits 0, prints nothing, and
+  ignores the parameters. The screen share hint therefore handed out a
+  command that silently did nothing, however many times you ran it.
+  Steamcord now tells that case apart from a module that is simply not
+  loaded, and unloads it first.
+- **Screen share stopped working again after every reboot**: nothing ever
+  persisted the module configuration, so `/dev/video42` was gone on the
+  next boot and the hint came back. The fix now writes
+  `/etc/modprobe.d/99-steamcord-v4l2loopback.conf` and
+  `/etc/modules-load.d/steamcord-v4l2loopback.conf`.
+
+### Changed
+- The screen share hint is delivered as a chat-style toast, which is too
+  small for a multi-line shell block and cannot be copied from in game
+  mode. Steamcord now drops a ready-to-run `~/steamcord-fix-v4l2.sh` and
+  the toast just shows `bash ~/steamcord-fix-v4l2.sh`. The script is safe
+  to re-run, and reports what is still holding the module if the unload
+  fails.
+
+## 1.14.5 — 2026-07-17
+
+### Fixed
+- **Watching a second stream mirrored the first one** (#8): with several
+  people streaming, watching one stream and then another showed the first
+  stream in both tiles (and, with screen + camera, the camera sometimes
+  came through black). The relay captures the rendered `<video>` elements
+  by size, with no reliable way to tell which element belongs to which
+  stream, so two streams watched at once cross-captured. Only one stream
+  is watched at a time now — the previous one is closed before the next
+  opens — which also keeps the narrow Quick Access panel readable.
+- **A re-opened share could come through black on the first watch** (#8):
+  when someone closes and re-opens their share, Discord re-subscribes you
+  automatically, but the relay could latch onto a not-yet-painting frame.
+  A re-created stream you are already relaying now restarts the relay so
+  it re-captures a live frame. (If it still comes through black, stop and
+  watch again.)
+- **The machine appeared to hang on shutdown while Steamcord was
+  installed** (#7): Vesktop runs in its own flatpak systemd scope, outside
+  the plugin's control group, and it ignored the shutdown SIGTERM — so the
+  system waited the full default stop timeout (~90s) before force-killing
+  it, leaving the machine with a dim backlight and the fan running before
+  it powered off. The Vesktop unit now terminates Vesktop immediately when
+  it stops and caps its stop timeout, so shutdown is prompt again.
+
+### Added
+- **Fullscreen toggle for a watched stream** (#8): a ⛶ button expands the
+  relayed video to fill the Quick Access panel, with a ✕ to exit — handy
+  on the small in-game panel.
+
+## 1.14.4 — 2026-07-17
+
+### Fixed
+- **Streams from other people never showed up in group DMs and server
+  voice channels, and a share that was closed and re-opened stayed
+  invisible until you left and rejoined the call** (#8): the plugin only
+  polled Discord's *active* stream registry, which is populated in 1:1
+  calls but only contains your own stream — or one you are already
+  watching — in group and guild channels, and misses re-created streams.
+  Stream detection (both the LIVE badge/Watch button and the watch
+  action itself) now also reads the gateway-fed *application* stream
+  registry, which tracks every stream in the channel, so streams appear
+  in every call type and re-opened shares are picked up automatically.
+
+## 1.14.3 — 2026-07-17
+
+### Fixed
+- **The "Discord login (fullscreen)" button did nothing** (#6): it was a
+  leftover from the pre-Vesktop architecture, where Discord ran inside
+  Steam's own browser view (`window.DISCORD_TAB`). Since the move to
+  Vesktop that view no longer exists, so the button — and the automatic
+  fullscreen fallback when the QR login hits a CAPTCHA — failed silently
+  for everyone.
+
+### Changed
+- **Login is now QR code or Vesktop only, by design.** No login page is
+  hosted inside the plugin and no credentials ever pass through it. The
+  dead fullscreen-login button and its CAPTCHA fallback are removed; the
+  "not connected" panel now shows the QR code plus a clear hint: if you
+  can't scan it, open Vesktop once in Desktop Mode and sign in there —
+  Steamcord reuses that session. The CAPTCHA message points to the same
+  Vesktop path instead of a page that no longer opens. Translated across
+  all 9 languages.
+
+## 1.14.2 — 2026-07-17
+
+### Fixed
+- **Watching a friend's Go Live / camera showed a green picture on devices
+  with a hardware video decoder** (#5, e.g. Steam Deck): Electron's VAAPI
+  decode path outputs green frames for incoming WebRTC video on some
+  GPU/driver combos, and the relayed stream inherited them. Vesktop is now
+  launched with hardware video *decode* disabled (software decode, the same
+  path already proven on GPUs without a decoder); sending your own share is
+  unaffected.
+- **The screen never turned off after a voice call** (#3, follow-up): the
+  v1.14.1 fix suspended the media engine's `AudioContext`, but the real
+  wake-lock holders survive a call: WebRTC audio sinks (`<audio>` elements
+  fed by a `MediaStream`) keep "playing" silence and microphone capture
+  tracks stay live, so Chromium keeps its audio output stream open forever
+  (the lingering "Chromium" entry in Steam's volume mixer). A post-call
+  janitor now pauses leftover WebRTC sinks, stops orphaned capture tracks
+  and suspends every page `AudioContext` ~5 s after leaving a call —
+  verified end-to-end in sandbox (leaked sink reproduced, PipeWire streams
+  all released after hangup). Discord recreates everything on the next call.
+- **The "Watch" button could vanish while the friend was still streaming**
+  (#5): Discord's streaming store transiently reports no active streams
+  (quality renegotiation, reconnection hiccups) and a single empty poll was
+  enough to declare the stream dead. A stream must now be missing for 3
+  consecutive polls (~6 s) before the button is removed.
+- **Voice/stream volume sliders reset to 100% when reopening the panel**
+  (#5, UI only — the actual volume was preserved): the sliders now read the
+  engine's persisted volume when they mount instead of assuming 100%.
+
+## 1.14.1 — 2026-07-16
+
+### Fixed
+- **Rerouted notifications from other Decky plugins no longer wear the
+  Discord logo** (#4): a toast from e.g. AutoFlatpaks used the generic
+  Discord avatar and looked like a Discord message — plugin toasts now get
+  the neutral Steam default avatar; the Discord logo is reserved for actual
+  Discord events without a custom avatar.
+- **Notification title could flicker or vanish** (#4): Steam refreshes the
+  personas backing the notifications asynchronously and could wipe the
+  sender's name mid-render (the name is a non-configurable MobX accessor, so
+  it can't be shadowed with a getter like the avatars) — a persona guard now
+  re-asserts the names of all notification personas, repairing the toast and
+  the notification tray within moments of any overwrite.
+- **A poisoned notification tray could silence every plugin's notifications
+  for the whole session** (#4): after using native Decky toasts on a Steam
+  build that can't render them, stale tray entries kept crashing the
+  notifications panel. The tray is now swept of leftover Decky entries at
+  every startup, regardless of the toggle. The toggle's description now
+  warns explicitly that most current builds (including SteamOS stable
+  3.8.15, same steamui bundle as the dev machine) crash on native rendering.
+- **Screen could never turn off while Steamcord was loaded** (#3,
+  experimental fix): the Discord audio engine's `AudioContext` was kept
+  permanently resumed, making Chromium hold an audio wake-lock. It is now
+  kept alive only during a voice call on this device and actively suspended
+  when idle (rejoining a call resumes it within ~1.5 s).
+
+## 1.14.0 — 2026-07-16
+
+### Added
+- **Notifications now show the Discord sender, not your own Steam profile**:
+  the sender's Discord name and real avatar appear on every message and
+  incoming-call notification (a per-sender local persona is primed in the
+  Steam friends store; senders without a custom avatar get the Discord logo).
+  DMs and incoming calls render as private messages (FriendChatMessage),
+  server channels render as group messages labeled `Sender (#channel, Server)`.
+  Your Discord notification settings (server/channel mutes, mentions-only…)
+  are respected — Steamcord only relays what Discord itself would notify.
+
+### Fixed
+- **Message notifications were broken entirely** — four stacked bugs:
+  a plain text message (no embed) crashed the handler with `IndexError`
+  (and handler exceptions went to an invisible `print()`); an apostrophe in
+  any message broke the JS dispatch eval (`JSON.parse('…')`); the dispatcher
+  task **died permanently** on the first `Cannot write to closing transport`
+  after a Steam restart (now retries with a fresh CDP tab and never dies);
+  and the plugin imported the **stale release-zip copies** of
+  `discord_client`/`tab_utils`/`steamcord_client.js` instead of the current
+  `defaults/` ones (defaults-first resolution now).
+- **Screen-share requirement hints are now translated (9 languages)** instead
+  of hardcoded French: when v4l2loopback or the GStreamer/PipeWire Python
+  bindings are missing, the backend returns a structured code plus the exact
+  install command for your distro, and the QAM shows the explanation in your
+  language with the command verbatim
+  ([#2](https://github.com/Necrosiak/Steamcord/issues/2)).
+- **SteamOS gets an honest message**: stock SteamOS does not ship the
+  v4l2loopback kernel module and OS updates wipe manual installs, so instead
+  of a `sudo pacman -S` command that cannot work there, Steamcord now says
+  screen share (game mode) is unavailable on SteamOS.
+
+### Added
+- **"Native Decky notifications" toggle** (Settings → 🔔 Notifications,
+  default OFF). Steamcord reroutes every Decky toast through a chat-style
+  Steam notification because some Steam builds crash while rendering native
+  Decky toasts (`TypeError: … reading 'notification_type'` — reproduced and
+  root-caused on current steamui: toast eType 31 is dispatched to
+  Steam-notification renderers that expect protobuf fields Decky toasts don't
+  have). If your Steam build renders them fine, flip the toggle ON to get the
+  native look back for all plugins
+  ([#2](https://github.com/Necrosiak/Steamcord/issues/2)). Turning it OFF
+  also sweeps crash-prone entries out of the notification tray.
+
+## 1.13.0 — 2026-07-12
+
+### Added
+- **🕹️ Controller voice shortcut** — capture **any button combo on your
+  controller** and bind it to **mute toggle** or **push-to-talk**, from the
+  new "Controller shortcut" section of the Settings tab. The listener is
+  global: it works in-game with the QAM closed, and survives panel close.
+  PTT mode switches Discord to push-to-talk automatically. Persisted per
+  machine in `~/.config/steamcord-input.json`. Strings in 9 languages.
+
+### Removed
+- The old hardcoded **R5 push-to-talk button** in the Voice tab — replaced by
+  the configurable shortcut above.
+
+## 1.12.3 — 2026-07-10
+
+### Fixed
+- **No more raw Python exception in the QAM when the backend starts while
+  Steam itself is still (re)starting** (mode switch, boot). The one-shot
+  SharedJSContext lookup could fail — CEF answers before the tab exists — and
+  killed the main loop; it now retries every 3 seconds until the Steam UI is
+  up.
+
+### Docs
+- Screenshot gallery in all 9 READMEs (servers, DMs, voice call, screen
+  share).
+
+## 1.12.2 — 2026-07-10
+
+### Fixed
+- **Debian/Ubuntu compatibility:** the screen-capture camera, the
+  screen-share server and its dependency bootstrap all ran the hardcoded
+  `/usr/bin/python`, which does not exist on Debian/Ubuntu. The system python
+  is now resolved from `PATH`.
+- **No more infinite "Initializing…" when the Vesktop install cannot
+  succeed.** When flatpak is present but installing Vesktop keeps failing
+  (offline, Flathub unreachable, full disk), the QAM now switches to the help
+  screen after 3 failed attempts, and self-heals when an install succeeds.
+
+### Added
+- **GStreamer/PipeWire pre-check** before starting the virtual camera, with
+  the exact package command for your OS (stock Arch/Fedora/Debian miss the
+  bindings by default).
+- openSUSE (`zypper`) is now covered by the OS-specific install hints.
+
+## 1.12.1 — 2026-07-09
+
+### Fixed
+- **Update failures are now visible.** When installing an update fails (e.g.
+  root-owned local install), the panel shows the exact error under the update
+  button instead of staying on "installing…" forever. Ships the new
+  `update_failed` string in 9 languages.
+
+## 1.12.0 — 2026-07-09
+
+Stand-alone across every Linux distro 🐧 — one build that checks what the
+machine has; Steamcord no longer assumes a Bazzite-like system.
+
+### Changed
+- **Vesktop backend cascade:** existing flatpak → native `vesktop` from PATH
+  → silently installable flatpak, with a clear per-OS message (9 languages)
+  when none is possible, and self-healing once one becomes available.
+- **Multi-session profiles work identically on the native backend.**
+
+### Added
+- **Screen share dependency check:** when `/dev/video42` is missing, the
+  "game mode" share button shows exactly how to install/load v4l2loopback
+  for your package manager, distinguishing "not installed" from "not loaded".

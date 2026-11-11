@@ -1,0 +1,228 @@
+{
+  "vesktopCommit": "4bf170e0acaf6488d3b97b19dba53bbc3c1d655d",
+  "collectedUtc": "2026-11-11T10:06:13.904343+00:00",
+  "scope": "Actual runtime packages present in official app.asar source maps; versions and archive bytes verified against pinned Vesktop root pnpm-lock.yaml. Lock-only argparse and tiny-typed-emitter omitted because absent from bundled source maps.",
+  "packages": [
+    {
+      "name": "arrpc",
+      "version": "3.7.0",
+      "license": "MIT",
+      "sourceCommit": "1dc801e8ea14d96ce8dccff416417614f058afb8",
+      "archiveUrl": "https://codeload.github.com/Vencord/arrpc/tar.gz/1dc801e8ea14d96ce8dccff416417614f058afb8",
+      "archiveSha256": "f8c97d403773e3368314f8c3e6d146dc0e974b7910960bf818abfef0ef1b677d",
+      "lockIntegrity": "sha512-/hVH9ZN2J1S2uExkz/8DjsuskA3YYcWb9oXRyaRbPExybJkvx33bpZsWOIVqgZO85ihn4wb9J97JdeWO+HIhrQ==",
+      "licenseFiles": [
+        "arrpc-1dc801e8ea14d96ce8dccff416417614f058afb8/LICENSE"
+      ]
+    },
+    {
+      "name": "builder-util-runtime",
+      "version": "9.3.1",
+      "license": "MIT",
+      "sourceCommit": null,
+      "archiveUrl": "https://registry.npmjs.org/builder-util-runtime/-/builder-util-runtime-9.3.1.tgz",
+      "archiveSha256": "079bee0237ad45b079c381395de46216d3813153d8947408d6657a28cba6fe73",
+      "lockIntegrity": "sha512-2/egrNDDnRaxVwK3A+cJq6UOlqOdedGA7JPqCeJjN2Zjk1/QB/6QUi3b714ScIGS7HafFXTyzJEOr5b44I3kvQ==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "debug",
+      "version": "4.4.3",
+      "license": "MIT",
+      "sourceCommit": "6b2c5fbdb7d414483d9e306ef234acb4cd7ea67c",
+      "archiveUrl": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+      "archiveSha256": "89c1ac9c946ee8905a875837114528e97eeae35e03be3190584b2216af43e4a7",
+      "lockIntegrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "electron-updater",
+      "version": "6.6.2",
+      "license": "MIT",
+      "sourceCommit": null,
+      "archiveUrl": "https://registry.npmjs.org/electron-updater/-/electron-updater-6.6.2.tgz",
+      "archiveSha256": "dd23dff7a87ec792c6b6f9fd9d461a284f0f18b54d7dfbd4a95ebab1a3a6b43f",
+      "lockIntegrity": "sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "fs-extra",
+      "version": "10.1.0",
+      "license": "MIT",
+      "sourceCommit": "0220eac966d7d6b9a595d69b1242ab8a397fba7f",
+      "archiveUrl": "https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz",
+      "archiveSha256": "50aa67852e866bb06b35c23f83fd07fc21b06c21ac96283956d0480922971fea",
+      "lockIntegrity": "sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "graceful-fs",
+      "version": "4.2.11",
+      "license": "ISC",
+      "sourceCommit": "514861c372899df14beb7aaecca4cdbb498d7d11",
+      "archiveUrl": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+      "archiveSha256": "3961374aa161e6fed80d6f4b6aaf2fb7eafd2c9e5be34e865b375f0114dd099c",
+      "lockIntegrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "has-flag",
+      "version": "4.0.0",
+      "license": "MIT",
+      "sourceCommit": "474aa39afca7333d356c022fc5be4d31732bbba3",
+      "archiveUrl": "https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz",
+      "archiveSha256": "77a7eb1411d927bb8a5ca7069dbe168886d63c88f446f0b81500a2cf23ddb5b1",
+      "lockIntegrity": "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==",
+      "licenseFiles": [
+        "package/license"
+      ]
+    },
+    {
+      "name": "js-yaml",
+      "version": "4.3.0",
+      "license": "MIT",
+      "sourceCommit": "33d05b5d29a8c21360f620f7e1c1706e24522eda",
+      "archiveUrl": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.0.tgz",
+      "archiveSha256": "8594ee34496dd2e41ec934fd202843dc993be9ab2d7d5d47579146962fbdfae6",
+      "lockIntegrity": "sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "jsonfile",
+      "version": "6.2.1",
+      "license": "MIT",
+      "sourceCommit": "97478af83f115359c331119330b418dfb7c5a6e7",
+      "archiveUrl": "https://registry.npmjs.org/jsonfile/-/jsonfile-6.2.1.tgz",
+      "archiveSha256": "6c1ae1dbfc6c518b10858d2e37c31d31e1fb39eaf32d77c10f1d84c573540d36",
+      "lockIntegrity": "sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "lazy-val",
+      "version": "1.0.5",
+      "license": "MIT",
+      "sourceCommit": "b69ad4119f1b19bdab13c61ee2fcc88d46b89071",
+      "archiveUrl": "https://registry.npmjs.org/lazy-val/-/lazy-val-1.0.5.tgz",
+      "archiveSha256": "7d8602ad98db3d19fbd5b46fbf3831dd996197a013ef1ff7badc205e41435372",
+      "lockIntegrity": "sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==",
+      "licenseFiles": [],
+      "licenseDeclarationSource": "package/package.json",
+      "standardLicenseReference": "https://raw.githubusercontent.com/spdx/license-list-data/main/text/MIT.txt",
+      "upstreamLicenseFileAbsent": true
+    },
+    {
+      "name": "lodash.escaperegexp",
+      "version": "4.1.2",
+      "license": "MIT",
+      "sourceCommit": null,
+      "archiveUrl": "https://registry.npmjs.org/lodash.escaperegexp/-/lodash.escaperegexp-4.1.2.tgz",
+      "archiveSha256": "17e49a4288031a39d917abaecd2ad41919240806799dbea7f26b72748a8c483a",
+      "lockIntegrity": "sha512-TM9YBvyC84ZxE3rgfefxUWiQKLilstD6k7PTGt6wfbtXF8ixIJLOL3VYyV/z+ZiPLsVxAsKAFVwWlWeb2Y8Yyw==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "lodash.isequal",
+      "version": "4.5.0",
+      "license": "MIT",
+      "sourceCommit": null,
+      "archiveUrl": "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz",
+      "archiveSha256": "a3b534a55485caad0c28ce56779eb4faea13d3c23a55691eaedca6a0b9834278",
+      "lockIntegrity": "sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "ms",
+      "version": "2.1.3",
+      "license": "MIT",
+      "sourceCommit": "1c6264b795492e8fdecbc82cb8802fcfbfc08d26",
+      "archiveUrl": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+      "archiveSha256": "f6616e15e530ed552f9daa2d3ce71963947c6bc7c98c9b64fd3e673fd02622c6",
+      "lockIntegrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+      "licenseFiles": [
+        "package/license.md"
+      ]
+    },
+    {
+      "name": "sax",
+      "version": "1.6.0",
+      "license": "BlueOak-1.0.0",
+      "sourceCommit": "be26f5488fb832c25347296c4a2b59fd53f8ee13",
+      "archiveUrl": "https://registry.npmjs.org/sax/-/sax-1.6.0.tgz",
+      "archiveSha256": "d424acd207642df18c2d814411907b9a108ff1dfca341cfddf523bd57af699f4",
+      "lockIntegrity": "sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==",
+      "licenseFiles": [
+        "package/LICENSE.md"
+      ]
+    },
+    {
+      "name": "semver",
+      "version": "7.8.5",
+      "license": "ISC",
+      "sourceCommit": "6e05b7637396ac66522cff8731f07cfe0ef49a29",
+      "archiveUrl": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz",
+      "archiveSha256": "d85045d4300d7d57c891336b95df532e73f34c22ffcd222452b6d08b9d127d5d",
+      "lockIntegrity": "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "supports-color",
+      "version": "7.2.0",
+      "license": "MIT",
+      "sourceCommit": "c5edf46896d1fc1826cb1183a60d61eecb65d749",
+      "archiveUrl": "https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz",
+      "archiveSha256": "f16acafd1634624e60c24a5538004c4e168c82607f10dbe28395e9df3e7d5e4a",
+      "lockIntegrity": "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==",
+      "licenseFiles": [
+        "package/license"
+      ]
+    },
+    {
+      "name": "universalify",
+      "version": "2.0.1",
+      "license": "MIT",
+      "sourceCommit": "dc17e0e00fb39c8d52e97ce77e494cdadfa8d19c",
+      "archiveUrl": "https://registry.npmjs.org/universalify/-/universalify-2.0.1.tgz",
+      "archiveSha256": "7d07313bb61836a12f0ba5485e67673334a3ee955e7aefb3c4b3fc5a1b7b7865",
+      "lockIntegrity": "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "name": "ws",
+      "version": "8.21.3",
+      "license": "MIT",
+      "sourceCommit": "c791e707eab3c13dd9a261d2479c3cc4a49a6fed",
+      "archiveUrl": "https://registry.npmjs.org/ws/-/ws-8.21.3.tgz",
+      "archiveSha256": "df3454ef205791ce50b5b9241762dcf9bfe1aa9f7f01d3057229be7dac0c2dc3",
+      "lockIntegrity": "sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    }
+  ],
+  "failures": [],
+  "disclosures": [
+    "lazy-val 1.0.5 declares MIT but ships no LICENSE/copyright notice. Notice records verified upstream author and includes standard SPDX MIT text with original placeholders; no copyright year or holder was invented."
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "sourceCommit": "d07030c0968e31e41caa0c35fda0ef8ae63a079e",
+  "packages": [
+    {
+      "package": "@intrnl/xxhash64",
+      "version": "0.1.2",
+      "url": "https://registry.npmjs.org/@intrnl/xxhash64/-/xxhash64-0.1.2.tgz",
+      "integrity": "sha512-1+lx7j99fdph+uy3EnjQyr39KQZ7LP56+aWOr6finJWpgYpvb7XrhFUqDwnEk/wpPC98nCjAT6RulpW3crWjlg==",
+      "sha256": "42591736893e32e813d9c5eea8b19f45c37969cfe9569eeaa3b03fe4c9fa34d8",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "package": "@vap/core",
+      "version": "0.0.12",
+      "url": "https://registry.npmjs.org/@vap/core/-/core-0.0.12.tgz",
+      "integrity": "sha512-3csHpkE1zUSRTZwl7xIf2uXg1cD4IhhtUm0F6K/dWydc95R5Nj+krB4OTNATuqkewIv/ViCbwjPfkafAgvZQSg==",
+      "sha256": "fcc698c982edf152861aaefd9d8b73413f04c16801e92b8813e2151d8bdfe4da",
+      "licenseFiles": [
+        "https://raw.githubusercontent.com/Vap0r1ze/vapcord/a6d3c6af4e5a533f91363d2c617b849b9f08ce10/LICENSE"
+      ]
+    },
+    {
+      "package": "@vap/shiki",
+      "version": "0.10.5",
+      "url": "https://registry.npmjs.org/@vap/shiki/-/shiki-0.10.5.tgz",
+      "integrity": "sha512-5BHVGvQT8qonbLSASon5aQFQ18OZU4FxSl9tLSj6oJ0sap3KdMbYcfGq25M9zFZR1g1dJN7fgjmZXBIS5omIdw==",
+      "sha256": "a3d69025f12aa53d4eb78c1cfe20f90b4d639625b07aaa06441c236c95acafe9",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "package": "@vencord/monaco-editor",
+      "version": "0.57.0-beta.4",
+      "url": "https://registry.npmjs.org/@vencord/monaco-editor/-/monaco-editor-0.57.0-beta.4.tgz",
+      "integrity": "sha512-CCZAuwjYpgY+KdxqaPeqX8BX6VEdCMCLuQaYc2Guuxz6S2W4lSC1AnIRpgYkMxsEnMTZbl38UU2bK0zJSlc6rw==",
+      "sha256": "ecc31510d886d6047dd61c2acb86e46f4ed4eb9be7f32bb50a56fefe2d72610d",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "package": "fflate",
+      "version": "0.8.3",
+      "url": "https://registry.npmjs.org/fflate/-/fflate-0.8.3.tgz",
+      "integrity": "sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==",
+      "sha256": "38c2cd824402407b43153c782274aec2ea83ea688e4aa0b743c5f2c305857d92",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "package": "gifenc",
+      "version": "https://codeload.github.com/mattdesl/gifenc/tar.gz/64842fca317b112a8590f8fef2bf3825da8f6fe3",
+      "url": "https://codeload.github.com/mattdesl/gifenc/tar.gz/64842fca317b112a8590f8fef2bf3825da8f6fe3",
+      "integrity": "sha512-xP/ugyNyXc2Go2SpipSltQx9LTL2qR/URxgRxs2VEpvKokR8xPOABiHCD1DWQVt1/gHX/6IBozamH/rgOLFLuQ==",
+      "sha256": "4f0da3db7ba27eface945d8301e8ad14d715f4c486c46e8d93e1a639807f1045",
+      "licenseFiles": [
+        "gifenc-64842fca317b112a8590f8fef2bf3825da8f6fe3/LICENSE.md"
+      ]
+    },
+    {
+      "package": "eventemitter3",
+      "version": "4.0.7",
+      "url": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz",
+      "integrity": "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==",
+      "sha256": "703cdecfa6951d9ad258f615ab96895750add3cb2d95e3727837b78709975de8",
+      "licenseFiles": [
+        "package/LICENSE"
+      ]
+    },
+    {
+      "package": "jsonc-parser",
+      "version": "3.3.1",
+      "url": "https://registry.npmjs.org/jsonc-parser/-/jsonc-parser-3.3.1.tgz",
+      "integrity": "sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==",
+      "sha256": "4a0315b8671e7463bae7af7c142cdf19e9aa7ba39eb36dc2df383b8648e3cbc9",
+      "licenseFiles": [
+        "package/LICENSE.md"
+      ]
+    },
+    {
+      "package": "vscode-oniguruma",
+      "version": "1.7.0",
+      "url": "https://registry.npmjs.org/vscode-oniguruma/-/vscode-oniguruma-1.7.0.tgz",
+      "integrity": "sha512-L9WMGRfrjOhgHSdOYgCt/yRMsXzLDJSL7BPrOZt73gU0iWO4mpqzqQzOz5srxqTvMBaR0XZTSrVWo4j55Rc6cA==",
+      "sha256": "830c8de8fd475455d8c161ca3c1f5f3c935fad8327ee548dec38c8985097657f",
+      "licenseFiles": [
+        "package/LICENSE.txt"
+      ]
+    },
+    {
+      "package": "vscode-textmate",
+      "version": "5.2.0",
+      "url": "https://registry.npmjs.org/vscode-textmate/-/vscode-textmate-5.2.0.tgz",
+      "integrity": "sha512-Uw5ooOQxRASHgu6C7GVvUxisKXfSgW4oFlO+aa+PAkgmH89O3CXxEEzNRNtHSqtXFTl0nAC1uYj0GMSH27uwtQ==",
+      "sha256": "74c7aa1cf538ef97bc70eacf46df8ae7245926b920f8633eb80b2ab26e34e9c8",
+      "licenseFiles": [
+        "package/LICENSE.md"
+      ]
+    }
+  ]
+}

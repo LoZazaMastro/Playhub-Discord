@@ -14,16 +14,15 @@ import {
   SliderField,
   Dropdown,
   TextField,
-  SteamSpinner,
   showModal,
   useQuickAccessVisible,
 } from "@decky/ui";
 import { Component, Suspense, useState, useEffect, useRef } from "react";
 import { FaDiscord } from "react-icons/fa";
 import {
-  IcBell, IcCheckCircle, IcChat, IcController, IcFolder, IcGear, IcGithub,
-  IcHeadphones, IcHome, IcInfo, IcJoystick, IcLogout, IcMic, IcPhone,
-  IcRefresh, IcSmartphone, IcSpeaker, IcStatus, IcUser, IcWarn,
+  IcBell, IcChat, IcController, IcFolder, IcGear, IcGithub,
+  IcHeadphones, IcInfo, IcJoystick, IcLogout, IcMic,
+  IcRefresh, IcSpeaker, IcStatus, IcUser, IcWarn,
 } from "./components/Icons";
 
 class ContentErrorBoundary extends Component<{ children: any }, { hasError: boolean; msg: string }> {
@@ -36,14 +35,15 @@ class ContentErrorBoundary extends Component<{ children: any }, { hasError: bool
   }
   render() {
     if (this.state.hasError)
-      return <div style={{ padding: 8, color: "#ff6b6b", fontSize: 13 }}><IcWarn /> Steamcord render error — check webhelper_js.txt<br />{this.state.msg}</div>;
+      return <div role="alert" style={{ padding: 12, color: "#ff9698", fontSize: 13, lineHeight: 1.5 }}><IcWarn /> {t("discord_reconnecting")}</div>;
     return this.props.children;
   }
 }
 
 import { menuEntryEnabled, patchMenu, setMenuEntryEnabled } from "./patches/menuPatch";
 import { notify, installClickHook, uninstallClickHook, getNativeToasts, setNativeToasts, getStreamerMode, setStreamerMode, setLiveSource, StreamerMode, NotifSound, getNotifSound, setNotifSoundCache } from "./notify";
-import { ACCENT, DANGER, ONLINE, focusHalo, setVeilAlpha } from "./components/Styled";
+import { ACCENT, DANGER, focusHalo, setVeilAlpha } from "./components/Styled";
+import { VoiceSession } from "./components/VoiceSession";
 
 // Même contournement que dans VoiceChatViews : les types publiés par @decky/ui
 // pour SliderField ne décrivent pas `bottomSeparator`.
@@ -58,7 +58,9 @@ import { DiscordExpandedModal } from "./components/DiscordExpanded";
 import { ChatFullscreenModal } from "./components/ChatFullscreen";
 import { openIncomingCall } from "./components/IncomingCall";
 import { EventsPanel } from "./components/EventsPanel";
-import { openCaptchaSolver } from "./components/CaptchaSolver";
+import { DiscordSignIn } from "./components/DiscordSignIn";
+import { DiscordStartup } from "./components/DiscordStartup";
+import { connectionProgress } from "./connectionDeadline";
 import {
   useSteamcordState,
   isLoaded,
@@ -112,62 +114,6 @@ declare global {
 const SP = PanelSection || ((p: any) => <div>{p.children}</div>);
 const SR = PanelSectionRow || ((p: any) => <div>{p.children}</div>);
 
-const CaptchaBtn = DialogButton as any;
-
-const NotLoggedIn = ({ qr_login, qr_scanned, captcha_needed }: { qr_login?: string; qr_scanned?: boolean; captcha_needed?: boolean }) => {
-  const host = useHost();
-  // Deux méthodes de login SEULEMENT : QR (ci-dessous) ou Vesktop en mode
-  // Bureau. AUCUN identifiant ne transite par le plugin — pas de page de login
-  // interne (l'ancien bouton « plein écran » pilotait une BrowserView Steam de
-  // l'archi pré-Vesktop qui n'existe plus → il ne faisait rien, issue #6).
-  // Le CAPTCHA, lui, n'a pas besoin d'identifiants : il se résout dans le
-  // miroir de la page (#37), sans repasser en mode Bureau.
-  return (
-    <div style={{ display: "flex", flexDirection: "column", padding: "8px 15px" }}>
-      <h2 style={{ marginBottom: 4 }}>{t("not_connected")}</h2>
-      {qr_scanned ? (
-        // QR scanné → Discord attend la validation sur le téléphone.
-        <div style={{ textAlign: "center", padding: "12px 0" }}>
-          <div style={{ fontSize: 26, marginBottom: 8, display: "flex", gap: 8, justifyContent: "center" }}><IcSmartphone /><IcCheckCircle color="#23a55a" /></div>
-          <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px" }}>{t("qr_scanned_title")}</p>
-          <p style={{ fontSize: 11, opacity: 0.65, margin: 0, lineHeight: 1.4 }}>{t("qr_scanned_body")}</p>
-        </div>
-      ) : qr_login ? (
-        <div style={{ textAlign: "center" }}>
-          <p style={{ fontSize: 12, opacity: 0.8, margin: "4px 0 8px" }}>
-            {t("qr_scan")}
-          </p>
-          <img src={qr_login} style={{ width: 160, height: 160, borderRadius: 8, background: "#fff", padding: 4 }} />
-          <p style={{ fontSize: 11, opacity: 0.55, margin: "8px 0 0", lineHeight: 1.4 }}>
-            {t("qr_explain")}
-          </p>
-        </div>
-      ) : (
-        <p style={{ fontSize: 12, opacity: 0.6 }}>{t("qr_loading")}</p>
-      )}
-      {captcha_needed && (
-        // Discord a planté un CAPTCHA SUR sa page de login : tant qu'il n'est
-        // pas résolu il n'émet aucun ticket, et le QR se régénère en boucle
-        // sans le moindre indice (#37). On le dit, et on propose de le résoudre
-        // ici même — le miroir de la page se pilote à la manette.
-        <div style={{ marginTop: 10, padding: "8px 10px", borderRadius: 8, background: "rgba(255,204,68,0.10)", border: "1px solid rgba(255,204,68,0.35)" }}>
-          <p style={{ fontSize: 12, color: "#ffcc44", margin: 0, lineHeight: 1.4 }}>
-            <IcWarn /> {t("captcha_needed")}
-          </p>
-          <CaptchaBtn onClick={() => openCaptchaSolver()} style={{ marginTop: 8, width: "100%" }}>
-            {t("captcha_open")}
-          </CaptchaBtn>
-        </div>
-      )}
-      <div style={{ marginTop: 12, padding: "8px 10px", background: "rgba(255,255,255,0.05)", borderRadius: 8 }}>
-        <p style={{ fontSize: 11, opacity: 0.75, margin: 0, lineHeight: 1.45 }}>
-          {t(host.onWindows ? "login_vesktop_hint_windows" : "login_vesktop_hint")}
-        </p>
-      </div>
-    </div>
-  );
-};
-
 const BtnTab = DialogButton as any;
 
 // Onglet de navigation (Vocal/Conversations, Serveurs/MP). Texte blanc forcé :
@@ -186,7 +132,7 @@ const TabBtn = ({ active, focused, onClick, onFocus, onBlur, fontSize, children 
   const halo = focusHalo(ACCENT, focused);
   const shadow = [
     active ? `inset 0 -${px(3)}px 0 ${ACCENT}` : "",
-    focused ? `0 0 0 2px #fff, 0 0 8px 1px ${ACCENT}` : "",
+    focused ? `0 0 0 2px ${ACCENT}` : "",
   ].filter(Boolean).join(", ") || "none";
   return (
   <BtnTab noFocusRing
@@ -199,11 +145,9 @@ const TabBtn = ({ active, focused, onClick, onFocus, onBlur, fontSize, children 
       flex: "1 1 0", minWidth: 0, margin: 0, padding: `${px(8)}px 0`,
       fontSize: fontSize ?? px(13), minHeight: px(40), boxSizing: "border-box",
       overflow: "visible", lineHeight: 1.2,
-      borderRadius: `${px(6)}px ${px(6)}px 0 0`,
+      borderRadius: px(8),
       color: active || focused ? "#fff" : "rgba(255,255,255,0.62)",
-      background: focused
-        ? "rgba(88,101,242,0.85)"
-        : active ? "rgba(88,101,242,0.28)" : "rgba(255,255,255,0.04)",
+      background: active ? "rgba(255,225,91,.12)" : focused ? "rgba(255,255,255,.12)" : "transparent",
       fontWeight: active ? 700 : 400,
       ...halo,
       boxShadow: shadow,
@@ -224,7 +168,7 @@ const TabRow = ({ children }: any) => (
     flow-children="row"
     style={{
       display: "flex", gap: 4, marginBottom: 6, width: "100%", boxSizing: "border-box",
-      borderBottom: "1px solid rgba(255,255,255,0.14)",
+      padding: 3, borderRadius: 10, background: "rgba(0,0,0,.17)",
     }}
   >
     {children}
@@ -244,7 +188,7 @@ const WideBtn = ({ onClick, focused, onFocus, onBlur, children }: any) => {
     style={{
       width: "100%", margin: 0, padding: `${px(8)}px 0`, fontSize: px(13), minHeight: px(40),
       boxSizing: "border-box", overflow: "visible", lineHeight: 1.2, color: "#fff",
-      background: focused ? "rgba(88,101,242,0.85)" : "rgba(255,255,255,0.06)",
+      background: focused ? "rgba(255,255,255,.14)" : "rgba(255,255,255,0.06)",
       ...focusHalo(ACCENT, focused),
     }}
   >
@@ -452,7 +396,7 @@ const syncOpenView = (apply: (top?: OpenTop, src?: OpenSrc) => void) => {
 
 const STATUS_AUTO_KEY = "steamcord_status_auto";
 const getAutoSync = (): boolean => {
-  try { return localStorage.getItem(STATUS_AUTO_KEY) !== "0"; } catch { return true; } // défaut ON
+  try { return localStorage.getItem(STATUS_AUTO_KEY) === "1"; } catch { return false; }
 };
 const setAutoSync = (v: boolean) => {
   try { localStorage.setItem(STATUS_AUTO_KEY, v ? "1" : "0"); } catch { }
@@ -578,7 +522,7 @@ const UserStatusButton = ({ me, onExpand }: { me: any; onExpand?: () => void }) 
           // Blanc forcé : le focus natif du DialogButton passe le texte en
           // sombre alors qu'on garde un fond foncé → pseudo illisible.
           color: "#fff",
-          background: focused === "name" ? "rgba(88,101,242,0.6)" : "rgba(255,255,255,0.06)",
+          borderRadius: px(10), background: focused === "name" ? "rgba(255,255,255,.12)" : "transparent",
           ...focusHalo(ACCENT, focused === "name"),
         }}
       >
@@ -594,7 +538,7 @@ const UserStatusButton = ({ me, onExpand }: { me: any; onExpand?: () => void }) 
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
           />
         </div>
-        <span style={{ flex: 1, minWidth: 0, textAlign: "left", fontSize: px(14), fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{me?.global_name || me?.username}</span>
+        <span style={{ flex: 1, minWidth: 0, textAlign: "left", fontSize: px(14), fontWeight: 600, lineHeight: 1.3, overflowWrap: "anywhere" }}>{me?.global_name || me?.username}</span>
         {/* Statut courant (icône) à droite du pseudo. */}
         <span style={{ fontSize: px(16) }}><IcStatus id={cur.id} color={cur.color} size={px(16)} /></span>
         <span style={{ opacity: 0.4, fontSize: px(12) }}>{open ? "▲" : "▼"}</span>
@@ -761,7 +705,7 @@ const StatusAutoToggle = () => {
 const RpcToggle = () => {
   const [on, setOn] = useState<boolean | null>(null);
   useEffect(() => {
-    call<[], boolean>("get_rpc_enabled").then((v) => setOn(!!v)).catch(() => setOn(true));
+    call<[], boolean>("get_rpc_enabled").then((v) => setOn(!!v)).catch(() => setOn(false));
   }, []);
   if (on === null) return null;
   return (
@@ -784,7 +728,7 @@ const RpcToggle = () => {
 const RpcDetectToggle = () => {
   const [on, setOn] = useState<boolean | null>(null);
   useEffect(() => {
-    call<[], boolean>("get_rpc_detect").then((v) => setOn(!!v)).catch(() => setOn(true));
+    call<[], boolean>("get_rpc_detect").then((v) => setOn(!!v)).catch(() => setOn(false));
   }, []);
   if (on === null) return null;
   return (
@@ -1034,267 +978,8 @@ const DiagnosticsSetting = ({ action, label, description }: { action: string; la
   </>;
 };
 
-const UpdaterSection = () => {
-  // Défaut OFF, aligné sur le backend : une install passe par la modale de
-  // confirmation de Decky, on ne la fait pas surgir sans que l'user l'ait voulu.
-  const [auto, setAuto] = useState(false);
-  const [status, setStatus] = useState<
-    "idle" | "checking" | "available" | "uptodate" | "updated" | "installing" | "confirm" | "checkfailed" | "failed" | "needsrestart"
-  >("idle");
-  const [updErr, setUpdErr] = useState("");
-  const [latest, setLatest] = useState("");
-  const [current, setCurrent] = useState("");
-  const [url, setUrl] = useState("");
-  const [focused, setFocused] = useState<string | null>(null);
-  const confirmTimer = useRef<any>(null);
-  const latestRef = useRef("");
-  latestRef.current = latest;
+const UpdaterSection = () => <SR><div style={{ fontSize: 12, opacity: .65 }}>{t("playhub_updates")}</div></SR>;
 
-  // Une annulation de la modale Decky n'émet AUCUN événement côté loader. En
-  // revanche le frontend de Decky, lui, appelle `utilities/cancel_plugin_install`
-  // : on enveloppe `DeckyBackend.call` le temps de la confirmation pour le voir
-  // passer et rendre le bouton tout de suite, au lieu d'attendre l'expiration du
-  // garde-fou (retour user : le libellé doit partir dès que la fenêtre part).
-  // `call` vit sur le prototype → notre wrapper est une propriété propre qu'un
-  // simple `delete` retire ; on n'enveloppe que pendant l'attente.
-  const cancelHooked = useRef(false);
-  const unhookCancel = () => {
-    const backend: any = (window as any).DeckyBackend;
-    if (!cancelHooked.current || !backend) return;
-    cancelHooked.current = false;
-    try { delete backend.call; } catch {}
-  };
-  const hookCancel = () => {
-    const backend: any = (window as any).DeckyBackend;
-    if (!backend?.call || cancelHooked.current) return;
-    const orig = backend.call.bind(backend);
-    backend.call = (name: string, ...args: any[]) => {
-      if (name === "utilities/cancel_plugin_install") {
-        unhookCancel();
-        if (confirmTimer.current) { clearTimeout(confirmTimer.current); confirmTimer.current = null; }
-        setStatus((s) => (s === "confirm" ? "available" : s));
-      }
-      return orig(name, ...args);
-    };
-    cancelHooked.current = true;
-  };
-
-  useEffect(() => () => {
-    if (confirmTimer.current) clearTimeout(confirmTimer.current);
-    unhookCancel();
-  }, []);
-
-  useEffect(() => {
-    call<[], boolean>("get_autoupdate").then((v) => setAuto(!!v)).catch(() => {});
-  }, []);
-
-  // Suivi d'une install déléguée au loader. Sans ça le bouton restait figé sur
-  // « confirmez dans la fenêtre Decky » même après validation, puisqu'on ne
-  // récupère aucun retour de l'appel (retour user).
-  useEffect(() => {
-    const backend: any = (window as any).DeckyBackend;
-    if (!backend?.addEventListener) return;
-    const onStart = (name: string) => {
-      if (name !== "Steamcord") return;
-      if (confirmTimer.current) { clearTimeout(confirmTimer.current); confirmTimer.current = null; }
-      unhookCancel();
-      setStatus("installing");
-    };
-    const onFinish = (name: string) => {
-      if (name !== "Steamcord") return;
-      unhookCancel();
-      // Decky recharge le plugin dans la foulée ; on remet quand même l'état au
-      // propre au cas où le panneau resterait monté.
-      setCurrent((c) => latestRef.current || c);
-      setStatus("updated");
-    };
-    backend.addEventListener("loader/plugin_download_start", onStart);
-    backend.addEventListener("loader/plugin_download_finish", onFinish);
-    return () => {
-      backend.removeEventListener("loader/plugin_download_start", onStart);
-      backend.removeEventListener("loader/plugin_download_finish", onFinish);
-    };
-  }, []);
-
-  const doCheck = async () => {
-    setStatus("checking");
-    try {
-      const info: any = await call<[], any>("check_update");
-      setCurrent(info?.current || "");
-      if (info?.error) {
-        // Une vérification qui ÉCHOUE (réseau coupé, quota API GitHub épuisé,
-        // GitHub en rade) renvoie update_available:false + error. Sans ce test on
-        // annonçait « vous êtes à jour » alors qu'on n'en savait rien (retour
-        // user : quota épuisé, plugin en 1.18.0, et le QAM affichait « à jour »).
-        setUpdErr(String(info.error));
-        setStatus("checkfailed");
-        return;
-      }
-      if (info?.update_available) {
-        setLatest(info.latest);
-        setUrl(info.url);
-        setStatus("available");
-      } else {
-        setStatus("uptodate");
-      }
-    } catch {
-      setStatus("idle");
-    }
-  };
-
-  const doInstall = async () => {
-    setStatus("installing");
-    setUpdErr("");
-    // ORDRE INVERSÉ le 13/09 : on essaie NOTRE décompression d'abord.
-    //
-    // Decky re-chown le dossier top-level du plugin (et plugin.json) à root à
-    // chaque chargement et n'attribue à l'utilisateur que le contenu : on peut
-    // réécrire les fichiers existants, jamais créer une nouvelle entrée à la
-    // racine (#16, game_overlay/ en 1.18.x). D'où la délégation, jusqu'ici en
-    // premier, à l'installeur de Decky, qui tourne en root.
-    //
-    // Sauf que c'est la route du STORE Decky : après avoir décompressé, elle
-    // déclare l'install à plugins.deckbrew.xyz, qui ne connaît pas nos plugins
-    // → 404 → la suite ne s'exécute pas. Mesuré le 13/09, journal du loader à
-    // l'appui : fichiers écrits, plugin JAMAIS rechargé, et la modale « Mise à
-    // jour en cours » reste figée en travers de l'interface Steam.
-    //
-    // Notre updater sait désormais dire AVANT d'écrire s'il peut tout écrire.
-    // Il traite donc le cas courant, et Decky n'est plus qu'un dernier recours,
-    // pour les releases qui ajoutent vraiment un fichier à la racine.
-    let applyErr = "";
-    try {
-      const r: any = await call<[string], any>("apply_update", url);
-      if (r === true || r?.ok) {
-        // Les fichiers sont écrits — mais RIEN n'est chargé pour autant, et
-        // c'est tout le sujet de #52 : « je clique, il ne se passe rien », puis
-        // la bonne version apparaît après un redémarrage du Deck.
-        //
-        // Le backend ne peut pas recharger. Mesuré le 22/09, deux causes
-        // empilées : le loader est un bundle PyInstaller et lègue son
-        // LD_LIBRARY_PATH à nos backends, si bien que `systemctl` ne démarre
-        // même pas (libcrypto du bundle) ; et une fois cet environnement
-        // nettoyé, polkit refuse l'unité SYSTÈME à un plugin non root.
-        // Personne ne lisait ce code de retour, d'où le silence complet.
-        //
-        // Le loader, LUI, tourne en root : sa route interne loader/reload_plugin
-        // arrête notre backend, le réimporte depuis les fichiers neufs, puis
-        // fait recharger dist/index.js au frontend. Rien à voir avec
-        // utilities/install_plugin, la route du Store, qui se perd sur un 404
-        // deckbrew et laisse une modale figée (13/09).
-        const backend: any = (window as any).DeckyBackend;
-        if (backend?.call) {
-          try {
-            await backend.call("loader/reload_plugin", "Steamcord");
-            // Le panneau à l'écran n'est PAS remonté par le rechargement : Steam
-            // garde l'arbre React déjà monté, et il restait donc figé sur
-            // « Installation… » — vu à l'écran le 22/09, alors même que le
-            // plugin venait d'être réimporté des deux côtés. C'est très
-            // exactement le « je clique et il ne se passe rien » de #52, donc on
-            // finit le parcours nous-mêmes. Le nouveau code sert dès la
-            // prochaine ouverture du menu.
-            // #52 (bastiHST90, 24/09) : finir sur « À jour (x) » ne se
-            // distinguait pas d'un clic resté sans effet — il a cru que rien
-            // ne s'était passé. Un état à part dit que ça a marché, et quoi faire.
-            setCurrent(latest);
-            setStatus("updated");
-            return;
-          } catch {
-            // Decky trop ancien pour cette route : on le dit, au lieu de laisser
-            // le bouton figé sur « Installation… » pour toujours.
-          }
-        }
-        setStatus("needsrestart");
-        return;
-      }
-      applyErr = r?.error || "";
-    } catch {
-      applyErr = "";
-    }
-
-    // Dernier recours. Il écrira les fichiers, mais sa modale peut rester
-    // ouverte : le minuteur rend le bouton utilisable quoi qu'il arrive.
-    const backend: any = (window as any).DeckyBackend;
-    if (backend?.call) {
-      try {
-        // (artifact, name, version, hash, install_type) — 2 = InstallType.UPDATE
-        await backend.call("utilities/install_plugin", url, "Steamcord", latest, "", 2);
-        setStatus("confirm");
-        hookCancel();
-        if (confirmTimer.current) clearTimeout(confirmTimer.current);
-        confirmTimer.current = setTimeout(() => {
-          confirmTimer.current = null;
-          unhookCancel();
-          setStatus((s) => (s === "confirm" ? "available" : s));
-        }, 30000);
-        return;
-      } catch {
-        // Loader trop ancien / route absente.
-      }
-    }
-    setUpdErr(applyErr);
-    setStatus("failed");
-  };
-
-  const onToggle = (v: boolean) => {
-    setAuto(v);
-    call<[boolean], boolean>("set_autoupdate", v).catch(() => {});
-  };
-
-  const label =
-    status === "checking" ? t("update_checking")
-    : status === "installing" ? t("update_installing")
-    : status === "confirm" ? t("update_confirm_prompt")
-    : status === "available" ? t("update_install", { v: latest })
-    : status === "uptodate" ? t("update_up_to_date", { v: current })
-    : status === "updated" ? t("update_done", { v: current })
-    : status === "checkfailed" ? t("update_check_failed")
-    : status === "failed" ? t("update_failed")
-    : status === "needsrestart" ? t("update_needs_restart")
-    : t("update_check");
-
-  return (
-    <>
-      <SR>
-        <ToggleField
-          label={t("update_auto")}
-          checked={auto}
-          onChange={onToggle}
-          bottomSeparator="none"
-        />
-      </SR>
-      <SR>
-        <WideBtn
-          onClick={status === "available" ? doInstall : doCheck}
-          focused={focused === "upd"}
-          onFocus={() => setFocused("upd")}
-          onBlur={() => setFocused((f) => (f === "upd" ? null : f))}
-        >
-          {status === "failed" ? <IcWarn /> : <IcRefresh />} {label}
-        </WideBtn>
-      </SR>
-      {status === "updated" ? (
-        <SR>
-          <div style={{ fontSize: "11px", color: ONLINE, padding: "2px 4px", lineHeight: 1.35 }}>
-            {t("update_done_note", { v: current })}
-          </div>
-        </SR>
-      ) : null}
-      {(status === "failed" || status === "checkfailed") && updErr ? (
-        <SR>
-          <div style={{ fontSize: "11px", opacity: 0.8, padding: "2px 4px", wordBreak: "break-word" }}>
-            {updErr}
-          </div>
-        </SR>
-      ) : null}
-    </>
-  );
-};
-
-// Environnement d'affichage : "desktop" (KWin = Bureau/Big Picture) vs
-// "gamescope" (console). Depuis v1.15.0 Go Live marche partout (portail KWin
-// ou portal_shim) → ne sert plus qu'à décider si le fallback « mode jeu »
-// (v4l2) est proposé en plus ("unknown" → oui, par sécurité).
 function useShareEnv(): "desktop" | "gamescope" | "windows" | "unknown" {
   const [env, setEnv] = useState<"desktop" | "gamescope" | "windows" | "unknown">("unknown");
   useEffect(() => {
@@ -1314,42 +999,6 @@ function useShareEnv(): "desktop" | "gamescope" | "windows" | "unknown" {
 // faire tourner Vesktop existe (flatpak ou paquet natif). null = rien → on
 // remplace le spinner par la marche à suivre (cas CachyOS sans flatpak).
 // Re-poll 10 s → le message disparaît tout seul dès que le user a installé.
-function useVesktopBackend(active: boolean): string | null | "unknown" {
-  const [backend, setBackend] = useState<string | null | "unknown">("unknown");
-  useEffect(() => {
-    if (!active) return;
-    let alive = true;
-    const poll = () =>
-      call<[], { backend: string | null }>("get_vesktop_backend")
-        .then((r) => { if (alive) setBackend(r?.backend ?? "unknown"); })
-        .catch(() => { if (alive) setBackend("unknown"); });
-    poll();
-    const id = setInterval(poll, 10000);
-    return () => { alive = false; clearInterval(id); };
-  }, [active]);
-  return backend;
-}
-
-// #61 : « Initializing » qui s'éternise = presque toujours Discord pas connecté
-// (session perdue) ou Vencord abîmé dans Vesktop — rien que Steamcord puisse
-// voir de l'extérieur. Passé ce délai on dit quoi faire au lieu d'un spinner
-// muet. Horodatage au niveau module : refermer/rouvrir le QAM ne remet pas le
-// compteur à zéro ; il ne repart que quand Discord a fini de charger.
-const SLOW_INIT_MS = 60000;
-let initSince: number | null = null;
-function useSlowInit(active: boolean): boolean {
-  const [slow, setSlow] = useState(false);
-  useEffect(() => {
-    if (!active) { initSince = null; setSlow(false); return; }
-    if (initSince === null) initSince = Date.now();
-    const left = initSince + SLOW_INIT_MS - Date.now();
-    if (left <= 0) { setSlow(true); return; }
-    setSlow(false);
-    const id = setTimeout(() => setSlow(true), left);
-    return () => clearTimeout(id);
-  }, [active]);
-  return slow;
-}
 
 const Content = () => (
   <QamUiRoot><BackNavRoot><ContentBody /></BackNavRoot></QamUiRoot>
@@ -1365,9 +1014,10 @@ const VoiceDesktopDisabled = () => (
 // the view can be opened outside the panel (Steam menu), where the panel's
 // hooks do not run.
 const ExpandedCallSlot = () => {
+  const host = useHost();
   const shareEnv = useShareEnv();
   const gamescopeOnly = useVoiceGamescopeOnly();
-  const voiceAvailable = !gamescopeOnly || shareEnv !== "desktop";
+  const voiceAvailable = host.onWindows || !gamescopeOnly || shareEnv !== "desktop";
   return voiceAvailable ? <ExpandedCallPanel /> : <VoiceDesktopDisabled />;
 };
 
@@ -1485,11 +1135,10 @@ const ContentBody = () => {
   const shareEnv = useShareEnv();
   const screenCam = useShowScreenCam();
   const gamescopeOnly = useVoiceGamescopeOnly();
-  const vesktopBackend = useVesktopBackend(!state?.loaded);
-  const slowInit = useSlowInit(!state?.loaded);
+  useEffect(() => { connectionProgress(state); }, [state?.loaded, state?.logged_in, state?.qr_login, state?.qr_scanned, state?.captcha_needed]);
 
   const inCall = !!state?.vc?.channel_id;
-  const voiceAvailable = !gamescopeOnly || shareEnv !== "desktop";
+  const voiceAvailable = host.onWindows || !gamescopeOnly || shareEnv !== "desktop";
   // Une préférence « Vocal » mémorisée depuis Gamescope ne doit pas laisser
   // un écran vide en Bureau. On bascule vers le texte sans raccrocher Discord.
   useEffect(() => {
@@ -1528,190 +1177,61 @@ const ContentBody = () => {
     return <SP><DiscordRuntimeControl /></SP>;
   }
   if (!state?.loaded) {
-    // stand-alone : sans flatpak NI vesktop natif (backend === null), le spinner
-    // tournerait pour toujours → afficher la marche à suivre à la place.
-    if (vesktopBackend === null) {
-      return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px", minHeight: "60vh", padding: "0 12px", textAlign: "center" }}>
-          <h2 style={{ margin: "0" }}><IcWarn /></h2>
-          <div style={{ fontSize: "13px", lineHeight: "1.5" }}>{t(host.onWindows ? "vesktop_missing_windows" : "vesktop_missing")}</div>
-        </div>
-      );
-    }
-    // La connexion à Discord peut prendre ~1 min → spinner Steam animé pour
-    // montrer que ça travaille (un titre statique ressemble à un plantage).
-    // ⚠️ Le SteamSpinner rend ~110pt quel que soit son conteneur (centré, il
-    // DÉBORDE d'une boîte plus petite — dans 48px il recouvrait le titre,
-    // capture 19/07). Boîte à sa taille naturelle + overflow hidden, titre
-    // DESSOUS, à bonne distance.
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "16px", minHeight: "60vh" }}>
-        <div style={{ width: "110px", height: "110px", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <SteamSpinner background="transparent" />
-        </div>
-        <h2 style={{ margin: "0", fontSize: "15px", opacity: 0.85 }}>{t("initializing")}</h2>
-        {slowInit && (
-          <div style={{ fontSize: "12px", lineHeight: "1.5", opacity: 0.75, padding: "0 12px", textAlign: "center" }}>
-            {t("initializing_slow")}
-          </div>
-        )}
-      </div>
-    );
+    if (state?.qr_login || state?.qr_scanned || state?.captcha_needed)
+      return <DiscordSignIn qr_login={state?.qr_login} qr_scanned={state?.qr_scanned} captcha_needed={state?.captcha_needed} />;
+    return <DiscordStartup />;
   } else if (!state?.logged_in) {
-    return <NotLoggedIn qr_login={state?.qr_login} qr_scanned={state?.qr_scanned} captcha_needed={state?.captcha_needed} />;
-  } else {
-    return (
-      <SP>
-        <DeckyTitleAbove />
-        {/* Pseudo TOUJOURS en haut → changement de statut accessible en permanence. */}
-        <div style={{ marginBottom: "12px" }}>
-          <SR>
-            <UserStatusButton me={state?.me} onExpand={openExpanded} />
-          </SR>
-          <NowPlayingRow />
-        </div>
-        <hr></hr>
-        {/* Contrôles vocaux SOUS le pseudo : mute micro / casque / déconnexion.
-            Focusable + flow-children="row" → D-pad gauche/droite circule
-            entre les boutons (sinon nav unidirectionnelle). */}
-        {voiceAvailable && <div style={{ marginBottom: "12px" }}>
-          <SR>
-            <Focusable flow-children="row" style={{ display: "flex", justifyContent: "center", gap: 6 }}>
-              <MuteButton />
-              <DeafenButton />
-              <DisconnectButton />
-            </Focusable>
-          </SR>
-        </div>}
-        {/* Navigation Discord. Deux menus empilés, TOUJOURS visibles (même en
-            appel) :
-              1. Mode  : Vocal / Textuel  (en haut)
-              2. Source: Serveurs / MP    (partagé entre les deux modes)
-            Le contenu = mode × source. En appel actif, l'onglet Vocal affiche
-            d'abord l'appel en cours ; « Parcourir » révèle le menu Serveurs/MP
-            sans raccrocher. */}
-        <div style={{ marginBottom: "12px" }}>
-          <SR>
-            {/* 1. Menu de haut niveau (persistant) : Vocal / Textuel / Config. */}
-            <TabRow>
-              {voiceAvailable && <TabBtn
-                active={topTab === "voice"} focused={tabFocus === "top-voice"}
-                onClick={() => setTopTab("voice")}
-                onFocus={() => setTabFocus("top-voice")}
-                onBlur={() => setTabFocus((f) => (f === "top-voice" ? null : f))}
-              >
-                {inCall ? <IcPhone /> : <IcHeadphones />} {t("tab_voice")}
-              </TabBtn>}
-              <TabBtn
-                active={topTab === "text"} focused={tabFocus === "top-text"}
-                onClick={() => setTopTab("text")}
-                onFocus={() => setTabFocus("top-text")}
-                onBlur={() => setTabFocus((f) => (f === "top-text" ? null : f))}
-              >
-                <IcChat /> {t("tab_text")}
-              </TabBtn>
-              <TabBtn
-                active={topTab === "config"} focused={tabFocus === "top-config"}
-                onClick={() => setTopTab("config")}
-                onFocus={() => setTabFocus("top-config")}
-                onBlur={() => setTabFocus((f) => (f === "top-config" ? null : f))}
-              >
-                <IcGear />
-        </TabBtn>
-            </TabRow>
-
-            {topTab === "config" ? (
-              // ── Onglet Config : réglages regroupés (mises à jour, etc.) ──
-              <ConfigPanel />
-            ) : topTab === "voice" && inCall && !browsing ? (
-              // ── Onglet Vocal, en appel : vue de l'appel en cours ──
-              <>
-                <VoiceChatChannel />
-                <SoundboardPanel />
-                <ChatMixPanel />
-                <VoiceChatMembers />
-                {/* Go Live marche PARTOUT depuis v1.15.0 : portail KWin en
-                    Bureau/Big Picture, portal_shim (node gamescope) en console
-                    → toujours affiché. « Mode jeu » (v4l2) reste le fallback
-                    console pour les OS où le shim échouerait. */}
-                <div style={{ marginTop: 8 }}>
-                  <GoLiveButton />
-                </div>
-                {shareEnv !== "desktop" && screenCam.visible && (
-                  <div style={{ marginTop: 8 }}>
-                    <ScreenCameraButton />
-                  </div>
-                )}
-                <div style={{ marginTop: 8 }}>
-                  <GameAudioShare />
-                </div>
-                {/* Rejoindre un AUTRE vocal sans quitter l'appel courant. */}
-                <div style={{ marginTop: 8 }}>
-                  <WideBtn
-                    onClick={() => setBrowsing(true)}
-                    focused={tabFocus === "browse"}
-                    onFocus={() => setTabFocus("browse")}
-                    onBlur={() => setTabFocus((f) => (f === "browse" ? null : f))}
-                  >
-                    <IcFolder /> {t("browse_discord")}
-                  </WideBtn>
-                </div>
-              </>
-            ) : (
-              // ── Vue navigation (Vocal hors-appel/parcourir OU Textuel) ──
-              <>
-                {/* En appel : revenir à la vue de l'appel sans raccrocher. */}
-                {topTab === "voice" && inCall && (
-                  <div style={{ marginBottom: 6 }}>
-                    <WideBtn
-                      onClick={() => setBrowsing(false)}
-                      focused={tabFocus === "back"}
-                      onFocus={() => setTabFocus("back")}
-                      onBlur={() => setTabFocus((f) => (f === "back" ? null : f))}
-                    >
-                      ← {t("back_to_call")}
-                    </WideBtn>
-                  </div>
-                )}
-                {/* Événements programmés : au-dessus de la source, parce que
-                    « ça commence maintenant » prime sur « où je discute ». Le
-                    panneau s'efface complètement s'il n'y a rien. */}
-                <EventsPanel />
-                {/* 2. Menu source (partagé) : Serveurs / MP */}
-                <TabRow>
-                  <TabBtn
-                    active={srcTab === "servers"} focused={tabFocus === "servers"}
-                    onClick={() => setSrcTab("servers")}
-                    onFocus={() => setTabFocus("servers")}
-                    onBlur={() => setTabFocus((f) => (f === "servers" ? null : f))}
-                  >
-                    <IcHome /> {t("tab_servers")}
-                  </TabBtn>
-                  <TabBtn
-                    active={srcTab === "dms"} focused={tabFocus === "dms"}
-                    onClick={() => setSrcTab("dms")}
-                    onFocus={() => setTabFocus("dms")}
-                    onBlur={() => setTabFocus((f) => (f === "dms" ? null : f))}
-                  >
-                    <IcUser /> {t("tab_dms")}
-                  </TabBtn>
-                </TabRow>
-                {/* Contenu = mode × source. La clé force un remontage propre au
-                    changement de source (réinitialise la conversation ouverte).
-                    Textuel n'affiche plus qu'un aperçu passif + un bouton pour
-                    ouvrir la vraie vue plein écran (nav historique + réponse +
-                    partage de capture, cf. ChatFullscreen.tsx) — retour user
-                    #20 : le panneau QAM est trop étroit pour ça. */}
-                {topTab === "voice"
-                  ? (srcTab === "servers" ? <ChannelBrowser /> : <DMBrowser />)
-                  : <TextChat key={srcTab} source={srcTab} />}
-              </>
-            )}
-          </SR>
-        </div>
-      </SP>
-    );
+    return <DiscordSignIn qr_login={state?.qr_login} qr_scanned={state?.qr_scanned} captcha_needed={state?.captcha_needed} />;
   }
+  return <SP>
+    <DeckyTitleAbove />
+    <div style={{ minWidth: 0, padding: "4px 0 10px" }}>
+      <UserStatusButton me={state.me} onExpand={openExpanded} />
+      <NowPlayingRow />
+      {voiceAvailable && <VoiceSession />}
+      <TabRow>
+        {([
+          ...(voiceAvailable ? [{ id: "voice", label: t("tab_voice"), icon: <IcHeadphones /> }] : []),
+          { id: "text", label: t("tab_text"), icon: <IcChat /> },
+          { id: "config", label: t("xv_settings"), icon: <IcGear /> },
+        ] as const).map(tab => <TabBtn key={tab.id} active={topTab === tab.id}
+          focused={tabFocus === tab.id} onClick={() => setTopTab(tab.id as typeof topTab)}
+          onFocus={() => setTabFocus(tab.id)} onBlur={() => setTabFocus(null)}>
+          {tab.icon} {tab.label}
+        </TabBtn>)}
+      </TabRow>
+      <div style={{ paddingTop: 12, minWidth: 0 }}>
+        {topTab === "config" ? <ConfigPanel /> : topTab === "voice" && inCall && !browsing ? <>
+          <VoiceChatMembers />
+          <SoundboardPanel />
+          <ChatMixPanel />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, margin: "12px 0" }}>
+            <GoLiveButton />
+            {shareEnv !== "desktop" && screenCam.visible && <ScreenCameraButton />}
+            <GameAudioShare />
+          </div>
+          <WideBtn onClick={() => setBrowsing(true)} focused={tabFocus === "browse"}
+            onFocus={() => setTabFocus("browse")} onBlur={() => setTabFocus(null)}>
+            <IcFolder /> {t("browse_discord")}
+          </WideBtn>
+        </> : <>
+          {topTab === "voice" && inCall && <WideBtn onClick={() => setBrowsing(false)}
+            focused={tabFocus === "back"} onFocus={() => setTabFocus("back")} onBlur={() => setTabFocus(null)}>
+            ← {t("back_to_call")}
+          </WideBtn>}
+          <div style={{ fontSize: 11, opacity: .6, marginBottom: 7 }}>{t("discord_browse")}</div>
+          <Dropdown rgOptions={[
+            { data: "servers", label: t("tab_servers") }, { data: "dms", label: t("tab_dms") },
+          ]} selectedOption={srcTab} onChange={(option: any) => setSrcTab(option.data)} />
+          <div style={{ marginTop: 12 }}>
+            <EventsPanel />
+            {topTab === "voice" ? srcTab === "servers" ? <ChannelBrowser /> : <DMBrowser />
+              : <TextChat key={srcTab} source={srcTab} />}
+          </div>
+        </>}
+      </div>
+    </div>
+  </SP>;
 };
 
 // Panneau « Config » : réglages regroupés, accessibles via l'onglet ⚙️.
@@ -1740,9 +1260,9 @@ const AudioDevicesConfig = () => {
       const r = await call<[], any>("reload_audio_devices");
       load();
       const c = r && r.client;
-      notify({ title: "Steamcord", body: c && !c.error ? `${t("audio_reload_done")} : ${c.input}` : t("audio_reload_partial") });
+      notify({ title: "Discord", body: c && !c.error ? `${t("audio_reload_done")} : ${c.input}` : t("audio_reload_partial") });
     } catch (_) {
-      notify({ title: "Steamcord", body: t("audio_reload_partial") });
+      notify({ title: "Discord", body: t("audio_reload_partial") });
     } finally {
       setReloading(false);
     }
@@ -1849,8 +1369,8 @@ const AboutSection = () => {
       </SR>
       <SR>
         <div style={{ fontSize: 11, color: "#aaa", lineHeight: 1.6 }}>
-          <div><b style={{ color: "#fff" }}>Steamcord</b>{version ? ` v${version}` : ""}</div>
-          <div>{t("about_by")} <span style={{ color: "#67a3ff" }}>Necrosiak</span></div>
+          <div><b style={{ color: "#fff" }}>Discord</b>{version ? ` v${version}` : ""}</div>
+          <div>{t("about_by")} LoZazaMastro</div><div>{t("discord_upstream")}</div>
         </div>
       </SR>
       <SR>
@@ -1972,7 +1492,7 @@ const VoiceShortcutConfig = () => {
     call<[], any>("list_input_devices")
       .then((r) => { setDevs(r?.devices ?? []); setUnreadable(r?.unreadable ?? []); })
       .catch(() => {});
-    notify({ title: "Steamcord", body: `${t("shortcut_saved")}: ${bindingLabel(r)}` });
+    notify({ title: "Discord", body: `${t("shortcut_saved")}: ${bindingLabel(r)}` });
   };
 
   const modeOpts = [
@@ -2430,7 +1950,7 @@ export default definePlugin(() => {
 
   window.STEAMCORD = {
     dispatchNotification: (payload: { title: string; body: string; kind?: string; icon?: string; channel_id?: string; channel_name?: string; message_id?: string }) => {
-      console.log("Dispatching Steamcord notification: ", payload);
+      console.log("[Discord] notification received");
       // #25 — filtrage des notifications pendant qu'un jeu tourne. Il se fait
       // ICI et pas dans le backend : seul le contexte Steam sait qu'un jeu est
       // au premier plan.
@@ -2664,7 +2184,7 @@ export default definePlugin(() => {
   startStatusSync();
 
   return {
-    title: <div className={staticClasses.Title}>Steamcord</div>,
+    title: <div className={staticClasses.Title}>Discord</div>,
     content: <Suspense fallback={<div style={{ padding: 8 }}>{t("loading")}</div>}><ContentErrorBoundary><Content /></ContentErrorBoundary></Suspense>,
     icon: <FaDiscord />,
     onDismount() {

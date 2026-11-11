@@ -33,6 +33,7 @@ from pathlib import Path
 from decky import logger  # type: ignore
 
 import host
+import windows_identity
 
 VERSION = "1.6.8"
 # Official release assets and the SHA-256 GitHub publishes for them.
@@ -41,6 +42,12 @@ BUILDS = {
             "8ffa8d3778c287551ee0b302b3396acd2fac45931282071048bb881b67c88286"),
     "arm64": ("Vesktop-1.6.8-arm64-win.zip",
               "09a29c4872a3f92da056d85a71d91c66b9751e6dc519c734f970d79c12411a5e"),
+}
+VENCORD_FILES = {
+    "vencordDesktopMain.js": "f5f70942ad798f56097ab4c95b2090b058b9eb8f99d5366468ae083a48edd8cc",
+    "vencordDesktopPreload.js": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
+    "vencordDesktopRenderer.js": "391b3709f25ac7642dc5c32e1638c2e55a79d2806d84cb6ddad095686df54bc7",
+    "vencordDesktopRenderer.css": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254",
 }
 RELEASE_URL = "https://github.com/Vencord/Vesktop/releases/download/v{version}/{asset}"
 CDP_PORT = 9223  # same debugging port as the Linux unit
@@ -83,13 +90,61 @@ def _sha256(path):
     return digest.hexdigest()
 
 
+def _no_links(path):
+    for entry in (Path(path).absolute(), *Path(path).absolute().parents):
+        try:
+            attributes = entry.lstat()
+            if stat.S_ISLNK(attributes.st_mode) or getattr(attributes, "st_file_attributes", 0) & 0x400:
+                raise ValueError("Linked runtime directory refused")
+        except FileNotFoundError:
+            pass
+
+
+def _seed_vencord(profile):
+    source = Path(__file__).resolve().parent.parent / "runtime" / "vencord"
+    state = json.loads((profile / "vesktop" / "state.json").read_text(encoding="utf-8"))
+    # Vesktop's supported custom installation belongs to the existing profile.
+    # Never replace it or adopt an extension from another application.
+    if state.get("vencordDir"):
+        return
+    destination = profile / "vesktop" / "sessionData" / "vencordFiles"
+    _no_links(destination)
+    for name, expected in VENCORD_FILES.items():
+        if _sha256(source / name) != expected:
+            raise ValueError("Packaged Discord extension checksum mismatch")
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in VENCORD_FILES:
+        target = destination / name
+        _no_links(target)
+        # Existing user-managed extension files are kept on a plugin reinstall.
+        if not target.exists():
+            with (source / name).open("rb") as original, target.open("xb") as output:
+                shutil.copyfileobj(original, output)
+    try:
+        with (destination / "package.json").open("x", encoding="utf-8") as output:
+            output.write("{}")
+    except FileExistsError:
+        pass
+    settings = profile / "vesktop" / "settings"
+    _no_links(settings)
+    settings.mkdir(exist_ok=True)
+    try:
+        with (settings / "settings.json").open("x", encoding="utf-8") as output:
+            json.dump({"autoUpdate": False, "autoUpdateNotification": False}, output)
+    except FileExistsError:
+        pass
+
+
 def _unpack(archive, target):
     """Extract into a sibling folder, then rename it into place (all or nothing).
     The official zip may or may not wrap everything in one top-level folder."""
     target = Path(target)
+    _no_links(target)
     staging = Path(tempfile.mkdtemp(prefix=".unpack-", dir=target.parent))
     try:
         with zipfile.ZipFile(archive) as z:
+            if len(z.infolist()) > 512 or sum(info.file_size for info in z.infolist()) > 600 * 1024 * 1024:
+                raise ValueError("Vesktop archive exceeds the runtime size limit")
             for info in z.infolist():
                 member = info.filename
                 # ZIP uses '/', but Windows also interprets backslashes, drives
@@ -133,42 +188,21 @@ def _remove_old_copies():
 
 
 async def install():
-    """Download, verify and unpack the pinned Vesktop. Never raises: the caller
-    checks installed() and shows the help text if this keeps failing."""
+    """Prepare the pinned runtime included in the Playhub package, without a download."""
     if installed():
         return
-    from aiohttp import ClientSession  # type: ignore
-
     asset, expected = BUILDS[_arch()]
-    url = RELEASE_URL.format(version=VERSION, asset=asset)
+    archive = Path(__file__).resolve().parent.parent / "runtime" / asset
     root().mkdir(parents=True, exist_ok=True)
-    part = root() / (asset + ".part")
-    # Settings ▸ Proxy: the download is useless without it where GitHub is
-    # filtered — and this runs before Discord, so the proxy is the only route.
-    proxy = None
     try:
-        from discord_client import netproxy
-        cfg = netproxy.load()
-        if netproxy.is_active(cfg):
-            proxy = netproxy.aiohttp_proxy(cfg, await netproxy.ensure_bridge(cfg))
-    except Exception as e:
-        logger.warning(f"[win-vesktop] proxy unavailable: {e!r}")
-    try:
-        logger.info(f"[win-vesktop] downloading {asset}")
-        async with ClientSession() as session:
-            async with session.get(url, timeout=None, proxy=proxy) as response:
-                response.raise_for_status()
-                with open(part, "wb") as f:
-                    async for chunk in response.content.iter_chunked(1 << 20):
-                        f.write(chunk)
+        if not archive.is_file():
+            raise FileNotFoundError("The packaged Windows runtime is missing")
         loop = get_running_loop()
-        await loop.run_in_executor(None, _checked_unpack, part, install_dir(), expected)
-        logger.info(f"[win-vesktop] Vesktop {VERSION} ready in {install_dir()}")
+        await loop.run_in_executor(None, _checked_unpack, archive, install_dir(), expected)
+        logger.info(f"[win-vesktop] Vesktop {VERSION} ready")
         _remove_old_copies()
     except Exception as e:
         logger.warning(f"[win-vesktop] could not set up Vesktop {VERSION}: {e!r}")
-    finally:
-        part.unlink(missing_ok=True)
 
 
 # ── one Discord login per Steam account ─────────────────────────────────────
@@ -208,13 +242,15 @@ def steam_account_id():
 def profile_dir(account):
     safe = re.sub(r"[^0-9A-Za-z_.-]", "_", account) or "default"
     path = Path(host.settings_dir()) / "vesktop-profiles" / safe
+    _no_links(path)
     path.mkdir(parents=True, exist_ok=True)
     vesktop = path / "vesktop"
     vesktop.mkdir(exist_ok=True)
     # Vesktop's first-run tour blocks Discord from loading. Initialise only
     # this new private profile, without importing another Vencord installation
     # or registering an application at Windows startup.
-    for name, data in (("state.json", {"firstLaunch": False}),
+    for name, data in (("state.json", {"firstLaunch": False,
+                                      "updater": {"snoozeUntil": 8640000000000000}}),
                        ("settings.json", {"discordBranch": "stable", "minimizeToTray": True,
                                           "autoStartMinimized": True})):
         try:
@@ -236,10 +272,10 @@ def running_account():
         return ""
 
 
-def _remember_account(account):
+def _remember_account(account, identity=None):
     try:
         _state_file().parent.mkdir(parents=True, exist_ok=True)
-        _state_file().write_text(json.dumps({"account": account}), encoding="utf-8")
+        _state_file().write_text(json.dumps({"account": account, "owner": identity}), encoding="utf-8")
     except OSError as e:
         logger.warning(f"[multisession] cannot record account: {e!r}")
 
@@ -254,8 +290,13 @@ def is_running():
 
 
 def owns_cdp():
-    owners = host.listening_pids(CDP_PORT)
-    return bool(owners) and owners.issubset(set(our_pids()))
+    try:
+        record = json.loads(_state_file().read_text(encoding="utf-8"))
+        identity = record.get("owner")
+        return (record.get("account") == steam_account_id() and windows_identity.matches(identity, exe())
+                and host.listening_pids(CDP_PORT) == {identity["pid"]})
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False
 
 
 async def stop(tag):
@@ -273,10 +314,11 @@ async def stop(tag):
 
 def _command(account, extra_flags=()):
     profile = profile_dir(account)
+    _seed_vencord(profile)
     return [
         str(exe()),
         f"--remote-debugging-port={CDP_PORT}",
-        "--remote-allow-origins=*",
+        "--remote-debugging-address=127.0.0.1",
         # Chromium's own profile, and with it the single-instance lock: without
         # it, a Vesktop the user already runs would swallow our launch.
         f"--user-data-dir={profile / 'chromium'}",
@@ -327,10 +369,9 @@ async def launch(is_up):
                 await sleep(1)
             logger.info("[recover] our Vesktop runs but its debugging port stays closed: restarting it")
         else:
-            logger.info(f"[multisession] Steam account changed ({running_account() or '?'} → {account}): "
-                        "switching Discord profile")
+            logger.info("[multisession] switching the private Discord profile")
         await stop("[win-vesktop]")
-    if await is_up():
+    if host.listening_pids(CDP_PORT) or await is_up():
         logger.warning(f"[win-vesktop] port {CDP_PORT} is already used by another program")
         return False
     # Proxy (Settings ▸ Proxy): same Chromium flags as on Linux. Windows has no
@@ -344,13 +385,17 @@ async def launch(is_up):
     except Exception as e:
         logger.warning(f"[proxy] proxy flags unavailable, launching without: {e!r}")
     command, profile = _command(account, proxy_flags)
-    _remember_account(account)
-    logger.info(f"[win-vesktop] starting Vesktop {VERSION} for Steam account {account}")
+    logger.info(f"[win-vesktop] starting the private Vesktop {VERSION} client")
     try:
         process = await get_running_loop().run_in_executor(None, _spawn, command, _environment(profile))
     except OSError as e:
         logger.warning(f"[win-vesktop] cannot start Vesktop: {e!r}")
         return False
+    identity = windows_identity.capture(process.pid, exe(), os.getpid())
+    if identity is None:
+        logger.warning("[win-vesktop] private client identity could not be verified")
+        return False
+    _remember_account(account, identity)
     for second in range(60):
         if owns_cdp() and await is_up():
             logger.info(f"[launchdiag] Vesktop CDP {CDP_PORT} up after ~{second}s")

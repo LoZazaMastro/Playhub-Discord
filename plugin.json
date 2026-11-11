@@ -1,11 +1,14 @@
 {
-  "name": "Steamcord",
-  "author": "Necrosiak",
+  "name": "Discord",
+  "author": "LoZazaMastro, based on Steamcord by Necrosiak",
   "api_version": 1,
   "flags": [],
   "publish": {
-    "tags": ["discord", "chat", "voice"],
-    "description": "Discord in Steam Gaming Mode — voice chat, DMs, QR login",
-    "image": "https://raw.githubusercontent.com/Necrosiak/Steamcord/main/assets/store-banner.png"
+    "tags": [
+      "discord",
+      "chat",
+      "voice"
+    ],
+    "description": "Discord voice, channels and conversations, built into Playhub for Windows."
   }
 }

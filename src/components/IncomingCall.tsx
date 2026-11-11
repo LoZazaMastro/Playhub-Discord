@@ -17,7 +17,7 @@ const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
 // est l'état interne que son propre menu utilise. Sans lui, le QAM s'ouvre sur
 // l'onglet Decky, mais sur le dernier plugin consulté.
 export function openSteamcordPanel() {
-  try { (window as any).DeckyPluginLoader?.deckyState?.setActivePlugin?.("Steamcord"); } catch {}
+  try { (window as any).DeckyPluginLoader?.deckyState?.setActivePlugin?.("Discord"); } catch {}
   try { Navigation.OpenQuickAccessMenu(QuickAccessTab.Decky); } catch (e) { console.error("[Steamcord] ouverture du QAM échouée", e); }
 }
 

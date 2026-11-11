@@ -8,7 +8,7 @@ const ENABLED_KEY = "STEAMCORD_MENU_ENTRY";
 let unregister: (() => void) | undefined;
 
 const register = () => registerSteamMenu({
-  id: "steamcord", route: "/discord", label: "Steamcord", icon: <FaDiscord />, order: 10,
+  id: "steamcord", route: "/discord", label: "Discord", icon: <FaDiscord />, order: 10,
   onSecondary: () => {
     const choose = new (Dropdown as any)({
       rgOptions: Array.from({ length: 9 }, (_, i) => ({ label: String(i + 1), data: i + 1 })),

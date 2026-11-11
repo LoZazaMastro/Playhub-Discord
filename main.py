@@ -6,7 +6,7 @@ from aiohttp.web import (  # type: ignore
     TCPSite,
     Response,
 )
-from asyncio import sleep, create_task, create_subprocess_exec, wait_for
+from asyncio import sleep, create_task, create_subprocess_exec, wait_for, current_task, Lock
 import signal
 import aiohttp_cors  # type: ignore
 from json import dumps
@@ -31,6 +31,7 @@ sys.path.append(DECKY_PLUGIN_DIR)
 
 # Linux (Gaming Mode) or Windows (Big Picture with the official Decky build).
 import host
+import local_bridge
 
 
 def linux_only(unavailable):
@@ -180,7 +181,7 @@ async def _initialize_discord():
         webrtc_js = open(_wjs, "r", encoding="utf-8").read()
     except Exception:
         webrtc_js = ""
-    host_js = f'window.STEAMCORD_HOST = "{host.NAME}";\n'
+    host_js = local_bridge.client_bootstrap(host.NAME, getattr(Plugin._bridge, "port", None))
     tab = await vesktop.get_discord_tab(host_js + webrtc_js + "\n" + client_js)
 
     Plugin.discord_tab = tab
@@ -742,6 +743,10 @@ class Plugin:
         },
     )
     evt_handler = EventHandler()
+    _bridge = None
+    _main_task = None
+    _bridge_failed = False
+    _retry_lock = None
     last_ws: WebSocketResponse = None
     discord_tab = None
     # Routage audio par-application (PipeWire) : None = auto (suit le système).
@@ -891,8 +896,90 @@ class Plugin:
         create_task(stream_watcher(cls.portal_shim.stderr, True, prefix="[portal]"))
 
     @classmethod
+    async def _start_local_bridge(cls):
+        cls.server.add_routes(
+            [
+                get("/openkb", cls._openkb),
+                get("/voice_render", cls._voice_render),
+                get("/voice_hide", cls._voice_hide),
+                get("/socket", cls._websocket_handler),
+                get("/clip", cls._serve_clip),
+                get("/pov_feed", cls._pov_feed),
+            ]
+        )
+        cls.evt_handler.on_pov_chunk = cls._on_pov_chunk
+        for r in list(cls.server.router.routes())[:-1]:
+            cls.cors.add(r)
+
+
+        await cls._bridge.start(cls.server, host.WINDOWS)
+        cls.runner = cls._bridge.runner
+        logger.info("Private Discord bridge ready")
+
+    @classmethod
+    async def get_bridge_status(cls):
+        port = getattr(cls._bridge, "port", None)
+        return {"ready": port is not None, "port": port, "loopback": host.WINDOWS,
+                "clientReady": bool(cls.evt_handler.loaded), "enabled": discord_runtime.enabled}
+
+    @classmethod
+    async def retry_connection(cls):
+        if cls._retry_lock is None:
+            cls._retry_lock = Lock()
+        async with cls._retry_lock:
+            if not discord_runtime.enabled:
+                return {"ok": False, "status": "paused"}
+            if getattr(cls._bridge, "port", None) is None:
+                if cls._bridge_failed and (cls._main_task is None or cls._main_task.done()):
+                    # A listener failure happens before any Windows client task.
+                    # Retry that startup with a fresh aiohttp application only.
+                    task = create_task(cls._main())
+                    cls._main_task = task
+                    def finished(result):
+                        if not result.cancelled() and result.exception() is not None:
+                            logger.warning("Discord connection retry failed")
+                    task.add_done_callback(finished)
+                    return {"ok": True, "status": "starting"}
+                return {"ok": bool(cls._main_task and not cls._main_task.done()), "status": "starting"}
+            tab = cls.discord_tab
+            if tab is not None:
+                try:
+                    # Reconnect the existing verified private page. Never close
+                    # the client, reload the account, or clear its saved session.
+                    await wait_for(tab.evaluate("(() => { if (typeof window.__sc_reconnectBridge === 'function') window.__sc_reconnectBridge(); })()"), 3)
+                    await wait_for(tab.evaluate(_REHANDSHAKE_JS), 3)
+                except Exception:
+                    return {"ok": False, "status": "unavailable"}
+            return {"ok": True, "status": "connecting"}
+
+    @classmethod
     async def _main(cls):
-        logger.info("Starting Steamcord backend")
+        owner = current_task()
+        cls._main_task = owner
+        cls._bridge_failed = False
+        cls.server = Application()
+        cls.cors = aiohttp_cors.setup(cls.server, defaults={
+            "*": aiohttp_cors.ResourceOptions(expose_headers="*", allow_headers="*", allow_credentials=True)
+        })
+        cls._bridge = local_bridge.BridgeServer()
+        try:
+            # Bind before starting/injecting the Windows client. Port zero lets
+            # Windows choose an available, non-excluded loopback port atomically.
+            if host.WINDOWS:
+                try:
+                    await cls._start_local_bridge()
+                except Exception:
+                    cls._bridge_failed = True
+                    raise
+            await cls._run_main()
+        finally:
+            await cls._bridge.close()
+            if cls._main_task is owner:
+                cls._main_task = None
+
+    @classmethod
+    async def _run_main(cls):
+        logger.info("Starting Discord backend")
         create_task(_exit_with_decky_loader(logger.warning))
         # Settings ▸ Proxy : le pont local démarre AVANT tout le reste, sinon la
         # première vérification de mise à jour, le QR login et le téléchargement
@@ -944,24 +1031,8 @@ class Plugin:
         else:
             await cls._initialize_until_up()
 
-        cls.server.add_routes(
-            [
-                get("/openkb", cls._openkb),
-                get("/voice_render", cls._voice_render),
-                get("/voice_hide", cls._voice_hide),
-                get("/socket", cls._websocket_handler),
-                get("/clip", cls._serve_clip),
-                get("/pov_feed", cls._pov_feed),
-            ]
-        )
-        cls.evt_handler.on_pov_chunk = cls._on_pov_chunk
-        for r in list(cls.server.router.routes())[:-1]:
-            cls.cors.add(r)
-
-        cls.runner = AppRunner(cls.server, access_log=None)
-        await cls.runner.setup()
-        logger.info("Starting server.")
-        await TCPSite(cls.runner, "127.0.0.1" if host.WINDOWS else "0.0.0.0", 65123).start()
+        if not host.WINDOWS:
+            await cls._start_local_bridge()
 
         # Same failure mode as initialize() above: while the Steam UI is still
         # (re)starting, CEF answers /json but SharedJSContext is not in the tab
@@ -1231,6 +1302,8 @@ class Plugin:
 
     @classmethod
     async def _openkb(cls, request):
+        if host.WINDOWS and not local_bridge.authorized_token(request):
+            return Response(status=403)
         await cls.shared_js_tab.ensure_open()
         await setOSK(cls.shared_js_tab, True)
         logger.info("Setting discord visibility to true")
@@ -1257,6 +1330,8 @@ class Plugin:
 
     @classmethod
     async def _voice_render(cls, request):
+        if host.WINDOWS:
+            return Response(text="OK")
         # Chromium freezes WebRTC in the occluded (hidden) BrowserView, so the voice
         # connection stalls forever at DTLS_CONNECTING. Rendering the view (even 1×1)
         # un-backgrounds the renderer so the handshake completes. The JS calls this
@@ -1279,6 +1354,8 @@ class Plugin:
 
     @classmethod
     async def _voice_hide(cls, request):
+        if host.WINDOWS:
+            return Response(text="OK")
         try:
             if cls.shared_js_tab is None:
                 return Response(text="OK")
@@ -1295,8 +1372,10 @@ class Plugin:
 
     @classmethod
     async def _websocket_handler(cls, request):
+        if host.WINDOWS and not local_bridge.authorized(request):
+            return Response(status=403)
         logger.info("Received websocket connection!")
-        ws = WebSocketResponse(max_msg_size=0)
+        ws = WebSocketResponse(max_msg_size=8 * 1024 * 1024)
         await ws.prepare(request)
         # Re-pousser le Rich Presence (issue #11) au client fraîchement (re)connecté
         # — petit délai le temps que son écouteur de messages et les stores Flux
@@ -1319,7 +1398,14 @@ class Plugin:
             await sleep(2)
             await cls._push_notif_sound()
         create_task(_replay_notif_sound())
-        await cls.evt_handler.main(ws)
+        bridge = cls._bridge
+        if bridge is not None:
+            bridge.clients.add(ws)
+        try:
+            await cls.evt_handler.main(ws)
+        finally:
+            if bridge is not None:
+                bridge.clients.discard(ws)
         return ws
 
     @classmethod
@@ -2019,7 +2105,7 @@ class Plugin:
         except Exception:
             cfg = {}
         if cls._rpc_enabled is None:
-            cls._rpc_enabled = bool(cfg.get("enabled", True))
+            cls._rpc_enabled = bool(cfg.get("enabled", False))
         if cls._rpc_detect is None:
             cls._rpc_detect = bool(cfg.get("detect_launcher_games", True))
         if cls._rpc_override is None:
@@ -2454,7 +2540,7 @@ class Plugin:
         send_name = _send_filename(entry, send_path)
         await cls.evt_handler.send_client(
             {"type": "$clip", "channel_id": channel_id,
-             "url": f"http://127.0.0.1:65123/clip?t={token}",
+             "url": local_bridge.http_url(f"/clip?t={token}", getattr(cls._bridge, "port", None), host.WINDOWS),
              "filename": send_name})
         return True
 
@@ -6313,6 +6399,8 @@ class Plugin:
         """WS binaire consommé par la fenêtre overlay (MSE ou GStreamer).
         À la connexion, on envoie d'abord l'init caché de chaque user actif
         pour que les fragments média qui suivent soient décodables."""
+        if host.WINDOWS:
+            return Response(status=403)
         from asyncio import Queue
         ws = WebSocketResponse(max_msg_size=0)
         await ws.prepare(request)

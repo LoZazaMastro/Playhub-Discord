@@ -1128,7 +1128,7 @@ export function TextChat({ source }: { source: "servers" | "dms" }) {
         <div data-sc-chat-composer style={{ flexShrink: 0 }}>
         <TextField
           value={draft}
-          placeholder={t("message_placeholder")}
+          label={t("message_placeholder")}
           onChange={(e: any) => {
             const v = e?.target?.value ?? "";
             setDraft(v);

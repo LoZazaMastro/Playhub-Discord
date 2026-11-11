@@ -64,7 +64,7 @@ def settings_dir():
     if not WINDOWS:
         return os.path.expanduser("~/.config")
     path = os.environ.get("DECKY_PLUGIN_SETTINGS_DIR") or os.path.join(
-        os.environ.get("APPDATA") or str(Path.home()), "Steamcord")
+        os.environ.get("APPDATA") or str(Path.home()), "Playhub", "Discord")
     os.makedirs(path, exist_ok=True)
     return path
 
@@ -78,7 +78,7 @@ def data_dir():
     if not WINDOWS:
         return os.path.expanduser("~/.local/share/steamcord")
     path = os.environ.get("DECKY_PLUGIN_RUNTIME_DIR") or os.path.join(
-        os.environ.get("LOCALAPPDATA") or str(Path.home()), "Steamcord")
+        os.environ.get("LOCALAPPDATA") or str(Path.home()), "Playhub", "Discord")
     os.makedirs(path, exist_ok=True)
     return path
 

@@ -9,6 +9,7 @@ import shutil
 from asyncio import sleep, create_subprocess_exec
 from subprocess import DEVNULL, PIPE
 from pathlib import Path
+from time import monotonic
 from aiohttp import ClientSession  # type: ignore
 
 from decky import logger  # type: ignore
@@ -18,6 +19,7 @@ from tab_utils.cdp import Tab
 import host
 if host.WINDOWS:
     import vesktop_win
+    from discord_cdp import select_page
 
 VESKTOP_CDP = "http://127.0.0.1:9223"
 VESKTOP_APP = "dev.vencord.Vesktop"
@@ -323,9 +325,17 @@ def _user_env():
 
 
 async def _cdp_json(path):
+    if host.WINDOWS and (path not in {"/json", "/json/version"} or not vesktop_win.owns_cdp()):
+        raise RuntimeError("Private Discord client is not available")
     async with ClientSession() as s:
-        async with s.get(VESKTOP_CDP + path, timeout=3) as r:
-            return await r.json()
+        async with s.get(VESKTOP_CDP + path, timeout=3, allow_redirects=False) as r:
+            if r.status != 200:
+                raise RuntimeError("Private Discord endpoint did not return a page")
+            r.raise_for_status()
+            result = await r.json()
+    if host.WINDOWS and not vesktop_win.owns_cdp():
+        raise RuntimeError("Private Discord client changed during discovery")
+    return result
 
 
 async def _port_is_up():
@@ -837,6 +847,8 @@ async def launch():
 async def _get_page():
     """Return the CDP target dict for Vesktop's main page (Discord or first-launch)."""
     tabs = await _cdp_json("/json")
+    if host.WINDOWS:
+        return select_page(tabs, vesktop_win.CDP_PORT, vesktop_win.install_dir())
     return next((t for t in tabs if t.get("type") == "page"), None)
 
 
@@ -844,6 +856,21 @@ async def _get_page():
 # mais hors-ligne/flathub bloqué/disque plein). ≥3 → le QAM bascule sur l'écran
 # d'aide au lieu d'« Initializing » éternel ; remis à 0 dès qu'une install passe.
 install_failures = 0
+
+
+class PrivateDiscordTab(Tab):
+    async def open_websocket(self):
+        if host.WINDOWS and not vesktop_win.owns_cdp():
+            raise RuntimeError("Private Discord client is not available")
+        await super().open_websocket()
+        if host.WINDOWS and not vesktop_win.owns_cdp():
+            await self.close_websocket()
+            raise RuntimeError("Private Discord client changed during connection")
+
+    async def _send_devtools_cmd(self, command, receive=True):
+        if host.WINDOWS and not vesktop_win.owns_cdp():
+            raise RuntimeError("Private Discord client session has ended")
+        return await super()._send_devtools_cmd(command, receive)
 
 
 async def get_discord_tab(client_js) -> Tab:
@@ -860,17 +887,19 @@ async def get_discord_tab(client_js) -> Tab:
                 install_failures += 1
             raise RuntimeError("no Vesktop backend (flatpak or native) available")
         install_failures = 0
-        await launch()
+        if not await launch():
+            raise RuntimeError("Private Discord client could not be started")
 
     # Wait for a page target and get past the first-launch setup screen
-    while True:
+    deadline = monotonic() + 35
+    while monotonic() < deadline:
         page = await _get_page()
         if page:
-            tab = Tab(page)
+            tab = PrivateDiscordTab(page)
             await tab.open_websocket()
             await tab.enable()
             url = page.get("url", "")
-            logger.info(f"[launchdiag] Vesktop page url={url!r}")
+            logger.info("[launchdiag] private Discord page ready")
             if "first-launch" in url:
                 # Accept defaults and proceed to Discord
                 await tab.evaluate("(()=>{const b=document.getElementById('submit');if(b)b.click();})()")
@@ -887,11 +916,14 @@ async def get_discord_tab(client_js) -> Tab:
             # (le toggle mute s'annulait, etc.). Le reload juste après suffit → 1 exécution.
             await tab._send_devtools_cmd({
                 "method": "Page.addScriptToEvaluateOnNewDocument",
-                "params": {"source": "window.STEAMCORD_IS_VESKTOP = true;\n" + client_js},
+                "params": {"source": "(() => { if (location.protocol !== 'https:' || "
+                    "!['discord.com','ptb.discord.com','canary.discord.com'].includes(location.hostname)) return;\n"
+                    "window.STEAMCORD_IS_VESKTOP = true;\n" + client_js + "\n})();"},
             }, False)
             await tab._send_devtools_cmd({"method": "Page.reload", "params": {}}, False)
             return tab
         await sleep(1)
+    raise RuntimeError("The private Discord window is not ready. Try again.")
 
 
 async def kill_for_recovery(tag="[recover]", relaunch=True):

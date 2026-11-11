@@ -343,7 +343,7 @@ function chatStyleNotification(n: ChatNotif) {
   if (streamerActive()) { holdForStream(() => chatStyleNotification(n)); return; }
   const { title, body, sender, avatar, dm, message, quiet, onClick, personaKey } = n;
   try {
-    const name = sender || title || "Steamcord";
+    const name = sender || title || "Discord";
     const { sid64, accountid } = fakeSenderSid(personaKey || name);
     primeSenderPersona(sid64, accountid, name, avatar || DEFAULT_AVATAR);
     if ((message && steamToastMuted()) || quiet) markToastSilent(sid64);

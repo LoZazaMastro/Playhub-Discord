@@ -1,11 +1,10 @@
-// Shared visual kit — same design language as the SkullKey / BC250-Toolkit
-// plugins: focusable controls with a white halo + colored glow + a slight
-// scale on gamepad focus, one accent color per section. Keeping every
-// Steamcord control on this kit makes the three plugins read as one family.
+import { FaDiscord } from "react-icons/fa";
+// Shared controls for Discord in Playhub. Keyboard and gamepad focus use the
+// same crisp outline, without scaling a row beyond its scroll container.
 import { DialogButton } from "@decky/ui";
 import { useCallback, useState, type ReactNode } from "react";
 import { useQamUi } from "../qamUi";
-import { IcChevronDown, SteamcordLogo } from "./Icons";
+import { IcChevronDown } from "./Icons";
 
 const Btn = DialogButton as any;
 
@@ -154,7 +153,7 @@ export function SteamcordModalFrame({ children, maxWidth = 720 }:
         display: "flex", alignItems: "center", gap: 9, padding: "12px 16px",
         background: "#20252f", borderBottom: "1px solid rgba(255,255,255,.08)",
         fontSize: 16, fontWeight: 800,
-      }}><SteamcordLogo size={27} /> Steamcord</div>
+      }}><FaDiscord size={27} /> Discord</div>
       {children}
     </div>
   </>;
@@ -207,8 +206,7 @@ export function useFillHeight(min = 180, bottom = 12) {
   return { ref, height };
 }
 
-// Discord blurple — Steamcord's primary accent.
-export const ACCENT = "#5865f2";
+export const ACCENT = "#ffe15b";
 // Semantic section colors reused across the panel.
 export const DANGER = "#ed4245";   // stop / disconnect / logout
 export const ONLINE = "#23a55a";   // active / online
@@ -217,12 +215,12 @@ export const ONLINE = "#23a55a";   // active / online
 // → our forced-white text becomes unreadable. Every control drives its own
 // focus instead: white ring + colored glow + a slight pop. `focusHalo` is the
 // single source of truth for that look, spread into a control's style.
-export function focusHalo(color: string, focused: boolean, scale = 1.02) {
+export function focusHalo(color: string, focused: boolean, _scale = 1) {
   const c = color || ACCENT;
   return {
-    boxShadow: focused ? `0 0 0 2px #fff, 0 0 8px 1px ${c}` : "none",
-    transform: focused ? `scale(${scale})` : "scale(1)",
-    transition: "box-shadow .08s ease, transform .08s ease",
+    boxShadow: focused ? `0 0 0 2px ${c}` : "none",
+    transform: "none",
+    transition: "box-shadow .08s ease",
     // position:relative makes zIndex effective so a focused control (and its
     // glow) lifts above tightly-packed flex siblings instead of being overpainted.
     position: "relative" as const,
@@ -262,7 +260,7 @@ export function CardBtn({ active, focused, color, disabled, center, big, onClick
         padding: big ? `${px(12)}px ${px(14)}px` : `${px(8)}px ${px(10)}px`,
         margin: 0, minHeight: px(big ? 44 : 36), boxSizing: "border-box",
         overflow: "visible", lineHeight: 1.2,
-        borderRadius: px(6), color: "#fff", fontSize: px(big ? 14 : 13), fontWeight: active ? 700 : 400,
+        borderRadius: px(6), color: active ? "#181818" : "#fff", fontSize: px(big ? 14 : 13), fontWeight: active ? 700 : 400,
         background: active ? c : "rgba(255,255,255,0.05)",
         border: active ? "1px solid " + c : "1px solid transparent",
         opacity: disabled ? 0.5 : 1,
@@ -323,7 +321,7 @@ export function IconBtn({ color, active, disabled, title, onClick, children }: a
         ...toolbarBtnStyle(px),
         marginRight: 0,
         display: "flex", alignItems: "center", justifyContent: "center",
-        borderRadius: px(6), color: "#fff",
+        borderRadius: px(6), color: active && c === ACCENT ? "#181818" : "#fff",
         background: active ? c : "rgba(255,255,255,0.06)",
         opacity: disabled ? 0.5 : 1,
         ...focusHalo(c, focused, 1.06),
@@ -491,8 +489,8 @@ export function RowBtn({
         fontSize: px(sub ? 12 : 13),
         opacity: disabled ? 0.5 : 1,
         background: active
-          ? c
-            : focused ? (sub ? hexA(c, 0.7) : hexA(c, 0.85)) : embedded ? "transparent" : "rgba(255,255,255,0.05)",
+          ? hexA(c, 0.18)
+            : focused ? hexA(c, 0.14) : embedded ? "transparent" : "rgba(255,255,255,0.05)",
         // Anneau blanc seul, sans agrandissement ni lueur : ces rangées vivent
         // dans des listes qui défilent, où tout ce qui dépasse est coupé net et
         // dessinait un 2e cadre — même correctif que les listes de la vue
@@ -526,9 +524,9 @@ export function InlineBtn({ on, color, tone, big, disabled, onClick, title, chil
         width: "100%", margin: 0, padding: `${px(big ? 7 : 5)}px 0`, minHeight: px(big ? 34 : 28),
         boxSizing: "border-box", borderRadius: px(big ? 10 : 8),
         display: "flex", alignItems: "center", justifyContent: "center", gap: px(big ? 8 : 6),
-        fontSize: px(big ? 12 : 11), fontWeight: 600, lineHeight: 1.2, color: "#fff",
+        fontSize: px(big ? 12 : 11), fontWeight: 600, lineHeight: 1.2, color: on && c === ACCENT ? "#181818" : "#fff",
         overflow: "visible", opacity: disabled ? 0.5 : 1,
-        background: on ? c : focused ? hexA(ACCENT, 0.85) : rest,
+        background: on ? c : focused ? hexA(ACCENT, 0.14) : rest,
         ...focusHalo(on ? c : ACCENT, focused),
       }}
     >
@@ -561,7 +559,7 @@ export function MiniBtn({ onClick, disabled, title, compact, dmAction, onGamepad
         boxSizing: "border-box", borderRadius: px(8), fontSize: px(11), lineHeight: 1.2,
         color: "#fff", overflow: "visible", opacity: disabled ? 0.5 : 1,
           display: "flex", alignItems: "center", justifyContent: compact ? "center" : undefined, flexShrink: compact ? 0 : undefined, gap: px(5),
-          background: focused ? hexA(ACCENT, 0.85) : compact ? "transparent" : "rgba(255,255,255,0.06)",
+          background: focused ? hexA(ACCENT, 0.14) : compact ? "transparent" : "rgba(255,255,255,0.06)",
         ...focusHalo(ACCENT, focused, 1.06),
       }}
     >

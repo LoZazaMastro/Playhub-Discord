@@ -1,0 +1,31 @@
+{
+  "repository": "Vendicated/Vencord",
+  "commit": "d07030c0968e31e41caa0c35fda0ef8ae63a079e",
+  "files": [
+    {
+      "file": "vencordDesktopMain.js",
+      "size": 35072,
+      "sha256": "f5f70942ad798f56097ab4c95b2090b058b9eb8f99d5366468ae083a48edd8cc",
+      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopMain.js"
+    },
+    {
+      "file": "vencordDesktopPreload.js",
+      "size": 2389,
+      "sha256": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
+      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopPreload.js"
+    },
+    {
+      "file": "vencordDesktopRenderer.css",
+      "size": 43726,
+      "sha256": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254",
+      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.css"
+    },
+    {
+      "file": "vencordDesktopRenderer.js",
+      "size": 728105,
+      "sha256": "391b3709f25ac7642dc5c32e1638c2e55a79d2806d84cb6ddad095686df54bc7",
+      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.js"
+    }
+  ],
+  "releaseTagCommit": "62b2acebe6806c7b0e2ca6a43c6b2419a627b8dc"
+}
