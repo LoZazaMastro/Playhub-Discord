@@ -1,0 +1,20 @@
+{
+  "runtime": "Vesktop 1.6.8-playhub.1 x64",
+  "baseSha256": "8ffa8d3778c287551ee0b302b3396acd2fac45931282071048bb881b67c88286",
+  "derivedSha256": "97829d8c2d317db0ba3ac965e721f24846b027fcdec1230e141a1c57a370707f",
+  "baseAsarSha256": "17fd4f71ed09e73e756b03645b8b0011f010e34ed565a0fcba3cb2b133ca47f1",
+  "derivedAsarSha256": "b34cc14ad3db8ca0d5ccf53bf62755c66926a59bd6010e3ace299b141e62c9ca",
+  "changedZipMembers": [
+    "resources/app.asar"
+  ],
+  "changedAsarMembers": [
+    "dist/js/arRpcWorker.js",
+    "dist/js/arRpcWorker.js.map"
+  ],
+  "zipMembers": 75,
+  "asarMembers": 39,
+  "electronExecutableUnchanged": true,
+  "embeddedAsarValidation": false,
+  "sourceSha256": "f35d4ef3979ff9fd44f5158fd706029872a99d01022194f5644c1da8a96307f0",
+  "behavior": "Skip failed OS process snapshot; preserve last activity; retry existing 5s scan. No profile access or feature disable."
+}

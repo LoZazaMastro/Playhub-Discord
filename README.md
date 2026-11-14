@@ -54,13 +54,15 @@ are supplied by Decky in production. Test dependencies are in
 The upstream Linux test fixtures require Linux; the Windows runtime tests and
 frontend tests are the supported Windows build gate.
 
-`runtime/Vesktop-1.6.8-win.zip` is an official release payload, omitted from Git
-because of its size. Obtain it from the URL in `runtime/SOURCE.md`; the package
-builder refuses any different SHA-256. The four Vencord assets and their exact
+`runtime/Vesktop-1.6.8-playhub.1-win.zip` is a private x64 runtime derived from
+the pinned official Vesktop archive. It contains one arRPC process-scan error
+guard; executable and other runtime payloads are unchanged. See `runtime/SOURCE.md`
+for the reproducible derivation command, original source, patch and exact hashes.
+The package builder refuses any different runtime SHA-256. The four Vencord assets and their exact
 hashes are in `runtime/vencord/manifest.json`. The release ZIP contains all of
 these files, the source archives and the notices.
 
-The package builder creates `out/Discord_Installer-1.0.1.zip` with a per-file
+The package builder creates `out/Discord_Installer-1.0.2.zip` with a per-file
 SHA-256 manifest. Playhub can install this package through its normal plugin
 installer. Runtime settings and saved logins remain outside the plugin folder.
 Updates are managed by Playhub; the upstream self-updater cannot overwrite this

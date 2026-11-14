@@ -6,14 +6,18 @@ license, original copyright notices and community credits are retained in
 `LICENSE` and `CREDITS.md`. The Windows runtime isolation, offline packaging,
 Playhub interface and associated tests are changes by LoZazaMastro.
 
-The plugin includes these separate, unmodified runtime components:
+The plugin includes the runtime components below. The private x64 Vesktop ASAR
+has a localized arRPC process-scan error guard by LoZazaMastro; its corresponding
+modified source, patch and reproducible derivation are documented in
+`runtime/SOURCE.md`. Vencord, Electron executables and other runtime payloads
+remain unchanged.
 
 | Component | Version/source | License |
 | --- | --- | --- |
-| Vesktop | 1.6.8, `4bf170e0acaf6488d3b97b19dba53bbc3c1d655d` | GPL-3.0-or-later |
+| Vesktop | 1.6.8-playhub.1 derived from 1.6.8, `4bf170e0acaf6488d3b97b19dba53bbc3c1d655d` | GPL-3.0-or-later |
 | Vencord | 1.15.17, `d07030c0968e31e41caa0c35fda0ef8ae63a079e` | GPL-3.0-or-later |
-| arRPC | `1dc801e8ea14d96ce8dccff416417614f058afb8` | MIT |
-| Electron | 44.9.3, within the official Vesktop portable archive | MIT and bundled third-party notices |
+| arRPC | `1dc801e8ea14d96ce8dccff416417614f058afb8` + localized scan guard | MIT |
+| Electron | 44.9.3, unchanged executable from the official Vesktop base | MIT and bundled third-party notices |
 
 The preferred source archives for Vesktop, Vencord and arRPC are included in
 `runtime/sources`. They contain their build scripts and dependency locks.

@@ -1,8 +1,10 @@
 # Runtime source and build notes
 
-The release package carries the official Vesktop Windows x64 portable build
-and the four official Vencord desktop files. These executables are not rebuilt
-or patched by Playhub. Only the new, private profile is initialized: the
+The release package carries a private runtime derived from the official Vesktop
+Windows x64 portable build and the four official Vencord desktop files. The
+Electron executable is unchanged; two files inside the Vesktop ASAR (arRPC
+worker and its source map) have a localized process-scan error guard. Only a
+new, private profile is initialized: the
 first-run tour is skipped, Vencord's automatic updates are off, and Vesktop's
 update prompt is snoozed. Existing profiles and extension files are preserved.
 Runtime updates are delivered through the Playhub plugin package.
@@ -46,3 +48,39 @@ in its notice rather than supplying an invented copyright owner or year.
 
 These source archives can be redistributed and modified under their original
 licenses. No installation key or permission from Playhub is required.
+
+## Private x64 runtime revision 1.6.8-playhub.1
+
+Playhub adds a catch around arRPC's existing Windows process enumeration call.
+If PowerShell returns malformed JSON or the OS query fails, that single scan
+returns without reporting games as closed. The existing five-second scan
+interval retries; Discord RPC, voice, messages and user preferences are not
+disabled. No raw process list or command line is logged.
+
+The preferred modified arRPC source is `patches/arrpc-scan-guard/index.js`;
+`scan-guard.patch` is the minimal change against the included MIT arRPC archive.
+Vesktop's GPL source archive and all dependency licenses remain included.
+The worker and its source map are the only changed ASAR payloads; all 74 other
+ZIP payloads, including the Electron executable and license files, are exact.
+`derived-runtime.json` records the base and derived SHA-256 values.
+
+From the source tree, obtain the unmodified official ZIP using the URL and
+SHA-256 above, then run (no Electron process is started):
+
+```text
+python -X utf8 -B scripts/derive-vesktop.py --base <official-Vesktop-1.6.8-win.zip>
+node --experimental-vm-modules tests/test-arrpc-scan-guard.mjs
+python -X utf8 -B scripts/package.py
+```
+
+The deterministic derivation verifies the official base hash, updates ASAR
+member integrity and source mappings, and refuses any unexpected runtime
+payload change. It does not change Electron fuses; embedded ASAR validation
+is already disabled in this official base. No executable signature is altered.
+The new x64 installation directory identifies this runtime revision so a normal
+plugin update cannot silently keep using the old runtime. Existing profile
+paths and saved sessions are unchanged. ARM64 is not modified by this patch.
+
+The installer also includes the identical standalone derivation tool at
+`runtime/patches/derive-vesktop.py`; it accepts the same arguments.
+

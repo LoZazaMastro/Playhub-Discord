@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+- Keep Discord running when Windows process detection returns malformed JSON.
+  Skip that scan and retry without clearing the last detected game.
+- Include the narrowly patched private arRPC runtime, source patch and exact
+  provenance. Preserve saved sessions and all other runtime payloads.
+
 ## 1.0.1
 
 - Fix the Windows connection when the system reserves the previous local port.

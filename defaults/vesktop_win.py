@@ -3,7 +3,7 @@
 On Linux Steamcord runs the user's flatpak or native Vesktop under a systemd
 unit (vesktop.py). Windows has neither, so Steamcord keeps its own copy:
 
-* the official portable build (Vencord/Vesktop release `Vesktop-<v>-win.zip`),
+* a pinned private runtime derived from official Vesktop (localized arRPC scan guard),
   pinned and checked against its SHA-256, unpacked into Steamcord's data folder
   under homebrew. Nothing is installed into Windows, no administrator prompt,
   and a Vesktop the user runs on the desktop is never touched;
@@ -36,10 +36,11 @@ import host
 import windows_identity
 
 VERSION = "1.6.8"
-# Official release assets and the SHA-256 GitHub publishes for them.
+X64_RUNTIME_VERSION = "1.6.8-playhub.1"
+# Pinned private x64 derivative; ARM64 retains its official release pin.
 BUILDS = {
-    "x64": ("Vesktop-1.6.8-win.zip",
-            "8ffa8d3778c287551ee0b302b3396acd2fac45931282071048bb881b67c88286"),
+    "x64": ("Vesktop-1.6.8-playhub.1-win.zip",
+            "97829d8c2d317db0ba3ac965e721f24846b027fcdec1230e141a1c57a370707f"),
     "arm64": ("Vesktop-1.6.8-arm64-win.zip",
               "09a29c4872a3f92da056d85a71d91c66b9751e6dc519c734f970d79c12411a5e"),
 }
@@ -69,7 +70,8 @@ def root():
 
 
 def install_dir():
-    return root() / f"{VERSION}-{_arch()}"
+    version = X64_RUNTIME_VERSION if _arch() == "x64" else VERSION
+    return root() / f"{version}-{_arch()}"
 
 
 def exe():
@@ -181,7 +183,7 @@ def _remove_old_copies():
     """Older versions of OUR copy only (never the profiles, never anything else)."""
     keep = install_dir().name
     for entry in root().iterdir():
-        if entry.is_dir() and entry.name != keep and re.fullmatch(r"\d+(\.\d+)+-(x64|arm64)", entry.name):
+        if entry.is_dir() and entry.name != keep and re.fullmatch(r"\d+(\.\d+)+(?:-playhub\.\d+)?-(x64|arm64)", entry.name):
             if host.pids_under(entry):
                 continue  # still running (a plugin update mid-call): next start removes it
             shutil.rmtree(entry, ignore_errors=True)

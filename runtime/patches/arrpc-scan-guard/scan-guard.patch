@@ -1,0 +1,19 @@
+--- a/src/process/index.js
++++ b/src/process/index.js
+@@ -92,7 +92,15 @@
+ 
+   async scan() {
+     // const startTime = performance.now();
+-    const processes = await Native.getProcesses();
++    let processes;
++    try {
++      processes = await Native.getProcesses();
++    } catch {
++      // A failed OS snapshot must not terminate the RPC worker or report games as closed.
++      // Retry on the existing five-second scan; do not log private process data.
++      log('process enumeration unavailable; retrying on the next scan');
++      return;
++    }
+     const ids = [];
+ 
+     // log(`got processed in ${(performance.now() - startTime).toFixed(2)}ms`);

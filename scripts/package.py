@@ -25,8 +25,8 @@ def build():
         raise ValueError("Unexpected plugin identity")
     if not (ROOT / "dist/index.js").is_file():
         raise ValueError("Compile the frontend before packaging")
-    payload = ROOT / "runtime/Vesktop-1.6.8-win.zip"
-    if digest(payload) != "8ffa8d3778c287551ee0b302b3396acd2fac45931282071048bb881b67c88286":
+    payload = ROOT / "runtime/Vesktop-1.6.8-playhub.1-win.zip"
+    if digest(payload) != "97829d8c2d317db0ba3ac965e721f24846b027fcdec1230e141a1c57a370707f":
         raise ValueError("Portable runtime checksum mismatch")
     vencord = json.loads((ROOT / "runtime/vencord/manifest.json").read_text(encoding="utf-8"))
     for entry in vencord["files"]:
@@ -37,7 +37,8 @@ def build():
                                       "README.md", "CHANGELOG.md", "NOTICE.md", "FRONTEND-NOTICES.txt")]
     for folder in ("defaults", "dist", "py_modules", "runtime"):
         files.extend(path for path in (ROOT / folder).rglob("*") if path.is_file()
-                     and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".map", ".so"})
+                     and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".map", ".so"}
+                     and path.name != "Vesktop-1.6.8-win.zip")
     files = sorted(set(files))
     records = []
     for path in files:

@@ -1,13 +1,14 @@
 {
   "name": "playhub-discord",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "Discord voice and conversations in Playhub for Windows",
   "scripts": {
     "build": "rollup -c",
     "build_norm": "rollup -c",
     "watch": "rollup -c -w",
-    "test": "node node_modules/typescript/bin/tsc --noEmit"
+    "test": "node node_modules/typescript/bin/tsc --noEmit",
+    "test:arrpc": "node --experimental-vm-modules tests/test-arrpc-scan-guard.mjs"
   },
   "repository": {
     "type": "git",

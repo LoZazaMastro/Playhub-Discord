@@ -32,6 +32,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: python -m pip install -r requirements-dev.txt
       - run: python -B -m unittest discover -s tests -p 'test_windows*.py'
       - run: python -B -m unittest discover -s tests -p test_bridge_endpoint.py
+      - name: Verify the private runtime scan guard
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'Vesktop-1.6.8-win.zip'
+          Invoke-WebRequest -Uri 'https://github.com/Vencord/Vesktop/releases/download/v1.6.8/Vesktop-1.6.8-win.zip' -OutFile $archive
+          python -X utf8 -B scripts/derive-vesktop.py --base $archive
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --experimental-vm-modules tests/test-arrpc-scan-guard.mjs

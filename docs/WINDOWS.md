@@ -9,7 +9,7 @@ for the fork's features and verification status.
 
 1. Install [Playhub](https://github.com/LoZazaMastro/Playhub) and use Steam Big Picture.
 2. Install **Discord** from Playhub's catalog, or install
-   `Discord_Installer-1.0.1.zip` from [this fork's releases](https://github.com/LoZazaMastro/Playhub-Discord/releases)
+   `Discord_Installer-1.0.2.zip` from [this fork's releases](https://github.com/LoZazaMastro/Playhub-Discord/releases)
    through Playhub's plugin installer.
 3. Open **Discord** from the Quick Access Menu. On first start it verifies and
    unpacks the private Vesktop runtime already included in the ZIP, then shows
@@ -21,7 +21,8 @@ from a remote shell, Windows denies Discord access to the microphone.
 
 ## Your own Discord stays untouched
 
-Discord uses a private, portable Vesktop from the official Vencord release,
+Discord uses a private, portable Vesktop derived from the official Vencord release,
+with a localized arRPC process-scan error guard,
 bundled in the plugin ZIP and checked against a pinned SHA-256. Nothing is installed
 into Windows, no administrator prompt is needed, and it is not added to
 Windows startup. A Discord or Vesktop you already use is never stopped,

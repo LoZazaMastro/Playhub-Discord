@@ -56,6 +56,19 @@ class WindowsHostTest(unittest.TestCase):
             self.assertEqual(self.host.settings_file("prefs.json"), str(self.root / "settings" / "prefs.json"))
             self.assertEqual(self.host.data_dir(), str(self.root / "runtime"))
 
+    def test_runtime_revision_does_not_reuse_old_official_directory(self):
+        owned = self.root / "runtime"
+        old = owned / "1.6.8-x64"
+        old.mkdir(parents=True)
+        (old / "Vesktop.exe").write_bytes(b"old")
+        (old / ".steamcord-complete").write_text("complete")
+        with patch.object(self.win, "root", return_value=owned), patch.object(self.win, "_arch", return_value="x64"):
+            self.assertEqual(self.win.install_dir(), owned / "1.6.8-playhub.1-x64")
+            self.assertFalse(self.win.installed())
+            self.assertNotEqual(self.win.install_dir(), old)
+        with patch.object(self.win, "root", return_value=owned), patch.object(self.win, "_arch", return_value="arm64"):
+            self.assertEqual(self.win.install_dir(), owned / "1.6.8-arm64")
+
     def test_archive_with_or_without_root_and_complete_marker(self):
         for prefix in ("", "portable/"):
             with self.subTest(prefix=prefix):
