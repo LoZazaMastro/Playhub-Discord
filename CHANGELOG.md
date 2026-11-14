@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+
+- Remove an embedded upstream Google API key by rebuilding the bundled Vencord runtime without its optional Translate plugin.
+- Check source archives and release packages for embedded credentials before publishing. Saved Discord accounts are preserved.
+
 ## 1.0.2
 
 - Keep Discord running when Windows process detection returns malformed JSON.

@@ -45,10 +45,16 @@ BUILDS = {
               "09a29c4872a3f92da056d85a71d91c66b9751e6dc519c734f970d79c12411a5e"),
 }
 VENCORD_FILES = {
+    "vencordDesktopMain.js": "247b1f60e85ed59f272c0637d2d33437c780009430461e4b80d8f117ffd3799f",
+    "vencordDesktopPreload.js": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
+    "vencordDesktopRenderer.css": "6ede6d03ff7d6e3200c5460b455b3c81b2aeecf3ce53ea465782392b1f467cbc",
+    "vencordDesktopRenderer.js": "f4fea8ff7365504000c7949aea79b147bcfffd0d603ed1696d9c3f1ee85e7eec"
+}
+LEGACY_VENCORD_FILES = {
     "vencordDesktopMain.js": "f5f70942ad798f56097ab4c95b2090b058b9eb8f99d5366468ae083a48edd8cc",
     "vencordDesktopPreload.js": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
     "vencordDesktopRenderer.js": "391b3709f25ac7642dc5c32e1638c2e55a79d2806d84cb6ddad095686df54bc7",
-    "vencordDesktopRenderer.css": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254",
+    "vencordDesktopRenderer.css": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254"
 }
 RELEASE_URL = "https://github.com/Vencord/Vesktop/releases/download/v{version}/{asset}"
 CDP_PORT = 9223  # same debugging port as the Linux unit
@@ -102,6 +108,21 @@ def _no_links(path):
             pass
 
 
+def _managed_extension_upgrade_needed(profile):
+    state_path=profile/'vesktop/state.json'
+    _no_links(state_path)
+    if not state_path.is_file() or json.loads(state_path.read_text('utf-8')).get('vencordDir'):
+        return False
+    destination=profile/'vesktop/sessionData/vencordFiles'
+    _no_links(destination)
+    for name,expected in VENCORD_FILES.items():
+        target=destination/name
+        _no_links(target)
+        if target.is_file() and expected!=LEGACY_VENCORD_FILES.get(name) and _sha256(target)==LEGACY_VENCORD_FILES.get(name):
+            return True
+    return False
+
+
 def _seed_vencord(profile):
     source = Path(__file__).resolve().parent.parent / "runtime" / "vencord"
     state = json.loads((profile / "vesktop" / "state.json").read_text(encoding="utf-8"))
@@ -115,11 +136,24 @@ def _seed_vencord(profile):
         if _sha256(source / name) != expected:
             raise ValueError("Packaged Discord extension checksum mismatch")
     destination.mkdir(parents=True, exist_ok=True)
-    for name in VENCORD_FILES:
+    for name, expected in VENCORD_FILES.items():
         target = destination / name
         _no_links(target)
-        # Existing user-managed extension files are kept on a plugin reinstall.
-        if not target.exists():
+        # Upgrade only our exact previously bundled build. A custom extension
+        # remains owned by the user, including Vesktop's custom vencordDir.
+        old_managed = target.is_file() and _sha256(target) == LEGACY_VENCORD_FILES.get(name)
+        if old_managed and expected != LEGACY_VENCORD_FILES.get(name):
+            handle, filename = tempfile.mkstemp(prefix='.discord-extension-', suffix='.tmp', dir=destination)
+            temporary = Path(filename)
+            try:
+                with (source / name).open('rb') as original, os.fdopen(handle, 'wb') as output:
+                    shutil.copyfileobj(original, output)
+                if _sha256(temporary) != expected:
+                    raise ValueError('Discord extension update checksum mismatch')
+                os.replace(temporary, target)
+            finally:
+                temporary.unlink(missing_ok=True)
+        elif not target.exists():
             with (source / name).open("rb") as original, target.open("xb") as output:
                 shutil.copyfileobj(original, output)
     try:
@@ -364,15 +398,20 @@ async def launch(is_up):
         return False
     account = steam_account_id()
     if is_running():
-        if running_account() == account:
+        if running_account() == account and _managed_extension_upgrade_needed(profile_dir(account)):
+            logger.info('[win-vesktop] applying the bundled Discord extension update')
+            if not await stop('[win-vesktop]'):
+                return False
+        elif running_account() == account:
             for _ in range(15):
                 if owns_cdp() and await is_up():
                     return True
                 await sleep(1)
             logger.info("[recover] our Vesktop runs but its debugging port stays closed: restarting it")
-        else:
+        elif is_running():
             logger.info("[multisession] switching the private Discord profile")
-        await stop("[win-vesktop]")
+        if is_running():
+            await stop("[win-vesktop]")
     if host.listening_pids(CDP_PORT) or await is_up():
         logger.warning(f"[win-vesktop] port {CDP_PORT} is already used by another program")
         return False

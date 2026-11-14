@@ -1,5 +1,6 @@
 """Build the self-contained Discord plugin ZIP from an already compiled frontend."""
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import stat
@@ -40,6 +41,9 @@ def build():
                      and "__pycache__" not in path.parts and path.suffix not in {".pyc", ".map", ".so"}
                      and path.name != "Vesktop-1.6.8-win.zip")
     files = sorted(set(files))
+    spec=importlib.util.spec_from_file_location('discord_secret_guard',ROOT/'scripts/check-secrets.py')
+    guard=importlib.util.module_from_spec(spec);spec.loader.exec_module(guard)
+    guard.check(ROOT,files)
     records = []
     for path in files:
         resolved = path.resolve(strict=True)

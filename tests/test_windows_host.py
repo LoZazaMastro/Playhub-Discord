@@ -175,6 +175,22 @@ class WindowsHostTest(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b"existing user extension")
             self.assertEqual(settings.read_text(), '{"autoUpdate":true,"theme":"personal"}')
 
+    def test_security_update_replaces_only_the_exact_known_managed_extension(self):
+        with patch.object(self.host, 'settings_dir', return_value=str(self.root)):
+            profile=self.win.profile_dir('123')
+            self.win._seed_vencord(profile)
+            target=profile/'vesktop/sessionData/vencordFiles/vencordDesktopRenderer.js'
+            original=self.win._sha256
+            target.write_bytes(b'old managed runtime fixture')
+            def digest(path):
+                if path==target and path.read_bytes()==b'old managed runtime fixture':
+                    return self.win.LEGACY_VENCORD_FILES[target.name]
+                return original(path)
+            with patch.object(self.win,'_sha256',side_effect=digest):
+                self.win._seed_vencord(profile)
+            self.assertEqual(original(target),self.win.VENCORD_FILES[target.name])
+            self.assertEqual(list(target.parent.glob('.discord-extension-*.tmp')),[])
+
     def test_custom_vencord_directory_and_bad_packaged_hash_fail_closed(self):
         with patch.object(self.host, "settings_dir", return_value=str(self.root)):
             profile = self.win.profile_dir("custom")

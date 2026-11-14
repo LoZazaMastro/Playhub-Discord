@@ -17,6 +17,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check source and bundled runtime for embedded credentials
+        run: python -B scripts/check-secrets.py
+      - name: Verify credential scanning of runtime and source archives
+        run: python -B -m unittest discover -s tests -p test_secret_payload.py
       - uses: pnpm/action-setup@v4
         with:
           version: '9.4.0'

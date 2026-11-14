@@ -1,7 +1,7 @@
 # Runtime source and build notes
 
 The release package carries a private runtime derived from the official Vesktop
-Windows x64 portable build and the four official Vencord desktop files. The
+Windows x64 portable build and a source-built Vencord desktop distribution. The
 Electron executable is unchanged; two files inside the Vesktop ASAR (arRPC
 worker and its source map) have a localized process-scan error guard. Only a
 new, private profile is initialized: the
@@ -23,13 +23,25 @@ Runtime updates are delivered through the Playhub plugin package.
 ## Vencord
 
 - Source: https://github.com/Vendicated/Vencord/tree/d07030c0968e31e41caa0c35fda0ef8ae63a079e
-- Included archive: `sources/Vencord-source.tar.gz`.
+- Included corresponding source: `sources/Vencord-source.tar.gz`, derived from
+  that exact commit without the optional Translate plugin. Original GPL license
+  and copyright notices are preserved; `PLAYHUB-PATCHES.md` records the changes.
 - Upstream package manager: `pnpm@12.15.0`.
-- Build entry point: `pnpm install --frozen-lockfile`, then `pnpm buildStandalone`.
-  Set `VENCORD_HASH=d07030c` when building from the source tar without Git.
-- `vencord/manifest.json` records every original asset URL, byte count and
-  SHA-256. The binary header, not a subsequently moved devbuild tag, identifies
-  the exact source commit included here.
+- Build entry point: `pnpm install --frozen-lockfile --ignore-scripts`, then
+  `node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --standalone`.
+  Set `VENCORD_HASH=d07030c`, `VENCORD_REMOTE=Vendicated/Vencord`, and
+  `SOURCE_DATE_EPOCH=1794368152563` when building from the source tar without Git.
+- `vencord/manifest.json` records current output hashes separately from the
+  original upstream asset URLs and hashes. The original four desktop files were
+  reproduced byte-exactly before deriving this build. Ordinal plugin-directory
+  sorting makes the build order deterministic on Windows.
+- `patches/derive-vencord-no-translate.py` verifies the exact upstream archive,
+  omits `src/plugins/translate`, applies that deterministic sorting, and creates
+  the corresponding source archive. It contains no credential literal.
+- Translate's optional message translation is unavailable in this distribution.
+  Its embedded third-party Google client credential is absent from both runtime
+  and corresponding source. Voice, messages, the arRPC integration and user
+  profiles are not changed. The desktop preload remains byte-identical.
 
 The runtime package includes all four files in the private profile's
 `vesktop/sessionData/vencordFiles` before first launch. It does not need to

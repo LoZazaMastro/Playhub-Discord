@@ -9,8 +9,8 @@ Playhub interface and associated tests are changes by LoZazaMastro.
 The plugin includes the runtime components below. The private x64 Vesktop ASAR
 has a localized arRPC process-scan error guard by LoZazaMastro; its corresponding
 modified source, patch and reproducible derivation are documented in
-`runtime/SOURCE.md`. Vencord, Electron executables and other runtime payloads
-remain unchanged.
+`runtime/SOURCE.md`. Vencord is rebuilt without its optional Translate plugin
+and embedded upstream Google key. Electron executables remain unchanged.
 
 | Component | Version/source | License |
 | --- | --- | --- |

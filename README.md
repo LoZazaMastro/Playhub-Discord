@@ -62,11 +62,15 @@ The package builder refuses any different runtime SHA-256. The four Vencord asse
 hashes are in `runtime/vencord/manifest.json`. The release ZIP contains all of
 these files, the source archives and the notices.
 
-The package builder creates `out/Discord_Installer-1.0.2.zip` with a per-file
+The package builder creates `out/Discord_Installer-1.0.3.zip` with a per-file
 SHA-256 manifest. Playhub can install this package through its normal plugin
 installer. Runtime settings and saved logins remain outside the plugin folder.
 Updates are managed by Playhub; the upstream self-updater cannot overwrite this
 fork or restart the loader.
+
+The bundled Vencord build omits its optional Translate plugin, which embedded
+an upstream Google API key. The package and CI checks inspect both the runtime
+and corresponding source archives for embedded API credentials.
 
 ## Verification status
 

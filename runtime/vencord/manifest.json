@@ -4,28 +4,58 @@
   "files": [
     {
       "file": "vencordDesktopMain.js",
-      "size": 35072,
-      "sha256": "f5f70942ad798f56097ab4c95b2090b058b9eb8f99d5366468ae083a48edd8cc",
-      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopMain.js"
+      "size": 34298,
+      "sha256": "247b1f60e85ed59f272c0637d2d33437c780009430461e4b80d8f117ffd3799f",
+      "derived": true,
+      "upstreamUrl": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopMain.js",
+      "upstreamSha256": "f5f70942ad798f56097ab4c95b2090b058b9eb8f99d5366468ae083a48edd8cc",
+      "upstreamSize": 35072
     },
     {
       "file": "vencordDesktopPreload.js",
       "size": 2389,
       "sha256": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
-      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopPreload.js"
+      "derived": false,
+      "upstreamUrl": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopPreload.js",
+      "upstreamSha256": "0777509a732afc2f9d316468fd90900b1ff5ba2844156747d5e9707d221f78f7",
+      "upstreamSize": 2389
     },
     {
       "file": "vencordDesktopRenderer.css",
-      "size": 43726,
-      "sha256": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254",
-      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.css"
+      "size": 43334,
+      "sha256": "6ede6d03ff7d6e3200c5460b455b3c81b2aeecf3ce53ea465782392b1f467cbc",
+      "derived": true,
+      "upstreamUrl": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.css",
+      "upstreamSha256": "f2dc03726e81af8ef67b017f6e441432580c088758a4dcd8c78b07686f650254",
+      "upstreamSize": 43726
     },
     {
       "file": "vencordDesktopRenderer.js",
-      "size": 728105,
-      "sha256": "391b3709f25ac7642dc5c32e1638c2e55a79d2806d84cb6ddad095686df54bc7",
-      "url": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.js"
+      "size": 712021,
+      "sha256": "f4fea8ff7365504000c7949aea79b147bcfffd0d603ed1696d9c3f1ee85e7eec",
+      "derived": true,
+      "upstreamUrl": "https://github.com/Vendicated/Vencord/releases/download/devbuild/vencordDesktopRenderer.js",
+      "upstreamSha256": "391b3709f25ac7642dc5c32e1638c2e55a79d2806d84cb6ddad095686df54bc7",
+      "upstreamSize": 728105
     }
   ],
-  "releaseTagCommit": "62b2acebe6806c7b0e2ca6a43c6b2419a627b8dc"
+  "releaseTagCommit": "62b2acebe6806c7b0e2ca6a43c6b2419a627b8dc",
+  "derivation": {
+    "id": "playhub-no-translate-v1",
+    "script": "runtime/patches/derive-vencord-no-translate.py",
+    "sourceArchive": "runtime/sources/Vencord-source.tar.gz",
+    "sourceSha256": "aaebff215bd38bfcce782952f330f4a44a71ae0bd013f4c5fd50f7185a868176",
+    "upstreamSourceSha256": "4adcd253519f253f65a7868080fe30bb5e09ce0a6bc9e167866faaaeeea176ee",
+    "removedOptionalPlugin": "Translate",
+    "build": {
+      "packageManager": "pnpm@12.15.0",
+      "dependencyScripts": false,
+      "VENCORD_HASH": "d07030c",
+      "VENCORD_REMOTE": "Vendicated/Vencord",
+      "SOURCE_DATE_EPOCH": "1794368152563",
+      "command": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --standalone"
+    },
+    "baselineOriginalFilesReproducedExactly": 4,
+    "preloadUnchanged": true
+  }
 }
