@@ -1,3 +1,9 @@
+> **Upstream reference:** This translation is preserved from Steamcord. Its
+> features and installation instructions may differ from the Playhub Windows
+> fork. For the current **Discord** plugin, installation and verification
+> status, see the [current README](../README.md). Original text and credits
+> follow unchanged.
+
 # Steamcord
 
 **Discord no Modo Jogo do Steam** — um plugin [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) para Steam Deck / Bazzite / SteamOS e Windows (Big Picture).
