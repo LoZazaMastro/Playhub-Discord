@@ -142,20 +142,33 @@ def _seed_vencord(profile):
         # Upgrade only our exact previously bundled build. A custom extension
         # remains owned by the user, including Vesktop's custom vencordDir.
         old_managed = target.is_file() and _sha256(target) == LEGACY_VENCORD_FILES.get(name)
-        if old_managed and expected != LEGACY_VENCORD_FILES.get(name):
+        if (old_managed and expected != LEGACY_VENCORD_FILES.get(name)) or not target.exists():
             handle, filename = tempfile.mkstemp(prefix='.discord-extension-', suffix='.tmp', dir=destination)
             temporary = Path(filename)
             try:
-                with (source / name).open('rb') as original, os.fdopen(handle, 'wb') as output:
+                with os.fdopen(handle, 'wb') as output, (source / name).open('rb') as original:
                     shutil.copyfileobj(original, output)
                 if _sha256(temporary) != expected:
                     raise ValueError('Discord extension update checksum mismatch')
-                os.replace(temporary, target)
+                _no_links(target)
+                if old_managed:
+                    # The profile may have changed while the new asset was copied.
+                    # A newly selected custom extension is never ours to replace.
+                    if target.is_file() and _sha256(target) == LEGACY_VENCORD_FILES.get(name):
+                        _no_links(target)
+                        os.replace(temporary, target)
+                else:
+                    # Publish a complete, verified file without replacing a file
+                    # created by another writer after the initial existence check.
+                    try:
+                        if os.name == 'nt':
+                            os.rename(temporary, target)  # Windows rename refuses an existing target.
+                        else:
+                            os.link(temporary, target)
+                    except FileExistsError:
+                        pass
             finally:
                 temporary.unlink(missing_ok=True)
-        elif not target.exists():
-            with (source / name).open("rb") as original, target.open("xb") as output:
-                shutil.copyfileobj(original, output)
     try:
         with (destination / "package.json").open("x", encoding="utf-8") as output:
             output.write("{}")

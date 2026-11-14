@@ -11,6 +11,26 @@ spec=importlib.util.spec_from_file_location('secret_check',ROOT/'scripts/check-s
 scanner=importlib.util.module_from_spec(spec);spec.loader.exec_module(scanner)
 
 class SecretPayloadTests(unittest.TestCase):
+    def test_archive_member_names_never_echo_matched_values(self):
+        marker=b'AI'+b'za'+b'x'*35
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            for kind in ('zip','tar.gz'):
+                with self.subTest(kind=kind):
+                    path=root/('payload.'+kind)
+                    member=marker.decode()+'.js'
+                    if kind=='zip':
+                        with zipfile.ZipFile(path,'w') as archive:
+                            archive.writestr(member,marker)
+                    else:
+                        with tarfile.open(path,'w:gz') as archive:
+                            item=tarfile.TarInfo(member);item.size=len(marker)
+                            archive.addfile(item,io.BytesIO(marker))
+                    with self.assertRaises(ValueError) as failure:
+                        scanner.check(root,[path])
+                    self.assertNotIn(marker.decode(),str(failure.exception))
+                    self.assertIn('embedded Google API credential',str(failure.exception))
+
     def test_plain_javascript_and_archive_findings_never_include_matched_value(self):
         marker=b'AI'+b'za'+b'x'*35
         with tempfile.TemporaryDirectory() as directory:

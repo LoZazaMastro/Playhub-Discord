@@ -7,11 +7,14 @@ import tarfile
 import zipfile
 
 GOOGLE = re.compile(rb'AI' + rb'za[A-Za-z0-9_-]{35}')
+GOOGLE_NAME = re.compile(r'AI' + r'za[A-Za-z0-9_-]{35}')
 TEXT = {'.js','.ts','.tsx','.cjs','.mjs','.json','.py','.md','.txt','.yaml','.yml','.html','.css','.asar'}
 
 def inspect(data, name):
     findings=[]
-    if GOOGLE.search(data): findings.append(name+': embedded Google API credential')
+    if GOOGLE.search(data):
+        safe_name=GOOGLE_NAME.sub('[redacted credential]',str(name))
+        findings.append(safe_name+': embedded Google API credential')
     return findings
 
 def scan_file(path, name=None):
